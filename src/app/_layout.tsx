@@ -29,6 +29,8 @@ function AuthenticatedNavigation() {
       </Stack.Protected>
       <Stack.Protected guard={status === 'authenticated'}>
         <Stack.Screen name="index" options={{ title: 'Inicio' }} />
+        <Stack.Screen name="studies/index" options={{ title: 'Estudios' }} />
+        <Stack.Screen name="profile" options={{ title: 'Mi perfil' }} />
       </Stack.Protected>
     </Stack>
   );
