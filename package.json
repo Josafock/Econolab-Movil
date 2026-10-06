@@ -54,6 +54,11 @@
     "verify": "npm run lint && npm run typecheck && npm test -- --runInBand && npm run build",
     "test:integration": "node --env-file=.env.integration scripts/integration.cjs"
   },
+  "overrides": {
+    "xcode@3.0.1": {
+      "uuid": "11.1.1"
+    }
+  },
   "private": true,
   "engines": {
     "node": ">=22.13.0"

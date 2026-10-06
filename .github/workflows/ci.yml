@@ -26,4 +26,6 @@ jobs:
       - run: npm run lint
       - run: npm run typecheck
       - run: npm test -- --ci --runInBand
+      - name: Verificar generación del proyecto iOS
+        run: npx expo prebuild --platform ios --no-install
       - run: npm run build
