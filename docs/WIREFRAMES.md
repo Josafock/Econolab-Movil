@@ -37,7 +37,7 @@ Trazabilidad en el repositorio: [HU-02 #2](https://github.com/Josafock/Econolab-
 └───────────────────────────────────┘
 ```
 
-El botón indica la carga y evita envíos repetidos. Si el backend solicita el segundo factor, se muestra el campo para el código y se valida con el mecanismo real. La contraseña no se conserva después de iniciar sesión ni se incluye en registros.
+El botón indica la carga y evita envíos repetidos. El contrato de login existente utiliza correo y contraseña; no se añade un segundo factor inexistente. La contraseña no se conserva después de iniciar sesión ni se incluye en registros.
 
 ## Inicio / dashboard
 
@@ -136,7 +136,7 @@ La edición depende de las operaciones y permisos reales. Si el backend no admit
 | --- | --- | --- |
 | Primera carga | Indicador con texto «Cargando…» | Esperar el resultado |
 | Formulario en envío | Botón con indicador, estado ocupado y bloqueo de nuevos envíos | Esperar o conservar la navegación admitida |
-| Catálogo vacío | Mensaje que distingue un catálogo vacío de una búsqueda sin coincidencias | Actualizar o cambiar la búsqueda |
+| Catálogo vacío o búsqueda sin coincidencias | «No encontramos estudios», con la búsqueda y filtros actuales visibles | Actualizar, cambiar la búsqueda o limpiar los filtros |
 | Error de red o timeout | Mensaje comprensible sin detalles internos | Volver a intentar |
 | Credenciales inválidas | Mensaje junto al formulario; no se revela si una cuenta existe | Corregir los datos |
 | Validación | Etiqueta y explicación junto al campo | Corregir el campo |

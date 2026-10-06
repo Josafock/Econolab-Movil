@@ -1,27 +1,46 @@
-# ECONOLAB m?vil
+# ECONOLAB móvil
 
-Cliente React Native con Expo SDK 57 y TypeScript. Reutiliza la API NestJS existente de ECONOLAB.
+Aplicación React Native con Expo SDK 57 y TypeScript. Reutiliza la API NestJS existente de ECONOLAB para iniciar sesión, consultar estudios y cambiar la contraseña. No incluye otro backend ni otra base de datos.
 
 ## Ejecutar
 
-1. Usar Node 24 LTS (.nvmrc).
-2. Ejecutar `npm ci` dentro de mobile.
-3. Copiar .env.example a .env y completar EXPO_PUBLIC_API_URL con la base del backend, incluido /api.
-4. Ejecutar `npm start` y abrir con Expo Go compatible con SDK 57, o un emulador/compilaci?n de desarrollo.
+1. Usar Node 24 LTS (`.nvmrc`).
+2. Ejecutar `npm ci` dentro de `mobile`.
+3. En una instalación nueva, copiar `.env.example` a `.env` y completar `EXPO_PUBLIC_API_URL` con la base del backend, incluido `/api`.
+4. Con el backend disponible, ejecutar `npm start` y abrir el proyecto con Expo Go compatible con SDK 57 o una compilación de desarrollo. `npm run android` requiere un emulador o teléfono Android configurado.
 
-En un tel?fono, localhost es el tel?fono: para backend local utiliza la IP de la computadora en la misma red. Android Emulator usa 10.0.2.2. HTTP solo se permite durante desarrollo; la versi?n publicada necesita HTTPS. El preview web necesita un origen autorizado por la configuraci?n CORS del backend.
+En un teléfono, `localhost` apunta al propio teléfono: para un backend local utiliza la IP de la computadora en la misma red. Android Emulator usa `10.0.2.2`. HTTP se permite durante desarrollo; la versión publicada requiere HTTPS. El preview web necesita un origen autorizado por el CORS existente del backend; la prueba local se ejecutó con `npx expo start --web --port 5173`.
 
-## Validaci?n
+La copia local de trabajo tiene `.env` configurado y una cuenta independiente de pruebas en `.env.integration`. Esos archivos son privados y están ignorados por Git. Nunca subirlos, imprimir la contraseña o incluirla en capturas. La URL local no sirve como entorno de integración de GitHub.
 
-`npm run verify` ejecuta lint, TypeScript, pruebas y exportaci?n Metro Android/iOS. `npm run build` verifica los bundles nativos; no genera APK/IPA ni sustituye una prueba en dispositivo.
+## Funcionalidades
 
-## Planificaci?n
+- Login, sesión almacenada con SecureStore en Android/iOS, restauración validada, expiración y logout con revocación.
+- Dashboard con acceso a estudios y perfil; pantallas protegidas.
+- Catálogo real con búsqueda, filtros, paginación, actualización y detalle con precios y parámetros disponibles.
+- Nombre, correo y rol recibidos en el login; cambio de contraseña mediante el endpoint existente.
+- Validaciones y mensajes para errores de red, timeout, sesión, permisos y respuestas inesperadas.
 
-Las issues y el Project existentes en https://github.com/Josafock/Econolab-Movil son la planificaci?n oficial. Ver docs/GIT.md para jerarqu?a y dependencias. Cada HU tiene una rama; el responsable integra los PR manualmente. No se alteran los sprints.
+El backend no ofrece una consulta actualizada ni edición de nombre/correo del usuario actual. Esos campos permanecen en lectura. [Compatibilidad del perfil](docs/PROFILE_COMPATIBILITY.md) describe el pendiente de HU06.
 
-## Documentaci?n
+## Validación
 
-- docs/ARCHITECTURE.md: estructura y contratos le?dos del backend.
-- docs/GIT.md: HUs, sub-issues y ramas.
+`npm run verify` ejecuta lint, TypeScript, pruebas y exportación Metro Android/iOS. `npm run build` verifica los bundles nativos; no genera APK/IPA ni sustituye una prueba en dispositivo.
 
-No se incluyen secretos ni credenciales. .env y .env.integration permanecen fuera del repositorio.
+`npm run test:integration` usa `.env.integration` contra el backend real. Los campos de ejemplo están en `.env.integration.example`. Para loopback HTTP local, se requiere `INTEGRATION_ALLOW_LOCAL_HTTP=1`. La integración habitual no modifica estudios ni contraseñas.
+
+## Planificación y entrega
+
+Las issues y el Project de [Econolab-Movil](https://github.com/Josafock/Econolab-Movil) son la planificación oficial. Cada HU tiene su rama y PR hacia `main`; las ramas dependientes incluyen el código de las anteriores. El responsable integra los PR según sus sprints. No se realizaron merges ni cambios de calendario.
+
+La implementación completa está en `feature/HU-08-pruebas`, disponible localmente y en el remoto. `main` conserva el estado original por instrucción del proyecto.
+
+## Documentación
+
+- [Auditoría final](docs/AUDITORIA_FINAL.md): resultados, trazabilidad, CI y pendientes reales.
+- [Arquitectura](docs/ARCHITECTURE.md): estructura y contratos comprobados.
+- [Git](docs/GIT.md): issues, sub-issues, ramas y dependencias.
+- [Wireframes](docs/WIREFRAMES.md): distribución e identidad visual.
+- [Perfil](docs/PROFILE_COMPATIBILITY.md): operaciones disponibles y limitación del backend.
+- [Errores](docs/ERRORS.md): validación y recuperación.
+- [Pruebas](docs/TESTING.md): comandos, integración y revisión en dispositivo.
