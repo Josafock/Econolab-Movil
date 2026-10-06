@@ -51,7 +51,8 @@
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "build": "expo export --platform android --platform ios",
-    "verify": "npm run lint && npm run typecheck && npm test -- --runInBand && npm run build"
+    "verify": "npm run lint && npm run typecheck && npm test -- --runInBand && npm run build",
+    "test:integration": "node --env-file=.env.integration scripts/integration.cjs"
   },
   "private": true,
   "engines": {
