@@ -37,7 +37,7 @@ Trazabilidad en el repositorio: [HU-02 #2](https://github.com/Josafock/Econolab-
 └───────────────────────────────────┘
 ```
 
-El botón indica la carga y evita envíos repetidos. El contrato de login existente utiliza correo y contraseña; no se añade un segundo factor inexistente. La contraseña no se conserva después de iniciar sesión ni se incluye en registros.
+El botón indica la carga y evita envíos repetidos. El contrato de login existente utiliza correo y contraseña y devuelve directamente la sesión. Aunque existe una ruta de verificación MFA en el backend, el login actual limpia el estado MFA pendiente y no solicita un código; la app sigue ese flujo real. La contraseña no se conserva después de iniciar sesión ni se incluye en registros.
 
 ## Inicio / dashboard
 
