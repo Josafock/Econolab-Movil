@@ -1,5 +1,5 @@
-import { Text, View } from 'react-native';
+import { Brand, Card, Heading, Screen } from '@/ui';
 
 export default function Index() {
-  return <View style={{ flex: 1, justifyContent: 'center', padding: 24 }}><Text accessibilityRole="header">ECONOLAB móvil</Text><Text>Entorno de desarrollo configurado.</Text></View>;
+  return <Screen><Brand /><Card><Heading title="ECONOLAB móvil" subtitle="Tu laboratorio, cerca de ti." /></Card></Screen>;
 }
