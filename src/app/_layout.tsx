@@ -1,9 +1,18 @@
-import { Stack } from 'expo-router';
+import { Stack, type ErrorBoundaryProps } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 import { AuthProvider, useAuth } from '@/features/auth/AuthProvider';
 import { Button, Feedback, Heading, Loading, Screen, colors } from '@/ui';
+import ConnectionBanner from '@/ui/ConnectionBanner';
+
+export function ErrorBoundary({ retry }: ErrorBoundaryProps) {
+  return <SafeAreaProvider><SafeAreaView style={{ flex: 1 }}><Screen>
+    <Heading title="No pudimos abrir esta pantalla" subtitle="Puedes volver a intentarlo para continuar." />
+    <Button title="Volver a intentar" onPress={retry} />
+  </Screen></SafeAreaView></SafeAreaProvider>;
+}
 
 function AuthenticatedNavigation() {
   const { status, error, notice, retry, logout } = useAuth();
@@ -23,7 +32,7 @@ function AuthenticatedNavigation() {
     );
   }
   return (
-    <Stack screenOptions={{ headerTitle: 'ECONOLAB', headerTintColor: colors.primaryDark, contentStyle: { backgroundColor: colors.background } }}>
+    <View style={{ flex: 1 }}><Stack screenOptions={{ headerTitle: 'ECONOLAB', headerTintColor: colors.primaryDark, contentStyle: { backgroundColor: colors.background } }}>
       <Stack.Protected guard={status === 'anonymous'}>
         <Stack.Screen name="login" options={{ title: 'Iniciar sesión', headerTitle: 'Iniciar sesión' }} />
       </Stack.Protected>
@@ -33,7 +42,7 @@ function AuthenticatedNavigation() {
         <Stack.Screen name="studies/[id]" options={{ title: 'Detalle del estudio' }} />
         <Stack.Screen name="profile" options={{ title: 'Mi perfil' }} />
       </Stack.Protected>
-    </Stack>
+    </Stack><ConnectionBanner /></View>
   );
 }
 
