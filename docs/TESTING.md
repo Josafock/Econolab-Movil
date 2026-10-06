@@ -15,9 +15,15 @@ Completar `.env.integration` local, ignorado por Git, conforme a `.env.integrati
 
 La integración comprueba acceso anónimo rechazado, login válido, paginación, búsqueda/filtros, detalle y revocación del token tras logout. No altera estudios ni contraseñas. Si el catálogo está vacío, falla explícitamente: no inventa resultados. No se realizan intentos inválidos contra la cuenta real para evitar su bloqueo. No se imprime información de pacientes, tokens o contraseñas.
 
-El workflow integration.yml se activa con tags sprint-01 a sprint-06 y con workflow_dispatch. Solo el responsable decide cuándo emitir esos tags; no se crearon durante el desarrollo. Necesita secrets INTEGRATION_API_URL, INTEGRATION_EMAIL e INTEGRATION_PASSWORD que apunten a un backend HTTPS accesible desde GitHub. Una URL127.0.0.1 del equipo del usuario no es accesible desde el runner; no subir esas credenciales como si fueran un entorno publicado. Faltan secrets → job falla claramente, nunca pasa como omitido.
+El workflow integration.yml se activa con tags sprint-01 a sprint-06 y con workflow_dispatch. Solo el responsable decide cuándo emitir esos tags; no se crearon durante el desarrollo. Necesita secrets INTEGRATION_API_URL, INTEGRATION_EMAIL e INTEGRATION_PASSWORD que apunten a un backend HTTPS accesible desde GitHub. Una URL `127.0.0.1` del equipo del usuario no es accesible desde el runner; no subir esas credenciales como si fueran un entorno publicado. Faltan secrets → job falla claramente, nunca pasa como omitido.
 
-El workflow_dispatch solo será visible en GitHub cuando el workflow esté integrado por el responsable en la rama predeterminada. Las validaciones push/PR de ci.yml no requieren secretos.
+El workflow_dispatch solo será visible en GitHub cuando el workflow esté integrado por el responsable en la rama predeterminada. Las validaciones push/PR de ci.yml no requieren secretos. Ver [auditoría final](AUDITORIA_FINAL.md) para los resultados de CI y las pruebas realizadas.
+
+## Validación adicional realizada
+
+Se ejecutó una prueba real del cambio de contraseña exclusivamente sobre la cuenta independiente de pruebas: modificar, iniciar sesión con la nueva contraseña y restaurar la original. La restauración y los logout finalizaron correctamente. Esta prueba adicional no forma parte del script habitual porque modifica temporalmente la cuenta.
+
+Se recorrieron las pantallas en Chromium con viewport de 390 × 844 y backend real: login, dashboard, listado, detalle, búsqueda vacía, perfil, validación, logout y enlace protegido sin sesión. Las capturas locales están en `artifacts/01-login.png` a `artifacts/06-profile.png`, ignoradas por Git. Se trata de un preview web, no de evidencia de ejecución Android/iOS.
 
 ## Prueba en dispositivo pendiente del equipo
 
