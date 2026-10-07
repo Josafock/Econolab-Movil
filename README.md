@@ -22,7 +22,7 @@ La app está configurada con `https://backend-econolab-escuela-1.onrender.com/ap
 - Perfil actualizado desde el backend, edición de nombre/correo con confirmación de contraseña al cambiar correo; rol protegido y cambio de contraseña.
 - Validaciones y mensajes para errores de red, timeout, sesión, permisos y respuestas inesperadas.
 
-El perfil utiliza `GET/PATCH /api/users/me` del backend existente. [Compatibilidad del perfil](docs/PROFILE_COMPATIBILITY.md) describe los contratos y la dependencia de publicación del PR1 del backend.
+El perfil utiliza `GET/PATCH /api/users/me` del backend existente. El PR1 del backend está integrado con autorización del propietario y la consulta/edición se verificaron en Render. [Compatibilidad del perfil](docs/PROFILE_COMPATIBILITY.md) describe los contratos y las pruebas de publicación.
 
 ## Validación
 
@@ -32,7 +32,7 @@ El perfil utiliza `GET/PATCH /api/users/me` del backend existente. [Compatibilid
 
 ## Planificación y entrega
 
-Las issues y el Project de [Econolab-Movil](https://github.com/Josafock/Econolab-Movil) son la planificación oficial. Cada HU tiene su rama y PR hacia `main`; las ramas dependientes incluyen el código de las anteriores. El responsable integra los PR según sus sprints. No se realizaron merges ni cambios de calendario.
+Las issues y el Project de [Econolab-Movil](https://github.com/Josafock/Econolab-Movil) son la planificación oficial. Cada HU tiene su rama y PR hacia `main`; las ramas dependientes incluyen el código de las anteriores. El responsable integra los PR según sus sprints. No se realizaron merges en el móvil ni cambios de calendario. El propietario autorizó integrar únicamente el backend para habilitar el perfil.
 
 La implementación completa está en `feature/HU-08-pruebas`, disponible localmente y en el remoto. `main` conserva el estado original por instrucción del proyecto.
 
@@ -46,6 +46,6 @@ La implementación completa está en `feature/HU-08-pruebas`, disponible localme
 - [Git](docs/GIT.md): issues, sub-issues, ramas y dependencias.
 - [Verificación del Project](docs/PROJECT_VERIFICATION.md): campos, seis Sprints y asignaciones oficiales comprobadas.
 - [Wireframes](docs/WIREFRAMES.md): distribución e identidad visual.
-- [Perfil](docs/PROFILE_COMPATIBILITY.md): contratos implementados y publicación pendiente en Render.
+- [Perfil](docs/PROFILE_COMPATIBILITY.md): contratos implementados y publicación verificada en Render.
 - [Errores](docs/ERRORS.md): validación y recuperación.
 - [Pruebas](docs/TESTING.md): comandos, integración y revisión en dispositivo.
