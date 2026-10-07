@@ -1,0 +1,40 @@
+name: Integración con backend real
+
+on:
+  push:
+    tags:
+      - sprint-01
+      - sprint-02
+      - sprint-03
+      - sprint-04
+      - sprint-05
+      - sprint-06
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: integration-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      INTEGRATION_API_URL: ${{ secrets.INTEGRATION_API_URL }}
+      INTEGRATION_EMAIL: ${{ secrets.INTEGRATION_EMAIL }}
+      INTEGRATION_PASSWORD: ${{ secrets.INTEGRATION_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Verificar que las credenciales estén configuradas
+        run: |
+          node -e "const keys=['INTEGRATION_API_URL','INTEGRATION_EMAIL','INTEGRATION_PASSWORD']; if(keys.some(key=>!process.env[key])) { console.error('Faltan secrets de integración. No se omite la prueba.'); process.exit(1); }"
+      - run: npm ci
+      - name: Probar login, catálogo, filtros, detalle y revocación
+        run: node scripts/integration.cjs
