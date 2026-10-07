@@ -157,7 +157,7 @@ export const Field = forwardRef<TextInput, FieldProps>(function Field(
           style,
         ]}
       />
-      {Icon ? <View pointerEvents="none" style={styles.fieldIcon}><Icon size={19} color={focused ? colors.primary : colors.subtle} strokeWidth={1.8} /></View> : null}
+      {Icon ? <View style={styles.fieldIcon}><Icon size={19} color={focused ? colors.primary : colors.subtle} strokeWidth={1.8} /></View> : null}
       {rightAccessory ? <View style={styles.fieldAccessory}>{rightAccessory}</View> : null}
       </View>
       {error ? (
@@ -273,7 +273,7 @@ const styles = StyleSheet.create({
   field: { gap: 8 },
   label: { color: '#334155', fontSize: 13, fontWeight: '600' },
   inputContainer: { position: 'relative' },
-  fieldIcon: { position: 'absolute', left: 15, top: 0, bottom: 0, justifyContent: 'center' },
+  fieldIcon: { position: 'absolute', left: 15, top: 0, bottom: 0, justifyContent: 'center', pointerEvents: 'none' },
   fieldAccessory: { position: 'absolute', right: 3, top: 2, bottom: 2, justifyContent: 'center' },
   inputWithIcon: { paddingLeft: 44 },
   inputWithAccessory: { paddingRight: 52 },
