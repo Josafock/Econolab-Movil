@@ -2,6 +2,8 @@
 
 Fecha: 5 de octubre de 2026, horario de Ciudad de México. Repositorio: [Josafock/Econolab-Movil](https://github.com/Josafock/Econolab-Movil).
 
+**Actualización del 6 de octubre:** la app ya usa `https://backend-econolab-escuela-1.onrender.com/api`; las seis comprobaciones de integración pasan contra Render. Expo inicia por túnel y se verificaron el bundle Android público y los WebSockets de desarrollo. Hay 88 pruebas unitarias aprobadas y 57 alertas de dependencias (49 altas, 8 moderadas, 0 críticas). Se adaptaron el logo completo de la web, las pantallas y la navegación inferior; revisión Chromium real a 320/390/768 px aprobada. Correcciones en [PR47](https://github.com/Josafock/Econolab-Movil/pull/47) y [PR48](https://github.com/Josafock/Econolab-Movil/pull/48), incluidas en la rama acumulada HU08 sin merges. Ver [conexión actual](CONEXION_RENDER.md) y [diseño actual](DISENO_MOVIL.md). El cuerpo siguiente conserva los resultados históricos del 5 de octubre; el entorno HTTPS ya está disponible, aunque faltan los secrets del workflow de integración remota. Los límites de HU06, Project y ejecución física siguen vigentes.
+
 ## Estado general
 
 La aplicación está implementada en React Native, Expo SDK 57 y TypeScript. Utiliza el backend NestJS existente. La versión acumulada se entrega en `feature/HU-08-pruebas`; `main` conserva el commit original. Hay ocho ramas feature y ocho PR hacia `main`.
