@@ -14,6 +14,6 @@ Se conserva `PATCH /api/users/update-password` con current_password y password. 
 
 ## Validación y publicación
 
-104 pruebas móviles aprobadas; build Android/iOS y lint/TypeScript aprobados. Backend: 22 pruebas nuevas y 52 pruebas completas aprobadas. Prueba HTTP real con la base existente: consulta, campos protegidos, cambio de nombre/correo, login nuevo, restauración y revocación. Solo se usó la cuenta independiente de pruebas.
+104 pruebas móviles aprobadas; build Android/iOS y lint/TypeScript aprobados. CI del PR49 aprobado. Backend: 22 pruebas nuevas y 52 pruebas completas aprobadas, con CI y SonarCloud aprobados. Prueba HTTP real con la base existente: consulta, campos protegidos, cambio de nombre/correo, login nuevo, restauración y revocación. También pasaron las siete comprobaciones del script de integración contra los módulos Auth, Users y Studies reales ejecutados localmente. Solo se usó la cuenta independiente de pruebas.
 
 Para habilitar el perfil en Render se debe integrar y desplegar el PR de backend. La prueba local no acredita publicación. Si ese servidor todavía no tiene los endpoints, la app muestra un error de consulta y no ofrece un guardado ficticio. La integración automática ahora exige la lectura real del perfil; no omite ese contrato. Los estados oficiales de HU06 y su Sprint siguen a cargo del responsable.

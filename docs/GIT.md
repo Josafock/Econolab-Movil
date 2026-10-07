@@ -17,4 +17,6 @@ La planificación oficial está en las issues y el Project existentes de Josafoc
 
 Los números TH del tablero se mantienen; los mensajes de commit emplean HU-XX/T-XX.YY y referencias a las issues reales. SemVer MAJOR.MINOR.PATCH conforme a #13. No se crean tags sprint ni se decide un cierre de sprint.
 
-La sesión disponible carece de `read:project`. Las issues y su jerarquía fueron consultadas, pero Sprint/fechas/estados del Project no pudieron verificarse. No se infieren ni se modifican. Para habilitar lectura, el titular puede ejecutar `gh auth refresh -s read:project`.
+El titular habilitó `read:project` el 6 de octubre y se verificó el Project oficial número 4, «Econolab Movil»: 14 campos, 37 issues y seis Sprints. La [verificación del Project](PROJECT_VERIFICATION.md) registra fechas, responsables y estados reales, además de las 29 subtareas sin Sprint individual. No se modificó la planificación.
+
+Las correcciones posteriores se publican en ramas `fix/HU-XX-...` y PR dependientes. El perfil completo está en `fix/HU-06-perfil-completo`, el icono nativo en `fix/HU-02-icono-aplicacion` y la verificación en `fix/HU-01-verificacion-project`. La rama acumulada HU08 incorpora esos commits mediante avance de su referencia, sin merge. El PR original HU06 conserva la versión parcial histórica; el PR49 añade la consulta y edición completas, dependientes del despliegue del PR1 del backend.

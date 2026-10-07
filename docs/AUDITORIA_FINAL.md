@@ -1,33 +1,36 @@
 # Auditoría final de ECONOLAB Mobile
 
-Fecha: 5 de octubre de 2026, horario de Ciudad de México. Repositorio: [Josafock/Econolab-Movil](https://github.com/Josafock/Econolab-Movil).
+Fecha de revisión: 6 de octubre de 2026, horario de Ciudad de México. Repositorio: [Josafock/Econolab-Movil](https://github.com/Josafock/Econolab-Movil).
 
-**Actualización del 6 de octubre:** la app ya usa `https://backend-econolab-escuela-1.onrender.com/api`; las seis comprobaciones de integración pasan contra Render. Expo inicia por túnel y se verificaron el bundle Android público y los WebSockets de desarrollo. Hay 88 pruebas unitarias aprobadas y 57 alertas de dependencias (49 altas, 8 moderadas, 0 críticas). Se adaptaron el logo completo de la web, las pantallas y la navegación inferior; revisión Chromium real a 320/390/768 px aprobada. Correcciones en [PR47](https://github.com/Josafock/Econolab-Movil/pull/47) y [PR48](https://github.com/Josafock/Econolab-Movil/pull/48), incluidas en la rama acumulada HU08 sin merges. Ver [conexión actual](CONEXION_RENDER.md) y [diseño actual](DISENO_MOVIL.md). El cuerpo siguiente conserva los resultados históricos del 5 de octubre; el entorno HTTPS ya está disponible, aunque faltan los secrets del workflow de integración remota. Los límites de HU06, Project y ejecución física siguen vigentes.
+**Actualización:** la app usa `https://backend-econolab-escuela-1.onrender.com/api` y Expo inicia por túnel. Se adaptaron el logo de la web, las pantallas y la navegación inferior en [PR47](https://github.com/Josafock/Econolab-Movil/pull/47) y [PR48](https://github.com/Josafock/Econolab-Movil/pull/48). El perfil completo está implementado en [PR49](https://github.com/Josafock/Econolab-Movil/pull/49), y el icono nativo en [PR50](https://github.com/Josafock/Econolab-Movil/pull/50). El Project oficial ya pudo verificarse: 14 campos y seis Sprints. El perfil necesita integrar y desplegar el [PR1 del backend](https://github.com/DavidHdz117/Backend_Econolab_Escuela/pull/1) antes de funcionar en Render; la solicitud de autorización permanece pendiente. Ver [perfil](PROFILE_COMPATIBILITY.md), [iconos](ICONOS.md) y [Project](PROJECT_VERIFICATION.md).
 
 ## Estado general
 
 La aplicación está implementada en React Native, Expo SDK 57 y TypeScript. Utiliza el backend NestJS existente. La versión acumulada se entrega en `feature/HU-08-pruebas`; `main` conserva el commit original. Hay ocho ramas feature y ocho PR hacia `main`.
 
-**No se declara cumplimiento al 100 %.** HU06 tiene una incompatibilidad real de contrato; falta ejecución Android/iOS, verificación de campos del Project y un entorno HTTPS para la integración remota de cierre de Sprint. También permanecen alertas de dependencias. No se ocultan estos puntos ni se cierran las issues como si todo estuviera terminado.
+**No se declara cumplimiento al 100 %.** Faltan el despliegue del perfil en Render y la ejecución física Android/iOS. También permanecen alertas de dependencias y la configuración de secrets para el workflow remoto de integración. Los campos y Sprints del Project están comprobados. No se cierran issues ni se cambia la planificación para presentar avances sin validación del equipo.
 
 | Comprobación | Resultado obtenido |
 | --- | --- |
 | Instalación desde lockfile | `npm ci` aprobado |
 | Lint | Aprobado, sin warnings permitidos |
 | TypeScript | Aprobado, modo estricto |
-| Unit tests | **87 pruebas aprobadas en 7 suites** |
+| Unit tests | **104 pruebas aprobadas en 7 suites** |
 | Build Metro | Android e iOS exportados correctamente; no son APK/IPA |
-| Integración real | **6 comprobaciones aprobadas** usando módulos de la app y backend existente |
+| Integración real | Siete comprobaciones aprobadas contra los módulos reales del backend local y la base existente; Render necesita desplegar el contrato nuevo |
+| Edición de perfil real | Consulta, nombre/correo, contraseña obligatoria, campos protegidos, persistencia y restauración aprobados con módulos reales y base existente |
 | Cambio de contraseña real | Aprobado en la cuenta de pruebas; contraseña original restaurada |
-| Navegación y formularios | Preview Chromium de 390 × 844 aprobado, con backend real |
-| GitHub Actions | CI de las ocho HUs aprobado; la corrección de HU08 añade prebuild iOS |
-| Seguridad de dependencias | Pendiente: 58 alertas, 50 altas y 8 moderadas; 0 críticas |
+| Navegación y formularios | Preview Chromium a 320/390/768 px aprobado; edición de perfil probada mediante backend local real, login y catálogo en Render |
+| GitHub Actions | CI de las ocho HUs y de las correcciones aprobado; PR49/50 verifican 104 tests, prebuild iOS y bundles Android/iOS |
+| Icono nativo | SVG original, cinco PNG y recursos Android/prebuild verificados; requiere una app compilada para verlo en el launcher |
+| Project oficial | 37 issues, 14 campos y seis Sprints comprobados sin modificaciones |
+| Seguridad de dependencias | Pendiente: 57 alertas, 49 altas y 8 moderadas; 0 críticas |
 
-La integración prueba acceso anónimo rechazado, login, catálogo/paginación, búsqueda/filtros, detalle/parámetros y token revocado después de logout. El recorrido web prueba login, dashboard, listado, detalle, búsqueda vacía, perfil, validaciones, logout y un enlace protegido sin sesión. Ninguna de estas pruebas acredita una ejecución física Android/iOS.
+La integración actual exige acceso anónimo rechazado, login, lectura del perfil, catálogo/paginación, búsqueda/filtros, detalle/parámetros y token revocado después de logout. El recorrido web también comprobó guardar nombre/correo, confirmación de contraseña, saludo actualizado y restauración de la cuenta de pruebas. La herramienta externa de QA dirigió solamente el perfil al módulo Users real local con la base existente; las demás peticiones fueron a Render. Ninguna prueba acredita despliegue del perfil ni ejecución física Android/iOS.
 
-## HUs
+## HUs — ramas originales del 5 de octubre
 
-Las issues y relaciones sub-issue se obtuvieron del repositorio existente. Las referencias `T-XX.YY` en commits identifican las tareas de cada HU; no sustituyen los nombres oficiales `TH` del tablero.
+Esta sección conserva el alcance de los ocho PR originales #39–#46. Las correcciones del 6 de octubre están en PR47–#50 y la rama acumulada HU08; en particular, PR49 sustituye el límite funcional del PR44 histórico. Las referencias `T-XX.YY` en commits identifican las tareas de cada HU; no sustituyen los nombres oficiales `TH` del tablero.
 
 ### HU-01 — Arquitectura
 
@@ -127,7 +130,7 @@ Las issues y relaciones sub-issue se obtuvieron del repositorio existente. Las r
 - No se recrearon, eliminaron, renombraron ni cerraron issues; tampoco se crearon tags de Sprint.
 - El código de «Hola mundo» previo se conservó en un stash local, identificado como respaldo antes de ECONOLAB Mobile.
 
-Se consultaron issues y relaciones por REST. La credencial de GitHub carece de `read:project`: no se pudieron verificar Sprint, fechas y campos del Project. No se inventaron ni modificaron. El titular puede habilitar la lectura con `gh auth refresh -s read:project`.
+El titular habilitó `read:project` y se verificó el Project oficial número 4 mediante CLI y GraphQL. Se encontraron seis Sprints de siete días; las HUs tienen Sprint asignado y las 29 subtareas figuran en Todo sin Sprint individual. HU01 está en Done aunque sus subtareas siguen en Todo. La [verificación completa](PROJECT_VERIFICATION.md) registra esos datos sin modificar estados, fechas ni responsables.
 
 ## CI/CD
 
@@ -137,7 +140,7 @@ GitHub ejecutó correctamente el CI de las ocho HUs. HU01 y HU02 inicialmente no
 
 `.github/workflows/integration.yml`: tags `sprint-01` a `sprint-06` y `workflow_dispatch`. Requiere `INTEGRATION_API_URL`, `INTEGRATION_EMAIL` e `INTEGRATION_PASSWORD` como secrets. Si faltan, falla de manera explícita. La API necesita HTTPS y acceso desde el runner; el backend local no cumple ese acceso remoto. El responsable decide el cierre de cada Sprint. El dispatch aparecerá al integrar el workflow en la rama predeterminada.
 
-Resultados locales finales: instalación, lint, TypeScript, 87 unit tests, exportación Android/iOS e integración real aprobados. Prebuild iOS no está disponible en Windows; se comprueba en el runner Ubuntu. No se generaron APK/IPA ni se publicaron versiones de producción.
+Resultados móviles: instalación, lint, TypeScript, 104 unit tests y exportación Android/iOS aprobados. Prebuild Android completado; iOS aprobado en el runner Ubuntu de [PR50](https://github.com/Josafock/Econolab-Movil/actions/runs/37562907591). [PR49](https://github.com/Josafock/Econolab-Movil/actions/runs/37562903885) también pasó CI. El backend del perfil tiene CI y SonarCloud aprobados; sus 22 pruebas nuevas y 52 pruebas completas pasaron. Las siete comprobaciones de integración pasaron contra AuthModule, UsersModule y StudiesModule reales, con la base existente y cambios de esquema desactivados. Repetirlas contra Render requiere desplegar el perfil. No se generaron APK/IPA ni se publicaron versiones de producción.
 
 ## Seguridad
 
@@ -149,7 +152,7 @@ Resultados locales finales: instalación, lint, TypeScript, 87 unit tests, expor
 - HTTPS obligatorio fuera del modo de desarrollo. `EXPO_PUBLIC_API_URL` es configuración pública, nunca una contraseña o clave.
 - `.env` y `.env.integration` ignorados. Solo ejemplos sin secretos rastreados. El escaneo de las ramas no encontró las credenciales locales ni patrones de claves privadas/tokens conocidos.
 - Cuenta independiente creada por autorización del usuario, con credenciales únicamente en el archivo local ignorado. No están en código, PR o documentación.
-- Dependencias revisadas y parche acotado de uuid aplicado. **58 alertas siguen abiertas**, con límites y fuentes en [revisión de dependencias](DEPENDENCIES.md).
+- Dependencias revisadas y parche acotado de uuid aplicado. **57 alertas siguen abiertas** (49 altas y 8 moderadas), con límites y fuentes en [revisión de dependencias](DEPENDENCIES.md). Sharp se añadió solo como herramienta de exportación de los iconos, sin aumentar ese conteo.
 
 ## Backend
 
@@ -163,17 +166,19 @@ Se reutilizan las siguientes rutas del backend existente, bajo su prefijo real `
 | GET | `/studies/:id` | Detalle y precios |
 | GET | `/studies/:id/details` | Parámetros/categorías |
 | PATCH | `/users/update-password` | Cambio de contraseña |
+| GET | `/users/me` | Lectura actualizada del perfil autenticado; implementado, pendiente de despliegue |
+| PATCH | `/users/me` | Edición de nombre/correo; implementado, pendiente de despliegue |
 
-Incompatibilidades: no existe lectura/edición completa del perfil ni refresh token. El cliente usa los contratos reales y evita inventar operaciones. El identificador SQL numérico se normaliza a texto; los precios decimales se validan sin transformar valores ausentes en cero.
+Los endpoints de perfil están implementados y probados en el backend existente, pero Render aún requiere su despliegue. No existe refresh token. El identificador SQL numérico se normaliza a texto; los precios decimales se validan sin transformar valores ausentes en cero.
 
-**Modificaciones al código, contratos y esquema del backend: 0.** No se creó otra API o base de datos. Para las pruebas se arrancó el backend existente con sincronización de esquema desactivada, sin editar sus archivos de configuración. Excepción autorizada de datos: creación y confirmación de una cuenta de pruebas mediante el servicio existente; su contraseña se cambió temporalmente en la prueba y quedó restaurada. No se alteraron usuarios operativos ni estudios.
+La solicitud posterior del usuario autorizó completar los endpoints pendientes. Los cambios están en `fix/HU-06-perfil-autenticado`, [PR1 del backend](https://github.com/DavidHdz117/Backend_Econolab_Escuela/pull/1), commits `c612c76` y `63b84f2`: controller, servicio, DTO, registro en UsersModule, pruebas y CI. Reutilizan JWT/roles y el repositorio Users. **Cambios de esquema y migraciones: 0.** No se creó otra API o base de datos. Las pruebas usan la cuenta independiente, restauran nombre/correo/contraseña originales y cierran sus sesiones; no modifican usuarios operativos ni estudios.
 
 ## Pendientes
 
-1. Definir e implementar en el backend, con autorización explícita, un contrato de consulta actualizada y edición de los campos personales permitidos para completar HU06.
+1. Integrar y desplegar el PR1 del backend para habilitar el perfil en Render, después de que el propietario autorice esa integración. El código y sus pruebas están completos; no se confunde la prueba local con publicación.
 2. Ejecutar la app en Android/iOS y registrar navegación, SecureStore, teclado, accesibilidad, regreso, refresco, pérdida de red y revocación. Este equipo no tiene SDK/emulador Android configurado; Windows no ejecuta el simulador iOS.
-3. Habilitar lectura del Project para verificar trazabilidad de Sprint/fechas/estado, sin alterar la planificación existente.
-4. Proporcionar un backend de pruebas HTTPS accesible desde GitHub y sus secrets; el responsable podrá ejecutar la integración al cerrar el Sprint. No se dispone de ese entorno remoto y no se emiten tags automáticamente.
-5. Dar seguimiento a las 58 alertas de dependencias y resolverlas con versiones compatibles; el override incompatible del decoder y `npm audit fix --force` no son soluciones verificadas.
+3. El equipo debe revisar las subtareas sin Sprint y la diferencia de estados de HU01 si necesita corregir el tablero. La verificación está terminada; no se modificó la planificación.
+4. Configurar los secrets del workflow para un backend HTTPS de pruebas accesible desde GitHub; Render está disponible, con el despliegue del perfil pendiente. El responsable decide cuándo ejecutar la integración al cerrar el Sprint; no se emiten tags automáticamente.
+5. Dar seguimiento a las 57 alertas de dependencias y resolverlas con versiones compatibles; el override incompatible del decoder y `npm audit fix --force` no son soluciones verificadas.
 
 La integración manual de PR por el responsable se mantiene pendiente por diseño del flujo solicitado; Codex no debe realizarla.
