@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { ArrowLeft, ClipboardList, FlaskConical, RefreshCw, Wallet } from 'lucide-react-native';
 
 import { errorMessage } from '@/core/errors';
-import { Button, Card, colors, Feedback, Heading, Loading, Screen } from '@/ui';
+import { Button, Card, colors, Feedback, Heading, IconBadge, Loading, Screen } from '@/ui';
 import {
   formatPrice, getStudy, getStudyDetails, parseStudyId, sampleTypeLabels, studyTypeLabels,
   type Study, type StudyDetail,
@@ -118,13 +119,14 @@ export default function StudyDetailScreen() {
         onRefresh={() => void load(true)}
         ListHeaderComponent={
           <View style={styles.header}>
-            <Button title="Volver al catálogo" variant="secondary" onPress={goBack} />
-            <Heading title={study.name} subtitle={`${study.code} · ${studyTypeLabels[study.type]}`} />
+            <Button title="Volver al catálogo" icon={ArrowLeft} variant="secondary" onPress={goBack} />
+            <IconBadge icon={FlaskConical} />
+            <Heading eyebrow="Detalle del estudio" title={study.name} subtitle={`${study.code} · ${studyTypeLabels[study.type]}`} />
             {study.status === 'suspended' ? (
               <Feedback message="Este estudio está suspendido en el catálogo." kind="info" />
             ) : null}
             <Card>
-              <Text style={styles.sectionTitle}>Información del estudio</Text>
+              <View style={styles.sectionHeading}><ClipboardList size={20} color={colors.primary} /><Text style={styles.sectionTitle}>Información del estudio</Text></View>
               <Information label="Descripción" value={study.description?.trim() || 'Sin descripción registrada.'} />
               <Information label="Estado" value={study.status === 'active' ? 'Activo' : 'Suspendido'} />
               <Information label="Duración registrada" value={`${study.durationMinutes} minutos`} />
@@ -137,7 +139,7 @@ export default function StudyDetailScreen() {
               />
             </Card>
             <Card>
-              <Text style={styles.sectionTitle}>Precios en pesos mexicanos</Text>
+              <View style={styles.sectionHeading}><Wallet size={20} color={colors.primary} /><Text style={styles.sectionTitle}>Precios en pesos mexicanos</Text></View>
               {priceRows.map((price) => (
                 <View key={price.label} style={styles.priceRow}>
                   <Text style={styles.value}>{price.label}</Text>
@@ -194,7 +196,7 @@ export default function StudyDetailScreen() {
           : null}
         ListFooterComponent={
           <View style={styles.footer}>
-            <Button title="Actualizar información" variant="secondary" loading={refreshing} onPress={() => void load(true)} />
+            <Button title="Actualizar información" icon={RefreshCw} variant="secondary" loading={refreshing} onPress={() => void load(true)} />
           </View>
         }
       />
@@ -205,11 +207,12 @@ export default function StudyDetailScreen() {
 const styles = StyleSheet.create({
   list: { paddingBottom: 28 },
   header: { gap: 18, paddingBottom: 14 },
-  information: { gap: 4, marginTop: 14 },
+  information: { gap: 4, paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: '#f1f5f9' },
   label: { color: colors.muted, fontSize: 12, fontWeight: '600' },
   value: { color: colors.text, fontSize: 15, lineHeight: 23 },
-  sectionTitle: { color: colors.text, fontSize: 18, lineHeight: 25, fontWeight: '700' },
-  priceRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 16, paddingVertical: 13, borderBottomWidth: 1, borderBottomColor: colors.border },
+  sectionHeading: { flexDirection: 'row', gap: 10, alignItems: 'center' },
+  sectionTitle: { color: colors.text, fontSize: 17, lineHeight: 25, fontWeight: '700', flexShrink: 1 },
+  priceRow: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: 12, paddingVertical: 13, borderBottomWidth: 1, borderBottomColor: colors.border },
   price: { color: colors.text, fontSize: 17, fontWeight: '700' },
   note: { color: colors.muted, fontSize: 13, lineHeight: 20, marginTop: 8 },
   packageLinks: { gap: 10, marginTop: 16 },

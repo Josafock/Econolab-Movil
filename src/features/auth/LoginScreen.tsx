@@ -1,8 +1,9 @@
 import { useRef, useState } from 'react';
-import { Keyboard, Text, TextInput, StyleSheet, Platform } from 'react-native';
+import { Keyboard, Text, TextInput, StyleSheet, Platform, View } from 'react-native';
+import { ArrowRight, Eye, EyeOff, LockKeyhole, Mail, ShieldCheck } from 'lucide-react-native';
 
 import { errorMessage } from '@/core/errors';
-import { Brand, Button, Card, Feedback, Field, Heading, Screen, colors } from '@/ui';
+import { Brand, Button, Card, Feedback, Field, Heading, IconButton, Screen, colors } from '@/ui';
 import { credentialsSchema } from './api';
 import { useAuth } from './AuthProvider';
 
@@ -44,13 +45,16 @@ export default function LoginScreen() {
   };
 
   return (
-    <Screen>
+    <Screen topInset>
+      <View style={styles.intro}><Text style={styles.overline}>ECONOLAB MÓVIL</Text></View>
       <Brand />
-      <Heading title="Bienvenido" subtitle="Inicia sesión para consultar los estudios de Econolab y tu información de cuenta." />
       {auth.notice ? <Feedback message={auth.notice} /> : null}
       <Card>
+        <Heading title="Bienvenido" subtitle="Todo tu catálogo, en un solo lugar. Entra con tu cuenta de Econolab." />
         <Field
           label="Correo electrónico"
+          icon={Mail}
+          placeholder="tu.correo@ejemplo.com"
           value={email}
           onChangeText={setEmail}
           error={fieldErrors.email}
@@ -67,6 +71,9 @@ export default function LoginScreen() {
         <Field
           ref={passwordInput}
           label="Contraseña"
+          icon={LockKeyhole}
+          placeholder="Escribe tu contraseña"
+          rightAccessory={<IconButton icon={passwordVisible ? EyeOff : Eye} label={passwordVisible ? 'Ocultar contraseña' : 'Mostrar contraseña'} disabled={busy} onPress={() => setPasswordVisible((visible) => !visible)} />}
           value={password}
           onChangeText={setPassword}
           error={fieldErrors.password}
@@ -79,14 +86,9 @@ export default function LoginScreen() {
           returnKeyType="go"
           onSubmitEditing={() => { void submit(); }}
         />
-        <Button
-          title={passwordVisible ? 'Ocultar contraseña' : 'Mostrar contraseña'}
-          variant="secondary"
-          disabled={busy}
-          onPress={() => setPasswordVisible((visible) => !visible)}
-        />
         {submitError ? <Feedback kind="error" message={submitError} /> : null}
-        <Button title="Iniciar sesión" loading={busy} onPress={() => { void submit(); }} />
+        <Button title="Iniciar sesión" icon={ArrowRight} loading={busy} onPress={() => { void submit(); }} />
+        <View style={styles.security}><ShieldCheck size={16} color={colors.muted} /><Text style={styles.securityText}>Tu cuenta, siempre contigo</Text></View>
       </Card>
       <Text style={styles.note}>
         Usa la misma cuenta que en la aplicación web. Si todavía no tienes acceso, contacta al administrador.
@@ -98,4 +100,10 @@ export default function LoginScreen() {
   );
 }
 
-const styles = StyleSheet.create({ note: { color: colors.muted, fontSize: 14, lineHeight: 22 } });
+const styles = StyleSheet.create({
+  intro: { alignItems: 'center', paddingTop: 16 },
+  overline: { color: colors.subtle, fontSize: 10, letterSpacing: 2.5, fontWeight: '700' },
+  note: { color: colors.muted, fontSize: 12, lineHeight: 20, textAlign: 'center', paddingHorizontal: 12 },
+  security: { borderTopWidth: 1, borderTopColor: colors.border, paddingTop: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 7 },
+  securityText: { color: colors.muted, fontSize: 12, flexShrink: 1 },
+});

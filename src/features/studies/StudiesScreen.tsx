@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
+import { ChevronRight, FlaskConical, Package, Search, SearchX } from 'lucide-react-native';
 
 import { errorMessage } from '@/core/errors';
-import { Button, Card, colors, Feedback, Field, Heading, Loading, Screen } from '@/ui';
+import { Button, Card, colors, Feedback, Field, Heading, IconBadge, Loading, Screen } from '@/ui';
 import {
   formatPrice, listStudies, studyTypeLabels,
   type Study, type StudiesResponse, type StudyStatus, type StudyType,
@@ -109,9 +110,10 @@ export default function StudiesScreen() {
         onRefresh={() => { if (!searching) void loadPage(1, 'refresh'); }}
         ListHeaderComponent={
           <View style={styles.header}>
-            <Heading title="Estudios" subtitle="Consulta el catálogo y sus precios." />
+            <Heading eyebrow="Catálogo del laboratorio" title="Estudios" subtitle="Encuentra lo que necesitas, consulta sus precios y revisa cada detalle." />
             <Field
               label="Buscar estudio"
+              icon={Search}
               placeholder="Nombre, clave o descripción"
               value={search}
               onChangeText={setSearch}
@@ -174,7 +176,7 @@ export default function StudiesScreen() {
             <Card>
               <View style={styles.cardContent}>
                 <View style={styles.cardTop}>
-                  <Text style={styles.code}>{item.code}</Text>
+                  <View style={styles.studyIdentity}><IconBadge icon={item.type === 'package' ? Package : FlaskConical} tone={item.type === 'package' ? 'blue' : 'red'} /><Text style={styles.code}>{item.code}</Text></View>
                   <Text style={[styles.badge, item.status === 'suspended' ? styles.suspended : styles.active]}>
                     {item.status === 'active' ? 'Activo' : 'Suspendido'}
                   </Text>
@@ -186,7 +188,7 @@ export default function StudiesScreen() {
                     <Text style={styles.priceLabel}>Precio normal</Text>
                     <Text style={styles.price}>{formatPrice(item.normalPrice)}</Text>
                   </View>
-                  <Text style={styles.detailLink}>Ver detalle ›</Text>
+                  <View style={styles.detailLink}><Text style={styles.detailText}>Ver detalle</Text><ChevronRight size={16} color={colors.primary} /></View>
                 </View>
               </View>
             </Card>
@@ -195,6 +197,7 @@ export default function StudiesScreen() {
         ItemSeparatorComponent={() => <View style={styles.separator} />}
         ListEmptyComponent={loading ? <Loading /> : failure ? null : (
           <Card>
+            <IconBadge icon={SearchX} />
             <Text style={styles.emptyTitle}>No encontramos estudios</Text>
             <Text style={styles.emptyText}>Prueba con otra palabra o cambia los filtros.</Text>
             {(search || type !== 'all' || status !== 'all') ? (
@@ -234,25 +237,27 @@ const styles = StyleSheet.create({
   list: { paddingBottom: 28 },
   header: { gap: 18, paddingBottom: 18 },
   filterGroup: { gap: 8 },
-  filterLabel: { color: colors.text, fontSize: 14, fontWeight: '600' },
+  filterLabel: { color: colors.muted, fontSize: 11, fontWeight: '700', letterSpacing: 1, textTransform: 'uppercase' },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  chip: { minHeight: 48, justifyContent: 'center', paddingHorizontal: 14, borderRadius: 24, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.card },
-  chipSelected: { backgroundColor: colors.primarySoft, borderColor: colors.primaryDark },
+  chip: { minHeight: 48, justifyContent: 'center', paddingHorizontal: 12, borderRadius: 14, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.card },
+  chipSelected: { backgroundColor: colors.primarySoft, borderColor: '#fecaca' },
   chipText: { color: colors.muted, fontSize: 13, fontWeight: '500' },
   chipTextSelected: { color: colors.primaryDark, fontWeight: '700' },
   summary: { color: colors.muted, fontSize: 13, lineHeight: 19 },
-  cardContent: { gap: 9 },
+  cardContent: { gap: 12 },
+  studyIdentity: { flexDirection: 'row', gap: 10, alignItems: 'center', flex: 1 },
   cardTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 12 },
-  code: { color: colors.muted, fontSize: 12, fontWeight: '600', flexShrink: 1 },
+  code: { color: colors.muted, fontSize: 11, fontWeight: '600', flexShrink: 1, letterSpacing: 0.5 },
   badge: { fontSize: 12, fontWeight: '600', paddingVertical: 4, paddingHorizontal: 9, borderRadius: 12, overflow: 'hidden' },
   active: { color: colors.success, backgroundColor: colors.successSoft },
   suspended: { color: colors.primaryDark, backgroundColor: colors.primarySoft },
   name: { color: colors.text, fontSize: 18, fontWeight: '700', lineHeight: 25 },
   muted: { color: colors.muted, fontSize: 13 },
-  cardBottom: { flexDirection: 'row', justifyContent: 'space-between', gap: 12, alignItems: 'flex-end', paddingTop: 8 },
+  cardBottom: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', gap: 12, alignItems: 'flex-end', paddingTop: 14, borderTopWidth: 1, borderTopColor: colors.border, marginTop: 4 },
   priceLabel: { color: colors.muted, fontSize: 12 },
   price: { color: colors.text, fontSize: 21, fontWeight: '700', marginTop: 2 },
-  detailLink: { color: colors.primaryDark, fontSize: 13, fontWeight: '600' },
+  detailLink: { flexDirection: 'row', alignItems: 'center', gap: 3, paddingBottom: 3 },
+  detailText: { color: colors.primaryDark, fontSize: 12, fontWeight: '600' },
   pressed: { opacity: 0.7 },
   separator: { height: 12 },
   footer: { gap: 14, paddingTop: 18 },

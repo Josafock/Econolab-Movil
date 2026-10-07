@@ -15,8 +15,8 @@ export default function ConfirmDialog({ visible, title, message, confirmLabel, o
 }
 
 const styles = StyleSheet.create({
-  backdrop: { flex: 1, backgroundColor: '#00000080', justifyContent: 'center', alignItems: 'center', padding: 24 },
-  dialog: { width: '100%', maxWidth: 480, backgroundColor: colors.card, borderRadius: 16, padding: 24, gap: 18 },
+  backdrop: { flex: 1, backgroundColor: '#0f172aa6', justifyContent: 'center', alignItems: 'center', padding: 24 },
+  dialog: { width: '100%', maxWidth: 480, backgroundColor: colors.card, borderRadius: 24, padding: 26, gap: 18 },
   title: { color: colors.text, fontSize: 22, fontWeight: '700' },
   message: { color: colors.muted, fontSize: 16, lineHeight: 24 },
 });

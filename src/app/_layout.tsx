@@ -4,8 +4,9 @@ import { View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 import { AuthProvider, useAuth } from '@/features/auth/AuthProvider';
-import { Button, Feedback, Heading, Loading, Screen, colors } from '@/ui';
+import { Brand, Button, Feedback, Heading, Loading, Screen, colors } from '@/ui';
 import ConnectionBanner from '@/ui/ConnectionBanner';
+import BottomNavigation from '@/ui/BottomNavigation';
 
 export function ErrorBoundary({ retry }: ErrorBoundaryProps) {
   return <SafeAreaProvider><SafeAreaView style={{ flex: 1 }}><Screen>
@@ -21,7 +22,7 @@ function AuthenticatedNavigation() {
   }
   if (status === 'error') {
     return (
-      <SafeAreaView edges={['top']} style={{ flex: 1 }}>
+      <SafeAreaView edges={['top', 'bottom']} style={{ flex: 1 }}>
         <Screen>
           <Heading title="No pudimos verificar tu sesión" subtitle="Necesitamos comprobar tu acceso antes de abrir la aplicación." />
           <Feedback kind="error" message={error ?? 'Vuelve a intentarlo.'} onRetry={retry} />
@@ -32,9 +33,9 @@ function AuthenticatedNavigation() {
     );
   }
   return (
-    <View style={{ flex: 1 }}><Stack screenOptions={{ headerTitle: 'ECONOLAB', headerTintColor: colors.primaryDark, contentStyle: { backgroundColor: colors.background } }}>
+    <View style={{ flex: 1, backgroundColor: colors.background }}><Stack screenOptions={{ headerTitle: () => <Brand compact />, headerTitleAlign: 'center', headerTintColor: colors.text, headerStyle: { backgroundColor: colors.card }, headerShadowVisible: false, contentStyle: { backgroundColor: colors.background } }}>
       <Stack.Protected guard={status === 'anonymous'}>
-        <Stack.Screen name="login" options={{ title: 'Iniciar sesión', headerTitle: 'Iniciar sesión' }} />
+        <Stack.Screen name="login" options={{ title: 'Iniciar sesión', headerShown: false }} />
       </Stack.Protected>
       <Stack.Protected guard={status === 'authenticated'}>
         <Stack.Screen name="index" options={{ title: 'Inicio' }} />
@@ -42,7 +43,7 @@ function AuthenticatedNavigation() {
         <Stack.Screen name="studies/[id]" options={{ title: 'Detalle del estudio' }} />
         <Stack.Screen name="profile" options={{ title: 'Mi perfil' }} />
       </Stack.Protected>
-    </Stack><ConnectionBanner /></View>
+    </Stack><ConnectionBanner />{status === 'authenticated' ? <BottomNavigation /> : null}</View>
   );
 }
 
