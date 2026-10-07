@@ -27,7 +27,9 @@ El 6 de octubre se repitió el recorrido en Chromium: login, dashboard, listado,
 
 Login y catálogo usaron Render. Para consultar/editar el perfil, la herramienta externa de QA dirigió las peticiones al módulo Users real compilado del backend local con la misma base existente y la sincronización desactivada; no se simularon respuestas. También reenviaba las peticiones sin Origin por la restricción CORS de localhost. Este montaje de QA no está en la app ni acredita que los endpoints nuevos estén publicados en Render. [Perfil](PROFILE_COMPATIBILITY.md) y [diseño móvil](DISENO_MOVIL.md) explican el alcance.
 
-Las siete comprobaciones del script habitual también pasaron contra AuthModule, UsersModule y StudiesModule reales del backend local, con la base existente, jobs y modificaciones de esquema desactivados. La misma suite sigue pendiente contra Render hasta desplegar el perfil.
+Las siete comprobaciones del script habitual también pasaron contra AuthModule, UsersModule y StudiesModule reales del backend local, con la base existente, jobs y modificaciones de esquema desactivados. Esta ejecución precedió a la publicación del perfil en Render.
+
+Después de la integración del backend autorizada por el propietario, las siete comprobaciones pasaron también contra Render. La prueba HTTP adicional confirmó guardar nombre/correo, login con el nuevo correo y restauración de la cuenta. Se repitió el formulario móvil con todas las peticiones de datos dirigidas a Render: edición, contraseña requerida para correo, confirmación, saludo actualizado y restauración aprobados. No se usó el servidor local para esta última ejecución; el preview web sigue necesitando la herramienta externa de QA para retirar Origin, por el CORS existente. Los resultados locales anteriores se conservan como historial.
 
 ## Prueba en dispositivo pendiente del equipo
 

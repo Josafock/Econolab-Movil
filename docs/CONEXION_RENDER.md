@@ -18,6 +18,8 @@ El aviso «Cannot connect to Expo CLI» corresponde a la conexión con el servid
 
 `npm run test:integration` se ejecutó contra Render: acceso anónimo, login, catálogo/paginación, búsqueda/filtros, detalle y revocación, seis comprobaciones aprobadas. Se usaron datos reales y se cerraron las sesiones de la prueba. La cuenta anterior funciona en este backend; no se creó otra cuenta ni se modificaron estudios o esquema.
 
+Actualización posterior del 6 de octubre: el propietario autorizó integrar el PR1 del backend para publicar el perfil. Se comprobó `GET/PATCH /api/users/me` en el mismo Render y pasaron las siete comprobaciones de la suite actual, incluido perfil. La edición HTTP y desde el formulario móvil verificó nombre/correo, contraseña obligatoria para cambiar correo, login nuevo y saludo actualizado; los datos originales de la cuenta de pruebas quedaron restaurados. Ver [perfil publicado](PROFILE_COMPATIBILITY.md). El despliegue del backend no integra los PR ni modifica `main` del móvil.
+
 Login y restauración de sesión permiten hasta 60 segundos para la primera conexión. El resto del transporte conserva su timeout habitual y cancelación; no se reintentan automáticamente contraseñas para evitar bloqueos.
 
 El Render publicado rechaza los orígenes localhost del preview web mediante CORS. La prueba normal con datos debe realizarse en Expo Go o desde un origen web autorizado. CORS no bloquea las peticiones nativas sin Origin. No se cambia la configuración del backend para el preview.
