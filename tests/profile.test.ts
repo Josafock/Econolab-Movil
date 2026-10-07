@@ -1,7 +1,7 @@
 import { api } from '@/core/api';
 import { AppError } from '@/core/errors';
-import { updatePassword } from '@/features/profile/api';
-import { passwordChangeSchema } from '@/features/profile/validation';
+import { getProfile, updatePassword, updateProfile } from '@/features/profile/api';
+import { passwordChangeSchema, profileChangeSchema } from '@/features/profile/validation';
 
 jest.mock('@/core/api', () => ({ api: { request: jest.fn() } }));
 
@@ -13,6 +13,53 @@ const validChange = {
 };
 
 beforeEach(() => request.mockReset());
+
+describe('authenticated profile read and edit', () => {
+  const profile = { id: '13', nombre: 'Jesús David', email: 'jesus@example.test', rol: 'admin' };
+  it('reads the authenticated profile without accepting a caller-supplied account URL', async () => {
+    request.mockResolvedValue({ ...profile, id: 13, password: 'private-fixture' });
+    await expect(getProfile('13')).resolves.toEqual(profile);
+    expect(request).toHaveBeenCalledWith('/users/me', { signal: undefined });
+  });
+  it('rejects a response belonging to another account', async () => {
+    request.mockResolvedValue({ ...profile, id: 14 });
+    await expect(getProfile('13')).rejects.toMatchObject({ kind: 'unexpected' });
+  });
+  it('rejects a profile whose account no longer has a role', async () => {
+    request.mockResolvedValue({ ...profile, rol: 'unassigned' });
+    await expect(getProfile('13')).rejects.toMatchObject({ kind: 'forbidden' });
+  });
+  it('normalizes editable fields and omits id, role and local metadata from the request', async () => {
+    request.mockResolvedValue({ message: 'Perfil actualizado', usuario: profile });
+    await expect(updateProfile('13', { nombre: ' Jesús David ', email: ' JESUS@EXAMPLE.TEST ' })).resolves.toEqual(profile);
+    expect(request).toHaveBeenCalledWith('/users/me', { method: 'PATCH', body: { nombre: profile.nombre, email: profile.email }, signal: undefined, expireOnUnauthorized: false });
+  });
+  it('includes the password confirmation only when provided', async () => {
+    request.mockResolvedValue({ message: 'Perfil actualizado', usuario: profile });
+    await updateProfile('13', profile, 'fixture-password8!');
+    expect(request.mock.calls[0][1]?.body).toEqual({ nombre: profile.nombre, email: profile.email, current_password: 'fixture-password8!' });
+  });
+  it.each([{ nombre: ' ' }, { nombre: 'A'.repeat(51) }, { nombre: '<script>' }, { email: 'invalid' }, { email: `${'a'.repeat(45)}@example.test` }])('rejects invalid input before calling the backend %p', async patch => {
+    const invalid = { ...profile, ...patch };
+    expect(profileChangeSchema.safeParse(invalid).success).toBe(false);
+    await expect(updateProfile('13', invalid)).rejects.toMatchObject({ kind: 'validation' });
+    expect(request).not.toHaveBeenCalled();
+  });
+  it('reports duplicate email without surfacing server details', async () => {
+    request.mockRejectedValue(new AppError('server', 'private database fixture', 409));
+    await expect(updateProfile('13', profile)).rejects.toMatchObject({ message: 'Ese correo ya está registrado. Utiliza otro.', status: 409 });
+  });
+  it('distinguishes wrong current password from an expired session', async () => {
+    request.mockRejectedValueOnce(new AppError('unauthorized', 'Private server fixture', 401)).mockResolvedValueOnce({});
+    await expect(updateProfile('13', profile, 'fixture8!')).rejects.toMatchObject({ kind: 'validation', message: 'La contraseña actual no es correcta.' });
+    expect(request).toHaveBeenNthCalledWith(2, '/studies?page=1&limit=1', { signal: undefined });
+  });
+  it('propagates revocation instead of claiming a wrong password', async () => {
+    const revoked = new AppError('unauthorized', 'Expired', 401);
+    request.mockRejectedValueOnce(revoked).mockRejectedValueOnce(revoked);
+    await expect(updateProfile('13', profile, 'fixture8!')).rejects.toBe(revoked);
+  });
+});
 
 describe('profile password validation and existing API', () => {
   it('accepts matching passwords that satisfy the backend requirements', () => {

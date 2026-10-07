@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 import { KeyRound, LockKeyhole, ShieldCheck } from 'lucide-react-native';
 import { useAuth } from '@/features/auth/AuthProvider';
 import { errorMessage } from '@/core/errors';
@@ -7,6 +7,7 @@ import { Button, Card, colors, Feedback, Field, Heading, IconBadge, Screen } fro
 import { updatePassword } from './api';
 import { passwordChangeSchema } from './validation';
 import ConfirmDialog from '@/ui/ConfirmDialog';
+import ProfileCard from './ProfileCard';
 
 export default function ProfileScreen() {
   const { session } = useAuth();
@@ -39,12 +40,7 @@ export default function ProfileScreen() {
 
   return <Screen>
     <Heading eyebrow="Tu cuenta" title="Mi perfil" subtitle="Tu información de acceso a Econolab." />
-    <Card>
-      <View style={styles.profileTop}><View style={styles.avatar}><Text style={styles.initial}>{session.usuario.nombre.trim().charAt(0).toUpperCase()}</Text></View><View style={styles.roleBadge}><ShieldCheck size={14} color={colors.primary} /><Text style={styles.role}>{session.usuario.rol === 'admin' ? 'Administrador' : 'Recepcionista'}</Text></View></View>
-      <View style={styles.identity}><Text style={styles.label}>Nombre</Text><Text selectable style={styles.name}>{session.usuario.nombre}</Text></View>
-      <View style={styles.identity}><Text style={styles.label}>Correo electrónico</Text><Text selectable style={styles.email}>{session.usuario.email}</Text></View>
-      <Text style={styles.note}>Información recibida al iniciar sesión.</Text>
-    </Card>
+    <ProfileCard disabled={busy} />
     <Card>
       <IconBadge icon={LockKeyhole} />
       <Text accessibilityRole="header" style={styles.title}>Cambiar contraseña</Text>
@@ -65,14 +61,5 @@ export default function ProfileScreen() {
 
 const styles = StyleSheet.create({
   title: { fontSize: 19, fontWeight: '700', color: colors.text },
-  profileTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 },
-  avatar: { backgroundColor: colors.primarySoft, height: 64, width: 64, borderRadius: 22, alignItems: 'center', justifyContent: 'center' },
-  initial: { fontSize: 27, fontWeight: '700', color: colors.primary },
-  roleBadge: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: colors.primarySoft, paddingHorizontal: 10, paddingVertical: 7, borderRadius: 20 },
-  role: { fontSize: 11, color: colors.primaryDark, fontWeight: '600' },
-  identity: { gap: 5 },
-  label: { fontSize: 12, color: colors.muted },
-  name: { fontSize: 20, lineHeight: 28, fontWeight: '700', color: colors.text },
-  email: { fontSize: 14, lineHeight: 22, color: colors.text },
   note: { fontSize: 12, lineHeight: 20, color: colors.muted },
 });

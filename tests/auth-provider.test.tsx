@@ -21,6 +21,38 @@ const session: Session = {
 };
 const wrapper = ({ children }: PropsWithChildren) => <AuthProvider>{children}</AuthProvider>;
 
+it('updates the current profile while preserving the signed login session', async () => {
+  jest.mocked(readSession).mockResolvedValueOnce(session);
+  const { result } = renderHook(useAuth, { wrapper });
+  await waitFor(() => expect(result.current.status).toBe('authenticated'));
+  const updated = { ...session.usuario, nombre: 'Nombre nuevo', email: 'nuevo@example.test' };
+  act(() => { expect(result.current.applyProfile(updated, session.token)).toBe(true); });
+  expect(result.current.profile).toEqual(updated);
+  expect(result.current.session).toEqual(session);
+  expect(saveSession).not.toHaveBeenCalled();
+});
+
+it('rejects a profile response from another account or an earlier login', async () => {
+  jest.mocked(readSession).mockResolvedValueOnce(session);
+  const { result } = renderHook(useAuth, { wrapper });
+  await waitFor(() => expect(result.current.status).toBe('authenticated'));
+  act(() => {
+    expect(result.current.applyProfile({ ...session.usuario, id: '14' }, session.token)).toBe(false);
+    expect(result.current.applyProfile(session.usuario, 'old-session-fixture')).toBe(false);
+  });
+  expect(result.current.profile).toBeUndefined();
+});
+
+it('cannot restore profile data after logout', async () => {
+  jest.mocked(readSession).mockResolvedValueOnce(session);
+  const { result } = renderHook(useAuth, { wrapper });
+  await waitFor(() => expect(result.current.status).toBe('authenticated'));
+  act(() => { result.current.applyProfile(session.usuario, session.token); });
+  await act(async () => { await result.current.logout(); });
+  act(() => { expect(result.current.applyProfile(session.usuario, session.token)).toBe(false); });
+  expect(result.current.profile).toBeUndefined();
+});
+
 beforeEach(() => {
   jest.mocked(readSession).mockResolvedValue(null);
   jest.mocked(saveSession).mockResolvedValue(undefined);

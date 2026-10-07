@@ -6,17 +6,9 @@ import { z } from 'zod';
 import { AppError } from '@/core/errors';
 import { parseResponse } from '@/core/validation';
 
-// TypeORM's serial ID is numeric at runtime although the entity declares a string.
-const identifierSchema = z.union([z.string().min(1), z.number().int().positive()]).transform(String);
-
-export const userSchema = z.object({
-  id: identifierSchema,
-  nombre: z.string().min(1),
-  email: z.string().email(),
-  rol: z.enum(['admin', 'recepcionista', 'unassigned']),
-});
-
-export type User = z.infer<typeof userSchema>;
+import { identifierSchema, userSchema, type User } from './user';
+export { userSchema } from './user';
+export type { User } from './user';
 export type Session = { token: string; usuario: User; expiresAt: number };
 
 export const sessionDataSchema = z.object({ token: z.string().min(1), usuario: userSchema });

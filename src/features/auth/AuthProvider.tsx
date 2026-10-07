@@ -7,14 +7,15 @@ import { AppState } from 'react-native';
 import { api } from '@/core/api';
 import { AppError, errorMessage, isCancelled } from '@/core/errors';
 import { loginRequest, logoutRequest, validateSession } from './api';
-import { isSessionExpired, readSession, removeSession, saveSession, type Session } from './session';
+import { isSessionExpired, readSession, removeSession, saveSession, type Session, type User } from './session';
 
 type AuthStatus = 'loading' | 'authenticated' | 'anonymous' | 'error';
-type AuthState = { session: Session | null; status: AuthStatus; error?: string; notice?: string };
+type AuthState = { session: Session | null; status: AuthStatus; error?: string; notice?: string; profile?: User };
 type AuthContextValue = AuthState & {
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   retry: () => void;
+  applyProfile: (profile: User, expectedToken: string) => boolean;
 };
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -144,6 +145,15 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
   const retry = useCallback(() => { void restore(); }, [restore]);
 
+  const applyProfile = useCallback((profile: User, expectedToken: string) => {
+    const active = currentSession.current;
+    if (!mounted.current || !active || active.token !== expectedToken || active.usuario.id !== profile.id || profile.rol === 'unassigned') return false;
+    // Identidad actual del servidor aparte de la instantánea firmada del login.
+    // Mantener el token y su almacenamiento intactos evita invalidar su consistencia.
+    setState(previous => previous.status === 'authenticated' && previous.session?.token === expectedToken ? { ...previous, profile } : previous);
+    return true;
+  }, []);
+
   useEffect(() => {
     mounted.current = true;
     api.setUnauthorizedHandler(() => { void clearSession(expirationNotice); });
@@ -185,7 +195,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
     return () => clearTimeout(timer);
   }, [clearSession, state.session, state.status]);
 
-  const value = useMemo(() => ({ ...state, login, logout, retry }), [state, login, logout, retry]);
+  const value = useMemo(() => ({ ...state, login, logout, retry, applyProfile }), [state, login, logout, retry, applyProfile]);
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
