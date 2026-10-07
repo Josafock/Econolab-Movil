@@ -44,6 +44,7 @@
     "jest": "~29.7.0",
     "jest-expo": "~57.0.5",
     "react-test-renderer": "^19.2.3",
+    "sharp": "^0.35.5",
     "typescript": "~6.0.3"
   },
   "scripts": {
@@ -57,7 +58,8 @@
     "test": "jest",
     "build": "expo export --platform android --platform ios",
     "verify": "npm run lint && npm run typecheck && npm test -- --runInBand && npm run build",
-    "test:integration": "node --env-file=.env.integration scripts/integration.cjs"
+    "test:integration": "node --env-file=.env.integration scripts/integration.cjs",
+    "generate:icons": "node scripts/generate-icons.cjs"
   },
   "overrides": {
     "xcode@3.0.1": {
