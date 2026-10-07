@@ -1,6 +1,6 @@
 # ECONOLAB móvil
 
-Aplicación React Native con Expo SDK 57 y TypeScript. Reutiliza la API NestJS existente de ECONOLAB para iniciar sesión, consultar estudios y cambiar la contraseña. No incluye otro backend ni otra base de datos.
+Aplicación React Native con Expo SDK 57 y TypeScript. Reutiliza la API NestJS existente de ECONOLAB para iniciar sesión, consultar estudios, gestionar el perfil y cambiar la contraseña. No incluye otro backend ni otra base de datos.
 
 ## Ejecutar
 
@@ -44,7 +44,8 @@ La implementación completa está en `feature/HU-08-pruebas`, disponible localme
 - [Icono de la aplicación](docs/ICONOS.md): recursos originales, generación nativa y cómo verlo al instalar la app.
 - [Arquitectura](docs/ARCHITECTURE.md): estructura y contratos comprobados.
 - [Git](docs/GIT.md): issues, sub-issues, ramas y dependencias.
+- [Verificación del Project](docs/PROJECT_VERIFICATION.md): campos, seis Sprints y asignaciones oficiales comprobadas.
 - [Wireframes](docs/WIREFRAMES.md): distribución e identidad visual.
-- [Perfil](docs/PROFILE_COMPATIBILITY.md): operaciones disponibles y limitación del backend.
+- [Perfil](docs/PROFILE_COMPATIBILITY.md): contratos implementados y publicación pendiente en Render.
 - [Errores](docs/ERRORS.md): validación y recuperación.
 - [Pruebas](docs/TESTING.md): comandos, integración y revisión en dispositivo.

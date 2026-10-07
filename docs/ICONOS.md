@@ -16,7 +16,7 @@ Los archivos se generan con `npm run generate:icons` a partir del SVG, mediante 
 
 `npx expo prebuild --platform android --no-install` terminó correctamente y generó iconos normales, redondos, adaptativos y monocromáticos para las cinco densidades. Los XML de los iconos adaptativos referencian el fondo, el símbolo y la máscara correctos. Las carpetas nativas generadas permanecen ignoradas por Git.
 
-La comprobación de iOS se ejecuta en el workflow Mobile CI mediante prebuild. Exportar los bundles con Metro no produce un instalador ni comprueba cómo se ve el icono en un teléfono.
+La comprobación de iOS pasó en el [workflow Mobile CI del PR50](https://github.com/Josafock/Econolab-Movil/actions/runs/37562907591), mediante prebuild. La exportación Metro de Android e iOS también pasó. Exportar bundles no produce un instalador ni comprueba cómo se ve el icono en un teléfono.
 
 ## Verlo en el teléfono
 
