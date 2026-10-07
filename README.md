@@ -19,10 +19,10 @@ La app está configurada con `https://backend-econolab-escuela-1.onrender.com/ap
 - Dashboard con acceso a estudios y perfil; pantallas protegidas.
 - Logo original de la web, tarjetas con la paleta de Econolab y navegación inferior entre Inicio, Estudios y Perfil.
 - Catálogo real con búsqueda, filtros, paginación, actualización y detalle con precios y parámetros disponibles.
-- Nombre, correo y rol recibidos en el login; cambio de contraseña mediante el endpoint existente.
+- Perfil actualizado desde el backend, edición de nombre/correo con confirmación de contraseña al cambiar correo; rol protegido y cambio de contraseña.
 - Validaciones y mensajes para errores de red, timeout, sesión, permisos y respuestas inesperadas.
 
-El backend no ofrece una consulta actualizada ni edición de nombre/correo del usuario actual. Esos campos permanecen en lectura. [Compatibilidad del perfil](docs/PROFILE_COMPATIBILITY.md) describe el pendiente de HU06.
+El perfil utiliza `GET/PATCH /api/users/me` del backend existente. [Compatibilidad del perfil](docs/PROFILE_COMPATIBILITY.md) describe los contratos y la dependencia de publicación del PR1 del backend.
 
 ## Validación
 

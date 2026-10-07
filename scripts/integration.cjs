@@ -48,6 +48,7 @@ async function main() {
   // These are the same transport and study schemas bundled in the mobile app.
   const { api } = loadTypeScript('src/core/api.ts');
   const { listStudies, getStudy, getStudyDetails } = loadTypeScript('src/features/studies/api.ts');
+  const { getProfile } = loadTypeScript('src/features/profile/api.ts');
   const loginResponseSchema = z.object({
     token: z.string().min(1),
     usuario: z.object({
@@ -89,6 +90,11 @@ async function main() {
     }
     pass('El login devuelve una sesión válida con el contrato esperado.');
 
+    phase = 'consulta de perfil';
+    const profile = await getProfile(login.usuario.id);
+    check(profile.nombre === login.usuario.nombre && profile.email === login.usuario.email && profile.rol === login.usuario.rol, 'El perfil no corresponde a la identidad real del login.');
+    pass('La consulta del perfil autenticado cumple el contrato de la app.');
+
     phase = 'consulta y paginación de estudios';
     const firstPage = await listStudies({ page: 1, search: '' });
     check(firstPage.meta.page === 1, 'La página inicial del catálogo no coincide.');
@@ -117,9 +123,10 @@ async function main() {
     const logout = await api.request('/auth/logout', { method: 'POST' });
     check(logout && typeof logout.message === 'string', 'El cierre de sesión no devolvió su confirmación.');
     await expectStatus(() => api.request('/studies?page=1&limit=1'), 401, 'sesión revocada');
+    await expectStatus(() => getProfile(login.usuario.id), 401, 'perfil con sesión revocada');
     revoked = true;
     pass('Cerrar sesión revoca el token y el backend rechaza su reutilización.');
-    process.stdout.write('Integración real completada: 6 comprobaciones aprobadas.\n');
+    process.stdout.write('Integración real completada: 7 comprobaciones aprobadas.\n');
   } finally {
     if (authenticated && !revoked) {
       try { await api.request('/auth/logout', { method: 'POST' }); } catch { /* Best-effort cleanup; never logs secrets. */ }

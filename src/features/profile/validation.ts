@@ -1,5 +1,10 @@
 import { z } from 'zod';
 
+export const profileChangeSchema = z.object({
+  nombre: z.string().trim().min(2, 'Escribe un nombre de al menos 2 caracteres.').max(50, 'El nombre admite hasta 50 caracteres.').regex(/^[^<>]*$/, 'El nombre contiene caracteres no permitidos.'),
+  email: z.string().trim().toLowerCase().email('Escribe un correo electrónico válido.').max(50, 'El correo admite hasta 50 caracteres.'),
+});
+
 export const passwordChangeSchema = z.object({
   current_password: z.string().min(1, 'Escribe tu contraseña actual.'),
   password: z.string().min(8, 'Utiliza al menos 8 caracteres.').max(128, 'Utiliza como máximo 128 caracteres.')

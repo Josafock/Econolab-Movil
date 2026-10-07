@@ -9,12 +9,13 @@ import { errorMessage } from '@/core/errors';
 import ConfirmDialog from '@/ui/ConfirmDialog';
 
 export default function DashboardScreen() {
-  const { session, logout } = useAuth();
+  const { session, profile, logout } = useAuth();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [confirming, setConfirming] = useState(false);
   if (!session) return null;
-  const role = session.usuario.rol === 'admin' ? 'Administrador' : 'Recepcionista';
+  const usuario = profile ?? session.usuario;
+  const role = usuario.rol === 'admin' ? 'Administrador' : 'Recepcionista';
 
   const closeSession = () => {
     setConfirming(false); setBusy(true);
@@ -22,7 +23,7 @@ export default function DashboardScreen() {
   };
 
   return <Screen>
-    <Heading eyebrow="Tu espacio de trabajo" title={`Hola, ${session.usuario.nombre.trim().split(/\s+/)[0]}`} subtitle="Qué bueno tenerte de vuelta." />
+    <Heading eyebrow="Tu espacio de trabajo" title={`Hola, ${usuario.nombre.trim().split(/\s+/)[0]}`} subtitle="Qué bueno tenerte de vuelta." />
     {error ? <Feedback kind="error" message={error} /> : null}
     <LinearGradient colors={['#0f172a', '#450a0a', '#991b1b']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.hero}>
       <View style={styles.heroTop}><View style={styles.heroIcon}><FlaskConical size={24} color="#fecaca" strokeWidth={1.6} /></View><View style={styles.badge}><ShieldCheck size={13} color="#fecaca" /><Text style={styles.badgeText}>{role}</Text></View></View>
