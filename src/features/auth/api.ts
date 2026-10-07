@@ -14,7 +14,7 @@ export async function loginRequest(email: string, password: string, signal?: Abo
   if (!result.success) throw new AppError('validation', 'Revisa tu correo y contraseña antes de continuar.');
   try {
     const data = await api.request('/auth/login', {
-      method: 'POST', body: result.data, authenticated: false, signal,
+      method: 'POST', body: result.data, authenticated: false, signal, timeoutMs: 60000,
     });
     return createSession(data);
   } catch (error) {
@@ -30,7 +30,7 @@ export async function loginRequest(email: string, password: string, signal?: Abo
 
 /** Existing authenticated endpoint; the backend does not expose a /me route. */
 export async function validateSession(signal?: AbortSignal, expireOnUnauthorized = true): Promise<void> {
-  await api.request('/studies?page=1&limit=1', { signal, expireOnUnauthorized });
+  await api.request('/studies?page=1&limit=1', { signal, expireOnUnauthorized, timeoutMs: 60000 });
 }
 
 export async function logoutRequest(): Promise<void> {

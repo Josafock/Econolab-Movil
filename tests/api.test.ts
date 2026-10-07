@@ -126,6 +126,18 @@ describe('authenticated HTTP transport', () => {
     expect(jest.getTimerCount()).toBe(0);
   });
 
+  it('allows the initial connection to finish beyond the ordinary request timeout', async () => {
+    jest.useFakeTimers();
+    const pending = deferred<Response>();
+    fetchMock.mockReturnValueOnce(pending.promise);
+    const request = client(25).request('/studies', { timeoutMs: 100 });
+    await jest.advanceTimersByTimeAsync(26);
+    expect(fetchMock.mock.calls[0][1]?.signal?.aborted).toBe(false);
+    pending.resolve(response());
+    await expect(request).resolves.toBeDefined();
+    expect(jest.getTimerCount()).toBe(0);
+  });
+
   it('also honors a signal that was cancelled before the request started', async () => {
     fetchMock.mockImplementation(pendingUntilAborted);
     const controller = new AbortController();

@@ -7,6 +7,7 @@ export type RequestOptions = {
   signal?: AbortSignal;
   authenticated?: boolean;
   expireOnUnauthorized?: boolean;
+  timeoutMs?: number;
 };
 
 // Tokens are held in memory here. Persistence belongs exclusively to SecureStore.
@@ -28,7 +29,7 @@ export class ApiClient {
     const abort = () => controller.abort();
     if (options.signal?.aborted) controller.abort();
     options.signal?.addEventListener('abort', abort);
-    const timer = setTimeout(() => { timedOut = true; controller.abort(); }, this.timeoutMs);
+    const timer = setTimeout(() => { timedOut = true; controller.abort(); }, options.timeoutMs ?? this.timeoutMs);
     try {
       const response = await fetch(`${base}${path}`, {
         method: options.method ?? 'GET',

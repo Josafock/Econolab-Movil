@@ -18,7 +18,7 @@ it('uses the real login body and accepts numeric IDs in the response and JWT', a
   jest.mocked(api.request).mockResolvedValueOnce({ message: 'Autenticado...', token, usuario });
   const session = await loginRequest(' equipo@example.test ', 'test-only-password');
   expect(api.request).toHaveBeenCalledWith('/auth/login', {
-    method: 'POST', body: { email: usuario.email, password: 'test-only-password' }, authenticated: false, signal: undefined,
+    method: 'POST', body: { email: usuario.email, password: 'test-only-password' }, authenticated: false, signal: undefined, timeoutMs: 60000,
   });
   expect(session.usuario.id).toBe('13');
 });
@@ -36,7 +36,7 @@ it('does not expose a backend reason for an unavailable account', async () => {
 it('checks an existing protected endpoint without inventing a current-user API', async () => {
   jest.mocked(api.request).mockResolvedValueOnce({ data: [] });
   await validateSession();
-  expect(api.request).toHaveBeenCalledWith('/studies?page=1&limit=1', { signal: undefined, expireOnUnauthorized: true });
+  expect(api.request).toHaveBeenCalledWith('/studies?page=1&limit=1', { signal: undefined, expireOnUnauthorized: true, timeoutMs: 60000 });
 });
 
 it('sends logout with no body and handles revocation errors in the provider', async () => {
