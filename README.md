@@ -1,56 +1,51 @@
-# Welcome to your Expo app 👋
+# ECONOLAB móvil
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Aplicación React Native con Expo SDK 57 y TypeScript. Reutiliza la API NestJS existente de ECONOLAB para iniciar sesión, consultar estudios, gestionar el perfil y cambiar la contraseña. No incluye otro backend ni otra base de datos.
 
-## Get started
+## Ejecutar
 
-1. Install dependencies
+1. Usar Node 24 LTS (`.nvmrc`).
+2. Ejecutar `npm ci` dentro de `mobile`.
+3. En una instalación nueva, copiar `.env.example` a `.env` y completar `EXPO_PUBLIC_API_URL` con la base del backend, incluido `/api`.
+4. Ejecutar `npm start` y escanear el QR con Expo Go compatible con SDK 57. El arranque usa un túnel; mantener computadora e internet disponibles. `npm run start:lan` permite usar la misma red Wi-Fi. `npm run android` requiere un emulador o teléfono Android configurado.
 
-   ```bash
-   npm install
-   ```
+En un teléfono, `localhost` apunta al propio teléfono: para un backend local utiliza la IP de la computadora en la misma red. Android Emulator usa `10.0.2.2`. HTTP se permite durante desarrollo; la versión publicada requiere HTTPS. El preview web necesita un origen autorizado por el CORS existente del backend; la prueba local se ejecutó con `npx expo start --web --port 5173`.
 
-2. Start the app
+La app está configurada con `https://backend-econolab-escuela-1.onrender.com/api`; no necesita iniciar el backend local. La copia de trabajo tiene una cuenta independiente válida para ese servidor en `.env.integration`. Esos archivos son privados y están ignorados por Git. Nunca subirlos, imprimir la contraseña o incluirla en capturas. Render restringe los orígenes localhost del preview web; utiliza Expo Go para probar el acceso con datos.
 
-   ```bash
-   npx expo start
-   ```
+## Funcionalidades
 
-In the output, you'll find options to open the app in a
+- Login, sesión almacenada con SecureStore en Android/iOS, restauración validada, expiración y logout con revocación.
+- Dashboard con acceso a estudios y perfil; pantallas protegidas.
+- Logo original de la web en las pantallas, icono nativo de ECONOLAB, tarjetas con su paleta y navegación inferior entre Inicio, Estudios y Perfil.
+- Catálogo real con búsqueda, filtros, paginación, actualización y detalle con precios y parámetros disponibles.
+- Perfil actualizado desde el backend, edición de nombre/correo con confirmación de contraseña al cambiar correo; rol protegido y cambio de contraseña.
+- Validaciones y mensajes para errores de red, timeout, sesión, permisos y respuestas inesperadas.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+El perfil utiliza `GET/PATCH /api/users/me` del backend existente. [Compatibilidad del perfil](docs/PROFILE_COMPATIBILITY.md) describe los contratos y la dependencia de publicación del PR1 del backend.
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## Validación
 
-## Get a fresh project
+`npm run verify` ejecuta lint, TypeScript, pruebas y exportación Metro Android/iOS. `npm run build` verifica los bundles nativos; no genera APK/IPA ni sustituye una prueba en dispositivo.
 
-When you're ready, run:
+`npm run test:integration` usa `.env.integration` contra el backend real. Los campos de ejemplo están en `.env.integration.example`. Para loopback HTTP local, se requiere `INTEGRATION_ALLOW_LOCAL_HTTP=1`. La integración habitual no modifica estudios ni contraseñas.
 
-```bash
-npm run reset-project
-```
+## Planificación y entrega
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Las issues y el Project de [Econolab-Movil](https://github.com/Josafock/Econolab-Movil) son la planificación oficial. Cada HU tiene su rama y PR hacia `main`; las ramas dependientes incluyen el código de las anteriores. El responsable integra los PR según sus sprints. No se realizaron merges ni cambios de calendario.
 
-### Other setup steps
+La implementación completa está en `feature/HU-08-pruebas`, disponible localmente y en el remoto. `main` conserva el estado original por instrucción del proyecto.
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+## Documentación
 
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- [Auditoría final](docs/AUDITORIA_FINAL.md): resultados, trazabilidad, CI y pendientes reales.
+- [Conexión actual a Render](docs/CONEXION_RENDER.md): dirección publicada, túnel, pruebas reales y CORS del preview.
+- [Diseño móvil actualizado](docs/DISENO_MOVIL.md): identidad de la web, pantallas y revisión visual del 6 de octubre.
+- [Icono de la aplicación](docs/ICONOS.md): recursos originales, generación nativa y cómo verlo al instalar la app.
+- [Arquitectura](docs/ARCHITECTURE.md): estructura y contratos comprobados.
+- [Git](docs/GIT.md): issues, sub-issues, ramas y dependencias.
+- [Verificación del Project](docs/PROJECT_VERIFICATION.md): campos, seis Sprints y asignaciones oficiales comprobadas.
+- [Wireframes](docs/WIREFRAMES.md): distribución e identidad visual.
+- [Perfil](docs/PROFILE_COMPATIBILITY.md): contratos implementados y publicación pendiente en Render.
+- [Errores](docs/ERRORS.md): validación y recuperación.
+- [Pruebas](docs/TESTING.md): comandos, integración y revisión en dispositivo.
