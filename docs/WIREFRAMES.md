@@ -6,21 +6,21 @@ Trazabilidad en el repositorio: [HU-02 #2](https://github.com/Josafock/Econolab-
 
 ## Identidad y reglas de diseño
 
-- Se reutiliza el logotipo de `frontend/public/econolab-logo.png` como `assets/econolab-logo.png`.
-- Rojo principal `#dc2626`, fondo `#f9fafb`, tarjetas blancas, texto `#111827`, texto secundario `#4b5563`. Son colores de la identidad existente en `frontend/src/app/globals.css`.
-- Contenido de una columna, con ancho máximo de 720 puntos en tabletas y web. Los márgenes son de 20 puntos en teléfono y 32 en pantallas amplias.
+- Se reutiliza la imagen completa de `frontend/public/econolab-brand.png` como `assets/econolab-brand.png`, igual que el encabezado web.
+- Rojo principal `#dc2626`, fondo `#f5f6fa`, tarjetas blancas, texto `#0f172a` y texto secundario `#64748b`. Se adapta la identidad de la web con tonos slate y el degradado oscuro del inicio.
+- Contenido de una columna, con ancho máximo de 720 puntos en tabletas y web. Los márgenes son de 22 puntos en teléfono y 32 en pantallas amplias.
 - Campos y botones con altura mínima de 52 puntos. Las etiquetas permanecen visibles al escribir. El texto admite el tamaño de fuente del sistema y salto de línea.
 - La jerarquía usa título, descripción breve, contenido y acción principal. Los mensajes de error incluyen texto; el color nunca es la única señal.
-- El encabezado de la navegación muestra el título y la acción de regreso. `Screen` respeta los bordes laterales e inferior sin duplicar el área superior que ya proporciona `Stack`.
+- El encabezado muestra el logo compacto y la acción de regreso. `Screen` respeta los bordes laterales; la barra inferior atiende el borde inferior y `Stack` el superior. En el login, sin encabezado, `Screen topInset` atiende todos los bordes.
 - El formulario permite desplazarse con el teclado abierto. Las listas usan `Screen scroll={false}` y su propia lista virtualizada para evitar anidar desplazamientos.
 
 ## Acceso
 
 ```text
 ┌───────────────────────────────────┐
-│ Encabezado: Iniciar sesión         │
+│       Econolab móvil              │
 ├───────────────────────────────────┤
-│ [Logotipo] ECONOLAB                │
+│ [Imagen completa de ECONOLAB]      │
 │            Laboratorio clínico    │
 │                                   │
 │ Bienvenido                        │
@@ -29,7 +29,7 @@ Trazabilidad en el repositorio: [HU-02 #2](https://github.com/Josafock/Econolab-
 │ │ Correo electrónico            │ │
 │ │ [                            ]│ │
 │ │ Contraseña                    │ │
-│ │ [••••••••                    ]│ │
+│ │ [••••••••          mostrar   ]│ │
 │ │ Mensaje si un campo es inválido│ │
 │ │ [       Iniciar sesión       ]│ │
 │ └───────────────────────────────┘ │
@@ -45,9 +45,8 @@ El botón indica la carga y evita envíos repetidos. El contrato de login existe
 ┌───────────────────────────────────┐
 │ Encabezado: Econolab               │
 ├───────────────────────────────────┤
-│ [Logotipo] ECONOLAB                │
 │ Hola, [nombre de la sesión]        │
-│ [Rol del usuario]                 │
+│ [Panel degradado, rol y catálogo] │
 │                                   │
 │ ┌───────────────────────────────┐ │
 │ │ Estudios                      │ │
@@ -60,6 +59,7 @@ El botón indica la carga y evita envíos repetidos. El contrato de login existe
 │ │ [         Ver perfil         ]│ │
 │ └───────────────────────────────┘ │
 │ [          Cerrar sesión         ]│
+│ [ Inicio ] [ Estudios ] [ Perfil ]│
 └───────────────────────────────────┘
 ```
 
@@ -148,7 +148,7 @@ Los títulos anuncian su papel de encabezado. Botones y campos tienen etiquetas 
 
 ## Componentes compartidos
 
-`src/ui/index.tsx` exporta `Screen`, `Brand`, `Heading`, `Button`, `Field`, `Card`, `Feedback` y `Loading`. `src/ui/theme.ts` concentra colores y medidas. Estos componentes no contienen llamadas a la API, reglas de autorización ni datos simulados.
+`src/ui/index.tsx` exporta `Screen`, `Brand`, `Heading`, `Button`, `Field`, `Card`, `IconBadge`, `IconButton`, `Feedback` y `Loading`. `BottomNavigation` concentra los tres accesos principales. `src/ui/theme.ts` concentra colores y medidas. Estos componentes no contienen llamadas a la API, reglas de autorización ni datos simulados. Ver [revisión visual actual](DISENO_MOVIL.md) para las pantallas implementadas.
 
 ## Referencias técnicas consultadas
 

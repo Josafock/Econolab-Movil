@@ -17,6 +17,7 @@ La app está configurada con `https://backend-econolab-escuela-1.onrender.com/ap
 
 - Login, sesión almacenada con SecureStore en Android/iOS, restauración validada, expiración y logout con revocación.
 - Dashboard con acceso a estudios y perfil; pantallas protegidas.
+- Logo original de la web, tarjetas con la paleta de Econolab y navegación inferior entre Inicio, Estudios y Perfil.
 - Catálogo real con búsqueda, filtros, paginación, actualización y detalle con precios y parámetros disponibles.
 - Nombre, correo y rol recibidos en el login; cambio de contraseña mediante el endpoint existente.
 - Validaciones y mensajes para errores de red, timeout, sesión, permisos y respuestas inesperadas.
@@ -39,6 +40,7 @@ La implementación completa está en `feature/HU-08-pruebas`, disponible localme
 
 - [Auditoría final](docs/AUDITORIA_FINAL.md): resultados, trazabilidad, CI y pendientes reales.
 - [Conexión actual a Render](docs/CONEXION_RENDER.md): dirección publicada, túnel, pruebas reales y CORS del preview.
+- [Diseño móvil actualizado](docs/DISENO_MOVIL.md): identidad de la web, pantallas y revisión visual del 6 de octubre.
 - [Arquitectura](docs/ARCHITECTURE.md): estructura y contratos comprobados.
 - [Git](docs/GIT.md): issues, sub-issues, ramas y dependencias.
 - [Wireframes](docs/WIREFRAMES.md): distribución e identidad visual.

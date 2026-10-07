@@ -1,5 +1,7 @@
 # Revisión de dependencias
 
+Actualización del 6 de octubre de 2026: se aplicaron parches compatibles del lockfile mediante `npm audit fix`, sin `--force`, y se incorporaron las herramientas del túnel y del diseño. El resultado actual es **57 alertas: 49 altas, 8 moderadas y 0 críticas**. El override `uuid@11.1.1` también se limita a `@expo/ngrok`, cuyo código usa `v4()` sin argumentos. El túnel arrancó correctamente. Los resultados del 5 de octubre que siguen son históricos.
+
 Fecha: 5 de octubre de 2026. Se revisaron `npm audit`, el árbol instalado y los avisos oficiales. Los números cuentan paquetes afectados, incluidos consumidores transitivos; no son defectos independientes encontrados en las pantallas de ECONOLAB.
 
 Antes del ajuste: 66 alertas (50 altas y 16 moderadas). Después: **58 alertas (50 altas y 8 moderadas; 0 críticas)**. No se considera una auditoría de seguridad aprobada sin pendientes.
@@ -21,4 +23,4 @@ El único llamado observado en xcode es `require('uuid').v4()` sin argumentos. S
 
 No se utilizó `npm audit fix --force`: propone combinaciones que no corresponden a Expo 57/React Native 0.86/Jest 29. Tampoco se anuncia un override incompatible como solución.
 
-Antes de distribuir la app, revisar nuevas versiones compatibles y el manejo de enlaces malformados en dispositivos. Los avisos sin parche requieren seguimiento de sus mantenedores. No exponer Metro públicamente ni aceptar configuraciones de compilación de fuentes no confiables.
+Antes de distribuir la app, revisar nuevas versiones compatibles y el manejo de enlaces malformados en dispositivos. Los avisos sin parche requieren seguimiento de sus mantenedores. Compartir el QR del túnel solo con el equipo de pruebas y no aceptar configuraciones de compilación de fuentes no confiables.

@@ -23,7 +23,7 @@ El workflow_dispatch solo será visible en GitHub cuando el workflow esté integ
 
 Se ejecutó una prueba real del cambio de contraseña exclusivamente sobre la cuenta independiente de pruebas: modificar, iniciar sesión con la nueva contraseña y restaurar la original. La restauración y los logout finalizaron correctamente. Esta prueba adicional no forma parte del script habitual porque modifica temporalmente la cuenta.
 
-Se recorrieron las pantallas en Chromium con viewport de 390 × 844 y backend real: login, dashboard, listado, detalle, búsqueda vacía, perfil, validación, logout y enlace protegido sin sesión. Las capturas locales están en `artifacts/01-login.png` a `artifacts/06-profile.png`, ignoradas por Git. Se trata de un preview web, no de evidencia de ejecución Android/iOS.
+El 6 de octubre se repitió el recorrido en Chromium con Render real: login, dashboard, listado, detalle, búsqueda vacía, perfil, validación, navegación inferior, logout y enlace protegido sin sesión. Se revisaron anchos de 320, 390 y 768 px sin desbordamiento horizontal. Las capturas locales están en `artifacts/01-login.png` a `artifacts/06-profile.png`, ignoradas por Git. Se trata de un preview web, no de evidencia de ejecución Android/iOS. La herramienta de QA externa reenviaba las peticiones reales sin Origin por la restricción CORS de localhost; [diseño móvil](DISENO_MOVIL.md) explica el alcance.
 
 ## Prueba en dispositivo pendiente del equipo
 
