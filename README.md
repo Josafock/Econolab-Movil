@@ -2,6 +2,12 @@
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
+## GitHub Actions
+
+La integración continua valida ESLint y TypeScript, ejecuta las pruebas disponibles
+y exporta bundles de Android, iOS y web con evidencias descargables.
+Consulta [la configuración y sus límites](docs/GITHUB_ACTIONS.md).
+
 ## Get started
 
 1. Install dependencies

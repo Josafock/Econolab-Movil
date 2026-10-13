@@ -1,0 +1,89 @@
+name: Mobile CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mobile-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CI: '1'
+  EXPO_NO_TELEMETRY: '1'
+  EXPO_PUBLIC_API_URL: https://example.invalid/api
+
+jobs:
+  validate:
+    name: Validaciones y pruebas
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Descargar código
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Configurar Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Instalar dependencias
+        run: npm ci
+      - name: Revisar código con ESLint
+        run: npm run lint
+      - name: Validar TypeScript
+        run: npm run typecheck
+      - name: Detectar pruebas disponibles
+        id: tests
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const hasTests = Boolean(require('./package.json').scripts?.test);
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, `available=${hasTests}\n`);
+          if (!hasTests) {
+            console.log('::notice::Esta rama todavía no tiene un script de pruebas unitarias.');
+            fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY,
+              '### Pruebas unitarias pendientes\nEsta rama no define `npm test`. Se validaron ESLint y TypeScript; no se acredita ejecución de pruebas unitarias. Al integrar Jest, este job ejecutará `npm test -- --ci --runInBand`.\n');
+          }
+          NODE
+      - name: Ejecutar pruebas unitarias
+        if: steps.tests.outputs.available == 'true'
+        run: npm test -- --ci --runInBand
+
+  build:
+    name: Build ${{ matrix.platform }}
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [android, ios, web]
+    steps:
+      - name: Descargar código
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Configurar Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Instalar dependencias
+        run: npm ci
+      - name: Exportar aplicación
+        run: npx expo export --platform ${{ matrix.platform }} --output-dir dist/${{ matrix.platform }}
+      - name: Guardar bundle como evidencia
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: econolab-${{ matrix.platform }}-${{ github.sha }}
+          path: dist/${{ matrix.platform }}/
+          if-no-files-found: error
+          retention-days: 14
