@@ -30,6 +30,10 @@ Estas etapas no necesitan secrets de Expo ni credenciales de producción.
 Los Actions se fijan por commit. La URL `https://example.invalid/api` es un
 valor público de CI para las ramas que requieren configurar la API al exportar;
 los bundles de evidencia no se distribuyen como versiones conectadas a Render.
+La instalación informó 32 alertas de dependencias (11 moderadas, 20 altas y una
+crítica). La crítica corresponde a `shell-quote@1.10.0`, presente también en el
+lockfile inicial. Estos checks no sustituyen la revisión de dependencias ni
+acreditan que la aplicación esté libre de vulnerabilidades.
 
 ## Verificación local
 
