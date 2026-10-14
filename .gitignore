@@ -40,6 +40,8 @@ example
 
 # Local tooling used while configuring CI
 .codex-tmp/
+reports/
+/tmp/ci-*/
 
 # generated native folders
 /ios

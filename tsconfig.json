@@ -11,6 +11,7 @@
       ]
     }
   },
+  "exclude": ["node_modules", ".codex-tmp", "tmp/ci-*/**", "dist", "reports", "android", "ios"],
   "include": [
     "**/*.ts",
     "**/*.tsx",

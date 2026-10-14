@@ -4,8 +4,9 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 
 ## GitHub Actions
 
-La integración continua valida ESLint y TypeScript, ejecuta las pruebas disponibles
-y exporta bundles de Android, iOS y web con evidencias descargables.
+La integración continua ejecuta regresión y checks asociados a cada HU/issue
+en push y Pull Request. Cada merge a main valida el conjunto completo y entrega
+bundles de Android, iOS y web con informes, cobertura y checksums descargables.
 Consulta [la configuración y sus límites](docs/GITHUB_ACTIONS.md).
 
 ## Get started
