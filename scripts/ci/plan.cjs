@@ -2,6 +2,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { execFileSync } = require('node:child_process');
 const features = require('../../ci/features.json');
+const isGlobalFile = file => /^(package(-lock)?\.json|tsconfig\.json|app\.json|eslint\.config\.|\.github\/|scripts\/ci\/|ci\/|tests\/ci\/)/.test(file);
 
 function implemented(root, feature) {
   return feature.markers.some(file => fs.existsSync(path.join(root, file)));
@@ -9,13 +10,17 @@ function implemented(root, feature) {
 
 function selectFeatures({ root, branch = '', text = '', changed = [], full = false }) {
   const available = features.filter(feature => implemented(root, feature));
-  const globalChange = changed.some(file => /^(package(-lock)?\.json|tsconfig\.json|app\.json|eslint\.config\.|\.github\/|scripts\/ci\/|ci\/|tests\/ci\/)/.test(file));
+  const globalChange = changed.some(isGlobalFile);
   if (full || globalChange) return available;
   const branchHus = [...branch.matchAll(/HU[-_]?0?([1-8])\b/gi)].map(match => `HU-0${match[1]}`);
   const issueRefs = [...text.matchAll(/(?:#|\/issues\/)(\d+)\b/g)].map(match => Number(match[1]));
   return available.filter(feature => branchHus.includes(feature.id)
     || [feature.issue, ...feature.tasks].some(issue => issueRefs.includes(issue))
     || changed.some(file => feature.paths.some(prefix => prefix.endsWith('/') ? file.startsWith(prefix) : file === prefix)));
+}
+
+function shouldPrebuild({ full = false, changed = [], selected = [] }) {
+  return full || changed.some(isGlobalFile) || selected.some(feature => feature.id === 'HU-02');
 }
 
 function changedFiles(event, eventName, git = execFileSync) {
@@ -41,7 +46,7 @@ function main() {
   const selected = selectFeatures({ root, branch, changed: changed || [], full,
     text: `${event.pull_request?.title || ''}\n${event.pull_request?.body || ''}` });
   const matrix = { include: selected.map(feature => ({ feature: feature.id, issue: feature.issue, title: feature.title })) };
-  const native = full || selected.some(feature => feature.id === 'HU-02');
+  const native = shouldPrebuild({ full, changed: changed || [], selected });
   fs.mkdirSync('reports', { recursive: true });
   fs.writeFileSync('reports/plan.json', JSON.stringify({ branch, full, changed, selected: selected.map(feature => ({ ...feature,
     availableTests: feature.tests.filter(file => fs.existsSync(file)), missingTests: feature.tests.filter(file => !fs.existsSync(file)) })) }, null, 2));
@@ -54,5 +59,5 @@ function main() {
   process.stdout.write(JSON.stringify({ branch, full, matrix, native }) + '\n');
 }
 
-module.exports = { selectFeatures, changedFiles };
+module.exports = { selectFeatures, changedFiles, shouldPrebuild };
 if (require.main === module) main();
