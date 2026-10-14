@@ -44,3 +44,8 @@ La implementación completa está en `feature/HU-08-pruebas`, disponible localme
 - [Perfil](docs/PROFILE_COMPATIBILITY.md): operaciones disponibles y limitación del backend.
 - [Errores](docs/ERRORS.md): validación y recuperación.
 - [Pruebas](docs/TESTING.md): comandos, integración y revisión en dispositivo.
+
+
+## CI/CD por issue
+
+Push y Pull Request ejecutan regresión y checks por HU. Después del merge, main valida el conjunto y entrega artifacts. Consulta [workflows, cobertura y entornos](docs/GITHUB_ACTIONS.md).
