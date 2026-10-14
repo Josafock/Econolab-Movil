@@ -1,0 +1,167 @@
+name: Pipeline reutilizable por HU
+
+on:
+  workflow_call:
+    inputs:
+      full:
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+env:
+  CI: '1'
+  EXPO_NO_TELEMETRY: '1'
+  EXPO_PUBLIC_API_URL: https://example.invalid/api
+
+jobs:
+  plan:
+    name: Seleccionar issues y alcance
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+      has-features: ${{ steps.plan.outputs.has-features }}
+      native: ${{ steps.plan.outputs.native }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - id: plan
+        name: Asociar rama, archivos y referencias a HUs
+        env:
+          CI_FULL: ${{ inputs.full }}
+        run: node scripts/ci/plan.cjs
+      - name: Guardar plan de pruebas
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: plan-${{ github.run_id }}-${{ github.run_attempt }}
+          path: reports/plan.json
+          if-no-files-found: error
+          retention-days: 14
+
+  quality:
+    name: Lint, TypeScript y regresión completa
+    needs: plan
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Instalar dependencias reproducibles
+        run: npm ci --no-audit --no-fund
+      - name: Probar la selección del pipeline
+        run: node --test tests/ci/plan.test.cjs
+      - name: ESLint
+        run: npm run lint
+      - name: TypeScript en checkout limpio
+        run: npm run typecheck
+      - name: Todas las pruebas de aplicación disponibles y cobertura
+        run: node scripts/ci/run-tests.cjs all
+      - name: Guardar resultados de pruebas
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: regression-${{ github.run_id }}-${{ github.run_attempt }}
+          path: reports/
+          if-no-files-found: warn
+          retention-days: 14
+
+  features:
+    name: ${{ matrix.feature }} · issue ${{ matrix.issue }} · ${{ matrix.title }}
+    needs: [plan, quality]
+    if: needs.plan.outputs.has-features == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Instalar dependencias
+        run: npm ci --no-audit --no-fund
+      - name: Pruebas y cobertura pendiente de la issue
+        env:
+          CI_FEATURE: ${{ matrix.feature }}
+        run: node scripts/ci/run-tests.cjs "$CI_FEATURE"
+      - name: Guardar evidencia por HU
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: tests-${{ matrix.feature }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: reports/
+          if-no-files-found: warn
+          retention-days: 14
+
+  build:
+    name: Entrega ${{ matrix.platform }}
+    needs: [plan, quality, features]
+    if: >-
+      always() && !cancelled() && needs.quality.result == 'success' &&
+      (needs.features.result == 'success' || needs.features.result == 'skipped')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [android, ios, web]
+    env:
+      EXPO_PUBLIC_API_URL: ${{ vars.EXPO_PUBLIC_API_URL || 'https://example.invalid/api' }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Instalar dependencias
+        run: npm ci --no-audit --no-fund
+      - name: Validar generación nativa de HU-02 y de main
+        if: needs.plan.outputs.native == 'true' && matrix.platform != 'web'
+        env:
+          CI_PLATFORM: ${{ matrix.platform }}
+        run: npx expo prebuild --platform "$CI_PLATFORM" --no-install
+      - name: Exportar bundle
+        env:
+          CI_PLATFORM: ${{ matrix.platform }}
+        run: npx expo export --platform "$CI_PLATFORM" --output-dir "dist/$CI_PLATFORM"
+      - name: Registrar versión y checksum de la entrega
+        env:
+          CI_PLATFORM: ${{ matrix.platform }}
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const path = require('node:path');
+          const crypto = require('node:crypto');
+          const root = path.join('dist', process.env.CI_PLATFORM);
+          const files = fs.readdirSync(root, { recursive: true }).filter(file => fs.statSync(path.join(root, file)).isFile()).sort();
+          const checksums = files.map(file => `${crypto.createHash('sha256').update(fs.readFileSync(path.join(root, file))).digest('hex')}  ${file.replaceAll('\\', '/')}`);
+          fs.writeFileSync(path.join(root, 'SHA256SUMS.txt'), checksums.join('\n') + '\n');
+          fs.writeFileSync(path.join(root, 'delivery.json'), JSON.stringify({ commit: process.env.GITHUB_SHA, platform: process.env.CI_PLATFORM, run: process.env.GITHUB_RUN_ID, packageVersion: require('./package.json').version, kind: 'expo-bundle' }, null, 2));
+          fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, `### Entrega ${process.env.CI_PLATFORM}\nBundle y recursos con checksums SHA-256. No es APK/AAB/IPA ni una instalación física comprobada.\n`);
+          NODE
+      - name: Entregar artifact descargable
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: econolab-${{ matrix.platform }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: dist/${{ matrix.platform }}/
+          if-no-files-found: error
+          retention-days: 14

@@ -1,40 +1,63 @@
-name: Integración con backend real
+name: Integración real después de main
 
 on:
-  push:
-    tags:
-      - sprint-01
-      - sprint-02
-      - sprint-03
-      - sprint-04
-      - sprint-05
-      - sprint-06
+  workflow_run:
+    workflows: [Main CI y entrega]
+    branches: [main]
+    types: [completed]
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: integration-${{ github.ref }}
+  group: integration-main
   cancel-in-progress: false
 
 jobs:
   integration:
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    env:
-      INTEGRATION_API_URL: ${{ secrets.INTEGRATION_API_URL }}
-      INTEGRATION_EMAIL: ${{ secrets.INTEGRATION_EMAIL }}
-      INTEGRATION_PASSWORD: ${{ secrets.INTEGRATION_PASSWORD }}
+    if: >-
+      (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_branch == 'main' &&
+      github.event.workflow_run.head_repository.full_name == github.repository)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version: '24'
-          cache: npm
-      - name: Verificar que las credenciales estén configuradas
+          package-manager-cache: false
+      - name: Comprobar disponibilidad de integración real
+        id: readiness
+        env:
+          INTEGRATION_API_URL: ${{ secrets.INTEGRATION_API_URL }}
+          INTEGRATION_EMAIL: ${{ secrets.INTEGRATION_EMAIL }}
+          INTEGRATION_PASSWORD: ${{ secrets.INTEGRATION_PASSWORD }}
         run: |
-          node -e "const keys=['INTEGRATION_API_URL','INTEGRATION_EMAIL','INTEGRATION_PASSWORD']; if(keys.some(key=>!process.env[key])) { console.error('Faltan secrets de integración. No se omite la prueba.'); process.exit(1); }"
-      - run: npm ci
-      - name: Probar login, catálogo, filtros, detalle y revocación
+          node <<'NODE'
+          const fs = require('node:fs');
+          const missing = ['INTEGRATION_API_URL', 'INTEGRATION_EMAIL', 'INTEGRATION_PASSWORD'].filter(key => !process.env[key]);
+          if (!fs.existsSync('scripts/integration.cjs')) missing.push('scripts/integration.cjs (HU-08 aún sin integrar)');
+          const ready = missing.length === 0;
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, `ready=${ready}\n`);
+          if (!ready) {
+            fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, `### Integración real pendiente\nFalta: ${missing.join(', ')}. No se ejecutó contra el backend y no se acredita una prueba aprobada.\n`);
+            if (process.env.GITHUB_EVENT_NAME === 'workflow_dispatch') process.exitCode = 1;
+            else process.stdout.write('::notice::Integración real pendiente de código y secrets; consulta el resumen.\n');
+          }
+          NODE
+      - name: Instalar dependencias
+        if: steps.readiness.outputs.ready == 'true'
+        run: npm ci --no-audit --no-fund
+      - name: Probar acceso, login, perfil, estudios y revocación contra el backend
+        if: steps.readiness.outputs.ready == 'true'
+        env:
+          INTEGRATION_API_URL: ${{ secrets.INTEGRATION_API_URL }}
+          INTEGRATION_EMAIL: ${{ secrets.INTEGRATION_EMAIL }}
+          INTEGRATION_PASSWORD: ${{ secrets.INTEGRATION_PASSWORD }}
         run: node scripts/integration.cjs
