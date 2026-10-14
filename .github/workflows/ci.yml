@@ -1,29 +1,27 @@
-name: Mobile CI
+name: Feature CI
+
 on:
   push:
-    branches: ['**']
+    branches-ignore: [main]
   pull_request:
-    branches: [main]
+    branches: [main, develop]
+    types: [opened, synchronize, reopened, ready_for_review, edited]
+  workflow_dispatch:
+    inputs:
+      full:
+        description: Ejecutar comprobaciones de todas las HUs implementadas
+        type: boolean
+        default: false
+
 permissions:
   contents: read
+
 concurrency:
-  group: mobile-ci-${{ github.ref }}
+  group: feature-ci-${{ github.event_name }}-${{ github.ref }}
   cancel-in-progress: true
+
 jobs:
-  validate:
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    env:
-      CI: '1'
-      EXPO_PUBLIC_API_URL: https://example.invalid/api
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '24'
-          cache: npm
-      - run: npm ci
-      - run: npm run lint
-      - run: npm run typecheck
-      - run: npm test -- --ci --runInBand
-      - run: npm run build
+  pipeline:
+    uses: ./.github/workflows/pipeline.yml
+    with:
+      full: ${{ inputs.full || false }}

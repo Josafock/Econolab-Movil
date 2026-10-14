@@ -25,3 +25,8 @@ Las issues y el Project existentes en https://github.com/Josafock/Econolab-Movil
 - docs/GIT.md: HUs, sub-issues y ramas.
 
 No se incluyen secretos ni credenciales. .env y .env.integration permanecen fuera del repositorio.
+
+
+## CI/CD por issue
+
+Push y Pull Request ejecutan regresión y checks por HU. Después del merge, main valida el conjunto y entrega artifacts. Consulta [workflows, cobertura y entornos](docs/GITHUB_ACTIONS.md).

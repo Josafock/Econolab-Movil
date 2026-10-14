@@ -1,0 +1,20 @@
+name: Main CI y entrega
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: main-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pipeline:
+    if: github.ref == 'refs/heads/main'
+    uses: ./.github/workflows/pipeline.yml
+    with:
+      full: true
