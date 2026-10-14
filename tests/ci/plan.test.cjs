@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
-const { selectFeatures, changedFiles } = require('../../scripts/ci/plan.cjs');
+const { selectFeatures, changedFiles, shouldPrebuild } = require('../../scripts/ci/plan.cjs');
 const manifest = require('../../ci/features.json');
 
 function fixture(t) {
@@ -40,6 +40,10 @@ test('shared dependency changes and main mode cover all implemented HUs', t => {
   const root = fixture(t);
   assert.equal(selectFeatures({ root, changed: ['package-lock.json'] }).length, 8);
   assert.equal(selectFeatures({ root, full: true }).length, 8);
+  assert.equal(shouldPrebuild({ changed: ['app.json'] }), true);
+  assert.equal(shouldPrebuild({ changed: ['.github/workflows/ci.yml'] }), true);
+  assert.equal(shouldPrebuild({ changed: ['src/features/studies/api.ts'] }), false);
+  assert.equal(shouldPrebuild({ full: true }), true);
 });
 test('unimplemented HUs are never reported as implemented', t => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'econolab-ci-'));
