@@ -60,15 +60,34 @@ jobs:
           node-version: '24'
           cache: npm
       - name: Instalar dependencias reproducibles
+        id: install
         run: npm ci --no-audit --no-fund
       - name: Probar la selección del pipeline
-        run: node --test tests/ci/plan.test.cjs
+        id: ci_tests
+        run: node --test tests/ci/*.test.cjs
       - name: ESLint
-        run: npm run lint
+        id: lint
+        run: |
+          mkdir -p reports
+          npm run lint 2>&1 | tee reports/lint.log
       - name: TypeScript en checkout limpio
-        run: npm run typecheck
+        id: typecheck
+        run: npm run typecheck 2>&1 | tee reports/typecheck.log
       - name: Todas las pruebas de aplicación disponibles y cobertura
+        id: tests
         run: node scripts/ci/run-tests.cjs all
+      - name: Registrar resultados de las etapas de calidad
+        if: always()
+        env:
+          CI_STEPS: ${{ toJSON(steps) }}
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          fs.mkdirSync('reports', { recursive: true });
+          const steps = JSON.parse(process.env.CI_STEPS);
+          const ids = ['install', 'ci_tests', 'lint', 'typecheck', 'tests'];
+          fs.writeFileSync('reports/quality-steps.json', JSON.stringify(Object.fromEntries(ids.map(id => [id, steps[id]?.conclusion || 'unknown'])), null, 2));
+          NODE
       - name: Guardar resultados de pruebas
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
@@ -77,6 +96,66 @@ jobs:
           path: reports/
           if-no-files-found: warn
           retention-days: 14
+
+  report:
+    name: ${{ github.event_name == 'pull_request' && 'CI obligatorio PR' || 'Reporte CI' }}
+    needs: [plan, quality, features, build]
+    if: always()
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Recuperar plan
+        id: plan_evidence
+        if: always()
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          pattern: plan-${{ github.run_id }}-${{ github.run_attempt }}
+          path: reports/evidence
+      - name: Recuperar regresión y diagnóstico
+        id: quality_evidence
+        if: always()
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          pattern: regression-${{ github.run_id }}-${{ github.run_attempt }}
+          path: reports/evidence
+      - name: Recuperar evidencia de las HUs
+        id: feature_evidence
+        if: always()
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          pattern: tests-*-${{ github.run_id }}-${{ github.run_attempt }}
+          path: reports/evidence
+      - name: Generar reporte y plantilla de seguimiento
+        id: report
+        if: always()
+        env:
+          CI_NEEDS: ${{ toJSON(needs) }}
+          CI_REPORT_STEPS: ${{ toJSON(steps) }}
+        run: node scripts/ci/report.cjs
+      - name: Guardar reporte de seguimiento
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: reporte-seguimiento-${{ github.run_id }}-${{ github.run_attempt }}
+          path: reports/final/
+          if-no-files-found: error
+          retention-days: 90
+      - name: Exigir resultado completo del pipeline
+        if: always()
+        env:
+          CI_APPROVED: ${{ steps.report.outputs.approved }}
+        run: |
+          if [ "$CI_APPROVED" != "true" ]; then
+            echo '::error::CI no aprobado. Consulta el reporte de seguimiento y las etapas fallidas o canceladas.'
+            exit 1
+          fi
 
   features:
     name: ${{ matrix.feature }} · issue ${{ matrix.issue }} · ${{ matrix.title }}
