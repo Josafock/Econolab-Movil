@@ -1,63 +1,32 @@
-# Welcome to your Expo app 👋
+# ECONOLAB m?vil
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Cliente React Native con Expo SDK 57 y TypeScript. Reutiliza la API NestJS existente de ECONOLAB.
 
-## GitHub Actions
+## Ejecutar
 
-La integración continua ejecuta regresión y checks asociados a cada HU/issue
-en push y Pull Request. Cada merge a main valida el conjunto completo y entrega
-bundles de Android, iOS y web con informes, cobertura y checksums descargables.
-Consulta [la configuración y sus límites](docs/GITHUB_ACTIONS.md).
+1. Usar Node 24 LTS (.nvmrc).
+2. Ejecutar `npm ci` dentro de mobile.
+3. Copiar .env.example a .env y completar EXPO_PUBLIC_API_URL con la base del backend, incluido /api.
+4. Ejecutar `npm start` y abrir con Expo Go compatible con SDK 57, o un emulador/compilaci?n de desarrollo.
 
-## Get started
+En un tel?fono, localhost es el tel?fono: para backend local utiliza la IP de la computadora en la misma red. Android Emulator usa 10.0.2.2. HTTP solo se permite durante desarrollo; la versi?n publicada necesita HTTPS. El preview web necesita un origen autorizado por la configuraci?n CORS del backend.
 
-1. Install dependencies
+## Validaci?n
 
-   ```bash
-   npm install
-   ```
+`npm run verify` ejecuta lint, TypeScript, pruebas y exportaci?n Metro Android/iOS. `npm run build` verifica los bundles nativos; no genera APK/IPA ni sustituye una prueba en dispositivo.
 
-2. Start the app
+## Planificaci?n
 
-   ```bash
-   npx expo start
-   ```
+Las issues y el Project existentes en https://github.com/Josafock/Econolab-Movil son la planificaci?n oficial. Ver docs/GIT.md para jerarqu?a y dependencias. Cada HU tiene una rama; el responsable integra los PR manualmente. No se alteran los sprints.
 
-In the output, you'll find options to open the app in a
+## Documentaci?n
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- docs/ARCHITECTURE.md: estructura y contratos le?dos del backend.
+- docs/GIT.md: HUs, sub-issues y ramas.
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+No se incluyen secretos ni credenciales. .env y .env.integration permanecen fuera del repositorio.
 
-## Get a fresh project
 
-When you're ready, run:
+## CI/CD por issue
 
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-### Other setup steps
-
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Push y Pull Request ejecutan regresión y checks por HU. Después del merge, main valida el conjunto y entrega artifacts. Consulta [workflows, cobertura y entornos](docs/GITHUB_ACTIONS.md).

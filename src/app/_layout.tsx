@@ -1,18 +1,49 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { useColorScheme } from 'react-native';
+import { Stack } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
-import { AnimatedSplashOverlay } from '@/components/animated-icon';
-import AppTabs from '@/components/app-tabs';
+import { AuthProvider, useAuth } from '@/features/auth/AuthProvider';
+import { Button, Feedback, Heading, Loading, Screen, colors } from '@/ui';
 
-SplashScreen.preventAutoHideAsync();
-
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
+function AuthenticatedNavigation() {
+  const { status, error, notice, retry, logout } = useAuth();
+  if (status === 'loading') {
+    return <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}><Loading /></SafeAreaView>;
+  }
+  if (status === 'error') {
+    return (
+      <SafeAreaView edges={['top']} style={{ flex: 1 }}>
+        <Screen>
+          <Heading title="No pudimos verificar tu sesión" subtitle="Necesitamos comprobar tu acceso antes de abrir la aplicación." />
+          <Feedback kind="error" message={error ?? 'Vuelve a intentarlo.'} onRetry={retry} />
+          {notice ? <Feedback message={notice} /> : null}
+          <Button title="Cerrar sesión en este dispositivo" variant="secondary" onPress={() => { void logout(); }} />
+        </Screen>
+      </SafeAreaView>
+    );
+  }
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <AnimatedSplashOverlay />
-      <AppTabs />
-    </ThemeProvider>
+    <Stack screenOptions={{ headerTitle: 'ECONOLAB', headerTintColor: colors.primaryDark, contentStyle: { backgroundColor: colors.background } }}>
+      <Stack.Protected guard={status === 'anonymous'}>
+        <Stack.Screen name="login" options={{ title: 'Iniciar sesión', headerTitle: 'Iniciar sesión' }} />
+      </Stack.Protected>
+      <Stack.Protected guard={status === 'authenticated'}>
+        <Stack.Screen name="index" options={{ title: 'Inicio' }} />
+        <Stack.Screen name="studies/index" options={{ title: 'Estudios' }} />
+        <Stack.Screen name="studies/[id]" options={{ title: 'Detalle del estudio' }} />
+        <Stack.Screen name="profile" options={{ title: 'Mi perfil' }} />
+      </Stack.Protected>
+    </Stack>
+  );
+}
+
+export default function RootLayout() {
+  return (
+    <SafeAreaProvider>
+      <AuthProvider>
+        <StatusBar style="dark" />
+        <AuthenticatedNavigation />
+      </AuthProvider>
+    </SafeAreaProvider>
   );
 }
