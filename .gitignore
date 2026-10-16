@@ -46,3 +46,12 @@ reports/
 # generated native folders
 /ios
 /android
+
+# Private configuration and generated results
+.env
+.env.*
+!.env.example
+!.env.integration.example
+coverage/
+*.log
+artifacts/
