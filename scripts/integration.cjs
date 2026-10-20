@@ -49,6 +49,8 @@ async function main() {
   const { api } = loadTypeScript('src/core/api.ts');
   const { listStudies, getStudy, getStudyDetails } = loadTypeScript('src/features/studies/api.ts');
   const { getProfile } = loadTypeScript('src/features/profile/api.ts');
+  const { getCashCut } = loadTypeScript('src/features/cash-cuts/api.ts');
+  const { businessToday } = loadTypeScript('src/features/cash-cuts/dates.ts');
   const loginResponseSchema = z.object({
     token: z.string().min(1),
     usuario: z.object({
@@ -95,6 +97,17 @@ async function main() {
     check(profile.nombre === login.usuario.nombre && profile.email === login.usuario.email && profile.rol === login.usuario.rol, 'El perfil no corresponde a la identidad real del login.');
     pass('La consulta del perfil autenticado cumple el contrato de la app.');
 
+    phase = 'cortes por fecha y permisos';
+    const date = businessToday();
+    const cutQuery = { fromDate: date, toDate: date };
+    if (login.usuario.rol === 'admin') {
+      await getCashCut(cutQuery);
+      pass('El administrador consulta un corte real con el contrato esperado.');
+    } else {
+      await expectStatus(() => getCashCut(cutQuery), 403, 'cortes para recepción');
+      pass('El backend impide que recepción consulte los cortes administrativos.');
+    }
+
     phase = 'consulta y paginación de estudios';
     const firstPage = await listStudies({ page: 1, search: '' });
     check(firstPage.meta.page === 1, 'La página inicial del catálogo no coincide.');
@@ -124,9 +137,10 @@ async function main() {
     check(logout && typeof logout.message === 'string', 'El cierre de sesión no devolvió su confirmación.');
     await expectStatus(() => api.request('/studies?page=1&limit=1'), 401, 'sesión revocada');
     await expectStatus(() => getProfile(login.usuario.id), 401, 'perfil con sesión revocada');
+    await expectStatus(() => getCashCut(cutQuery), 401, 'cortes con sesión revocada');
     revoked = true;
     pass('Cerrar sesión revoca el token y el backend rechaza su reutilización.');
-    process.stdout.write('Integración real completada: 7 comprobaciones aprobadas.\n');
+    process.stdout.write('Integración real completada: 8 comprobaciones aprobadas.\n');
   } finally {
     if (authenticated && !revoked) {
       try { await api.request('/auth/logout', { method: 'POST' }); } catch { /* Best-effort cleanup; never logs secrets. */ }

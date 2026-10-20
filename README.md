@@ -17,6 +17,7 @@ La app está configurada con `https://backend-econolab-escuela-1.onrender.com/ap
 
 - Login, sesión almacenada con SecureStore en Android/iOS, restauración validada, expiración y logout con revocación.
 - Dashboard con acceso a estudios y perfil; pantallas protegidas.
+- Cortes por fecha para administradores: periodo/sucursal, importes reales registrados, cancelaciones, desglose diario y detalle paginado. [Alcance y planeación de Cortes](docs/CORTES.md).
 - Logo original de la web en las pantallas, icono nativo de ECONOLAB, tarjetas con su paleta y navegación inferior entre Inicio, Estudios y Perfil.
 - Catálogo real con búsqueda, filtros, paginación, actualización y detalle con precios y parámetros disponibles.
 - Perfil actualizado desde el backend, edición de nombre/correo con confirmación de contraseña al cambiar correo; rol protegido y cambio de contraseña.
@@ -45,6 +46,7 @@ La implementación completa está en `feature/HU-08-pruebas`, disponible localme
 - [Arquitectura](docs/ARCHITECTURE.md): estructura y contratos comprobados.
 - [Git](docs/GIT.md): issues, sub-issues, ramas y dependencias.
 - [Verificación del Project](docs/PROJECT_VERIFICATION.md): campos, seis Sprints y asignaciones oficiales comprobadas.
+- [Cortes por fecha](docs/CORTES.md): HU04, permisos, contrato real, alcance contable y pruebas.
 - [Wireframes](docs/WIREFRAMES.md): distribución e identidad visual.
 - [Perfil](docs/PROFILE_COMPATIBILITY.md): contratos implementados y publicación verificada en Render.
 - [Errores](docs/ERRORS.md): validación y recuperación.

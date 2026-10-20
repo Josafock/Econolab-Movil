@@ -1,20 +1,23 @@
 import { router, usePathname, type Href } from 'expo-router';
-import { FlaskConical, House, UserRound } from 'lucide-react-native';
+import { FlaskConical, House, UserRound, Wallet } from 'lucide-react-native';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors } from './theme';
+import { useAuth } from '@/features/auth/AuthProvider';
 
 const tabs = [
   { label: 'Inicio', href: '/' as Href, icon: House, matches: (path: string) => path === '/' },
   { label: 'Estudios', href: '/studies' as Href, icon: FlaskConical, matches: (path: string) => path.startsWith('/studies') },
+  { label: 'Cortes', href: '/cash-cuts' as Href, icon: Wallet, matches: (path: string) => path === '/cash-cuts' },
   { label: 'Perfil', href: '/profile' as Href, icon: UserRound, matches: (path: string) => path === '/profile' },
 ];
 
 export default function BottomNavigation() {
+  const { session, profile } = useAuth();
   const pathname = usePathname();
   const insets = useSafeAreaInsets();
   return <View style={[styles.navigation, { paddingBottom: Math.max(insets.bottom, 10), paddingLeft: Math.max(insets.left, 10), paddingRight: Math.max(insets.right, 10) }]}>
-    {tabs.map(({ label, href, icon: Icon, matches }) => {
+    {tabs.filter(tab => tab.label !== 'Cortes' || (profile ?? session?.usuario)?.rol === 'admin').map(({ label, href, icon: Icon, matches }) => {
       const selected = matches(pathname);
       return <Pressable key={label} accessibilityRole="tab" accessibilityLabel={label} accessibilityState={{ selected }} onPress={() => router.navigate(href)} style={({ pressed }) => [styles.tab, selected && styles.selected, pressed && { opacity: 0.7 }]}>
         <Icon size={21} strokeWidth={selected ? 2 : 1.7} color={selected ? colors.primary : colors.muted} />

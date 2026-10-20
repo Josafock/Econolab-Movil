@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { router } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { ArrowUpRight, FlaskConical, LogOut, ShieldCheck, UserRound } from 'lucide-react-native';
+import { ArrowUpRight, FlaskConical, LogOut, ShieldCheck, UserRound, Wallet } from 'lucide-react-native';
 import { useAuth } from '@/features/auth/AuthProvider';
 import { Button, Card, colors, Feedback, Heading, IconBadge, Screen } from '@/ui';
 import { errorMessage } from '@/core/errors';
@@ -33,6 +33,12 @@ export default function DashboardScreen() {
       <Button title="Consultar estudios" icon={ArrowUpRight} onPress={() => router.navigate('/studies')} />
     </LinearGradient>
     <Text accessibilityRole="header" style={styles.sectionTitle}>Accesos rápidos</Text>
+    {usuario.rol === 'admin' ? <Card>
+      <IconBadge icon={Wallet} tone="green" />
+      <Text accessibilityRole="header" style={styles.title}>Cortes por fecha</Text>
+      <Text style={styles.description}>Revisa los importes registrados, cancelaciones y el desglose por día.</Text>
+      <Button title="Consultar cortes" icon={ArrowUpRight} variant="secondary" onPress={() => router.navigate('/cash-cuts')} />
+    </Card> : null}
     <Card>
       <IconBadge icon={FlaskConical} />
       <Text accessibilityRole="header" style={styles.title}>Catálogo de estudios</Text>

@@ -16,7 +16,7 @@ export function ErrorBoundary({ retry }: ErrorBoundaryProps) {
 }
 
 function AuthenticatedNavigation() {
-  const { status, error, notice, retry, logout } = useAuth();
+  const { status, session, profile, error, notice, retry, logout } = useAuth();
   if (status === 'loading') {
     return <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}><Loading /></SafeAreaView>;
   }
@@ -42,6 +42,9 @@ function AuthenticatedNavigation() {
         <Stack.Screen name="studies/index" options={{ title: 'Estudios' }} />
         <Stack.Screen name="studies/[id]" options={{ title: 'Detalle del estudio' }} />
         <Stack.Screen name="profile" options={{ title: 'Mi perfil' }} />
+        <Stack.Protected guard={(profile ?? session?.usuario)?.rol === 'admin'}>
+          <Stack.Screen name="cash-cuts" options={{ title: 'Cortes' }} />
+        </Stack.Protected>
       </Stack.Protected>
     </Stack><ConnectionBanner />{status === 'authenticated' ? <BottomNavigation /> : null}</View>
   );
