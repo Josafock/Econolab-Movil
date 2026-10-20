@@ -35,7 +35,7 @@ El perfil utiliza `GET/PATCH /api/users/me` del backend existente. El PR1 del ba
 
 Las issues y el Project de [Econolab-Movil](https://github.com/Josafock/Econolab-Movil) son la planificación oficial. Cada HU tiene su rama y PR hacia `main`; las ramas dependientes incluyen el código de las anteriores. El responsable integra los PR según sus sprints. No se realizaron merges en el móvil ni cambios de calendario. El propietario autorizó integrar únicamente el backend para habilitar el perfil.
 
-La implementación completa está en `feature/HU-08-pruebas`, disponible localmente y en el remoto. `main` conserva el estado original por instrucción del proyecto.
+La versión con Cortes está en `feature/HU-04-cortes`; la acumulada `feature/HU-08-pruebas` conserva la versión anterior. La rama nueva se actualizó sobre el `main` integrado por el propietario para resolver los conflictos del PR, sin modificar otras ramas ni integrar funcionalidades a `main`.
 
 ## Documentación
 
@@ -51,3 +51,8 @@ La implementación completa está en `feature/HU-08-pruebas`, disponible localme
 - [Perfil](docs/PROFILE_COMPATIBILITY.md): contratos implementados y publicación verificada en Render.
 - [Errores](docs/ERRORS.md): validación y recuperación.
 - [Pruebas](docs/TESTING.md): comandos, integración y revisión en dispositivo.
+
+
+## CI/CD por issue
+
+Push y Pull Request ejecutan regresión y checks por HU. Después del merge, main valida el conjunto y entrega artifacts. Consulta [workflows, cobertura y entornos](docs/GITHUB_ACTIONS.md).

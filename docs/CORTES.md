@@ -26,6 +26,8 @@ La lectura se incorpora al backend existente sin tablas, columnas o migraciones 
 
 Rama `feature/HU-04-cortes`, basada en la acumulada HU08 `684755e` para conservar autenticación, estudios, perfil, identidad visual y el pipeline actual. El diff hacia main incluye las bases pendientes; el responsable integra los PR móviles conforme a su planeación. Main remoto al iniciar el trabajo: `bbd004f`; no se integra ningún PR móvil.
 
+Para resolver los conflictos con HU01 ya integrada por el propietario, se aplicó rebase únicamente a la rama nueva sobre `origin/main`. Se conservaron el código probado y los workflows actuales; las otras ramas y main no se reescribieron. El PR móvil es [#56](https://github.com/Josafock/Econolab-Movil/pull/56). El backend fue integrado con la autorización previa del propietario: PR2, merge `07404d6`.
+
 132 pruebas móviles en diez suites y 77 del backend en diez suites aprobadas; lint/TypeScript, build Nest y exportación Metro Android/iOS aprobados. Se incorporan pruebas del dashboard, permisos, fechas, precisión decimal, paginación, respuestas tardías y errores de red. El registro `ci/features.json` vincula las suites nuevas con HU04 y la regresión HU08 sin modificar el mecanismo obligatorio del PR.
 
 El smoke con controladores reales y la base existente verificó JWT, revocación, filtros, fechas, centavos, cancelados, resumen completo, paginación, proyección segura y límites de medianoche; comparó con un cálculo independiente en centavos. La prueba de desarrollo no escribe servicios o importes ni constituye un cierre de Sprint. La ejecución física Android/iOS sigue pendiente del equipo.
