@@ -1,0 +1,31 @@
+{
+  "cli": {
+    "version": ">= 25.3.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "preview": {
+      "distribution": "internal",
+      "environment": "preview",
+      "node": "24.22.0",
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://backend-econolab-escuela-1.onrender.com/api"
+      },
+      "android": {
+        "buildType": "apk"
+      }
+    },
+    "production": {
+      "distribution": "store",
+      "environment": "production",
+      "node": "24.22.0",
+      "autoIncrement": true,
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://backend-econolab-escuela-1.onrender.com/api"
+      },
+      "android": {
+        "buildType": "app-bundle"
+      }
+    }
+  }
+}

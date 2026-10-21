@@ -21,12 +21,12 @@ import { colors, layout } from './theme';
 export { colors } from './theme';
 
 /** El encabezado de Stack atiende el borde superior del dispositivo. */
-export function Screen({ children, scroll = true, topInset = false }: PropsWithChildren<{ scroll?: boolean; topInset?: boolean }>) {
+export function Screen({ children, scroll = true, topInset = false, bottomInset = false }: PropsWithChildren<{ scroll?: boolean; topInset?: boolean; bottomInset?: boolean }>) {
   const { width } = useWindowDimensions();
   const contentStyle = [styles.content, width >= 600 && styles.wideContent];
 
   return (
-    <SafeAreaView edges={topInset ? ['top', 'left', 'right', 'bottom'] : ['left', 'right']} style={styles.screen}>
+    <SafeAreaView edges={topInset ? ['top', 'left', 'right', 'bottom'] : bottomInset ? ['left', 'right', 'bottom'] : ['left', 'right']} style={styles.screen}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         style={styles.fill}

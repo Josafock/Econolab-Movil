@@ -90,6 +90,7 @@ describe('profile password validation and existing API', () => {
       method: 'PATCH',
       body: { current_password: validChange.current_password, password: validChange.password },
       expireOnUnauthorized: false,
+      signal: undefined,
     });
   });
 
@@ -99,7 +100,7 @@ describe('profile password validation and existing API', () => {
     await expect(updatePassword(validChange.current_password, validChange.password)).rejects.toMatchObject({
       kind: 'validation', message: 'La contraseña actual no es correcta.',
     });
-    expect(request).toHaveBeenNthCalledWith(2, '/studies?page=1&limit=1');
+    expect(request).toHaveBeenNthCalledWith(2, '/studies?page=1&limit=1', { signal: undefined });
   });
 
   it('propagates a revoked-session response from the validation request', async () => {
@@ -127,5 +128,12 @@ describe('profile password validation and existing API', () => {
   it('does not show success for an invalid server response', async () => {
     request.mockResolvedValue({ saved: true });
     await expect(updatePassword(validChange.current_password, validChange.password)).rejects.toMatchObject({ kind: 'unexpected' });
+  });
+
+  it('propagates cancellation through the password change and session probe', async () => {
+    const controller = new AbortController();
+    request.mockRejectedValueOnce(new AppError('unauthorized', 'Unauthorized', 401)).mockResolvedValueOnce({});
+    await expect(updatePassword(validChange.current_password, validChange.password, controller.signal)).rejects.toMatchObject({ kind: 'validation' });
+    expect(request.mock.calls.every(([, options]) => options?.signal === controller.signal)).toBe(true);
   });
 });

@@ -33,7 +33,7 @@ function AuthenticatedNavigation() {
     );
   }
   return (
-    <View style={{ flex: 1, backgroundColor: colors.background }}><Stack screenOptions={{ headerTitle: () => <Brand compact />, headerTitleAlign: 'center', headerTintColor: colors.text, headerStyle: { backgroundColor: colors.card }, headerShadowVisible: false, contentStyle: { backgroundColor: colors.background } }}>
+    <View style={{ flex: 1, backgroundColor: colors.background }}><Stack initialRouteName={status === 'authenticated' ? 'index' : 'login'} screenOptions={{ headerTitle: () => <Brand compact />, headerTitleAlign: 'center', headerTintColor: colors.text, headerStyle: { backgroundColor: colors.card }, headerShadowVisible: false, contentStyle: { backgroundColor: colors.background } }}>
       <Stack.Protected guard={status === 'anonymous'}>
         <Stack.Screen name="login" options={{ title: 'Iniciar sesión', headerShown: false }} />
       </Stack.Protected>
@@ -46,6 +46,8 @@ function AuthenticatedNavigation() {
           <Stack.Screen name="cash-cuts" options={{ title: 'Cortes' }} />
         </Stack.Protected>
       </Stack.Protected>
+      <Stack.Screen name="about" options={{ title: 'Ayuda y uso de datos' }} />
+      <Stack.Screen name="+not-found" options={{ title: 'Pantalla no encontrada' }} />
     </Stack><ConnectionBanner />{status === 'authenticated' ? <BottomNavigation /> : null}</View>
   );
 }

@@ -4,8 +4,10 @@ import { KeyRound, Mail, Pencil, RefreshCw, Save, ShieldCheck, UserRound } from 
 import { useAuth } from '@/features/auth/AuthProvider';
 import type { User } from '@/features/auth/session';
 import { errorMessage, isCancelled } from '@/core/errors';
+import { fieldMessages } from '@/core/validation';
 import { Button, Card, colors, Feedback, Field, Loading } from '@/ui';
 import ConfirmDialog from '@/ui/ConfirmDialog';
+import PasswordField from '@/ui/PasswordField';
 import { getProfile, updateProfile } from './api';
 import { profileChangeSchema } from './validation';
 
@@ -53,9 +55,13 @@ export default function ProfileCard({ disabled = false }: { disabled?: boolean }
   }, [load]);
 
   const emailChanged = !!user && email.trim().toLowerCase() !== user.email.toLowerCase();
+  function edit(field: string, value: string, setter: (value: string) => void) {
+    setter(value); setError(''); setMessage('');
+    setFields(previous => ({ ...previous, [field]: '' }));
+  }
   const validate = () => {
     const result = profileChangeSchema.safeParse({ nombre, email });
-    const issues = result.success ? {} : Object.fromEntries(result.error.issues.map(issue => [String(issue.path[0]), issue.message]));
+    const issues: Record<string, string> = result.success ? {} : fieldMessages(result.error);
     if (emailChanged && !password) issues.current_password = 'Confirma tu contraseña para cambiar el correo.';
     setFields(issues);
     return result.success && Object.keys(issues).length === 0 ? result.data : null;
@@ -90,10 +96,10 @@ export default function ProfileCard({ disabled = false }: { disabled?: boolean }
     {!loading && user ? <>
       <View style={styles.top}><View style={styles.avatar}><Text style={styles.initial}>{user.nombre.trim().charAt(0).toUpperCase()}</Text></View><View style={styles.badge}><ShieldCheck size={14} color={colors.primary} /><Text style={styles.role}>{user.rol === 'admin' ? 'Administrador' : 'Recepcionista'}</Text></View></View>
       {editing ? <>
-        <Field label="Nombre" icon={UserRound} value={nombre} onChangeText={setNombre} error={fields.nombre} maxLength={50} editable={!busy && !disabled} autoComplete="name" />
-        <Field label="Correo electrónico" icon={Mail} value={email} onChangeText={setEmail} error={fields.email} maxLength={50} editable={!busy && !disabled} autoCapitalize="none" autoCorrect={false} keyboardType="email-address" autoComplete="email" />
+        <Field label="Nombre" icon={UserRound} value={nombre} onChangeText={value => edit('nombre', value, setNombre)} error={fields.nombre} maxLength={50} editable={!busy && !disabled} autoComplete="name" />
+        <Field label="Correo electrónico" icon={Mail} value={email} onChangeText={value => edit('email', value, setEmail)} error={fields.email} maxLength={50} editable={!busy && !disabled} autoCapitalize="none" autoCorrect={false} keyboardType="email-address" autoComplete="email" />
         <Text style={styles.note}>Si cambias el correo, será el que uses para iniciar sesión.</Text>
-        {emailChanged ? <Field label="Confirma tu contraseña" icon={KeyRound} value={password} onChangeText={setPassword} error={fields.current_password} secureTextEntry autoCapitalize="none" autoCorrect={false} autoComplete="current-password" maxLength={128} editable={!busy && !disabled} /> : null}
+        {emailChanged ? <PasswordField label="Confirma tu contraseña" icon={KeyRound} value={password} onChangeText={value => edit('current_password', value, setPassword)} error={fields.current_password} autoComplete="current-password" editable={!busy && !disabled} /> : null}
         <Button title="Guardar perfil" icon={Save} loading={busy} disabled={disabled} onPress={() => { if (validate()) setConfirming(true); }} />
         <Button title="Cancelar edición" variant="secondary" disabled={busy || disabled} onPress={() => { setEditing(false); setPassword(''); setFields({}); setError(''); }} />
       </> : <>

@@ -13,6 +13,11 @@ expo-env.d.ts
 .kotlin/
 *.orig.*
 *.jks
+*.keystore
+credentials.json
+*service-account*.json
+*service_account*.json
+google-play*.json
 *.p8
 *.p12
 *.key

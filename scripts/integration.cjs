@@ -66,7 +66,7 @@ async function main() {
   api.setToken(null);
   try {
     phase = 'acceso anónimo';
-    await expectStatus(() => api.request('/studies?page=1&limit=1', { authenticated: false }), 401, phase);
+    await expectStatus(() => api.request('/studies?page=1&limit=1', { authenticated: false, timeoutMs: 60000 }), 401, phase);
     pass('El backend rechaza el acceso anónimo al catálogo.');
 
     phase = 'inicio de sesión';

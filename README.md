@@ -22,6 +22,7 @@ La app está configurada con `https://backend-econolab-escuela-1.onrender.com/ap
 - Catálogo real con búsqueda, filtros, paginación, actualización y detalle con precios y parámetros disponibles.
 - Perfil actualizado desde el backend, edición de nombre/correo con confirmación de contraseña al cambiar correo; rol protegido y cambio de contraseña.
 - Validaciones y mensajes para errores de red, timeout, sesión, permisos y respuestas inesperadas.
+- Ayuda y uso de datos desde el acceso y el perfil; política de privacidad y soporte enlazables mediante configuración pública.
 
 El perfil utiliza `GET/PATCH /api/users/me` del backend existente. El PR1 del backend está integrado con autorización del propietario y la consulta/edición se verificaron en Render. [Compatibilidad del perfil](docs/PROFILE_COMPATIBILITY.md) describe los contratos y las pruebas de publicación.
 
@@ -35,7 +36,7 @@ El perfil utiliza `GET/PATCH /api/users/me` del backend existente. El PR1 del ba
 
 Las issues y el Project de [Econolab-Movil](https://github.com/Josafock/Econolab-Movil) son la planificación oficial. Cada HU tiene su rama y PR hacia `main`; las ramas dependientes incluyen el código de las anteriores. El responsable integra los PR según sus sprints. No se realizaron merges en el móvil ni cambios de calendario. El propietario autorizó integrar únicamente el backend para habilitar el perfil.
 
-La versión con Cortes está en `feature/HU-04-cortes`; la acumulada `feature/HU-08-pruebas` conserva la versión anterior. La rama nueva se actualizó sobre el `main` integrado por el propietario para resolver los conflictos del PR, sin modificar otras ramas ni integrar funcionalidades a `main`.
+La entrega con pulido y preparación de Google Play está en `fix/HU-08-publicacion-play-store`, basada en `feature/HU-04-cortes`. La acumulada `feature/HU-08-pruebas` conserva la versión anterior. Se conserva el `main` integrado por el propietario y la integración de los PR queda a su cargo, sin cambiar el calendario del Project.
 
 ## Documentación
 
@@ -56,3 +57,6 @@ La versión con Cortes está en `feature/HU-04-cortes`; la acumulada `feature/HU
 ## CI/CD por issue
 
 Push y Pull Request ejecutan regresión y checks por HU. Después del merge, main valida el conjunto y entrega artifacts. Consulta [workflows, cobertura y entornos](docs/GITHUB_ACTIONS.md).
+- [Publicar en Google Play paso a paso](docs/PUBLICAR_GOOGLE_PLAY.md): cuentas, APK, AAB, ficha, privacidad, pruebas y producción.
+- [Pulido y preparación de publicación](docs/PULIDO_PUBLICACION.md): cambios, pruebas, trazabilidad y pendientes del responsable.
+- [Privacidad pendiente del responsable](docs/PRIVACIDAD_PENDIENTES.md): datos reales que debes confirmar antes de publicar.

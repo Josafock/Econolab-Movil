@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import { Keyboard, Text, TextInput, StyleSheet, Platform, View } from 'react-native';
 import { ArrowRight, Eye, EyeOff, LockKeyhole, Mail, ShieldCheck } from 'lucide-react-native';
+import { router } from 'expo-router';
 
 import { errorMessage } from '@/core/errors';
 import { Brand, Button, Card, Feedback, Field, Heading, IconButton, Screen, colors } from '@/ui';
@@ -22,8 +23,6 @@ export default function LoginScreen() {
     if (submitting.current) return;
     const result = credentialsSchema.safeParse({ email, password });
     const attemptedPassword = password;
-    setPassword('');
-    setPasswordVisible(false);
     setSubmitError(undefined);
     if (!result.success) {
       const fields = result.error.flatten().fieldErrors;
@@ -31,6 +30,8 @@ export default function LoginScreen() {
       return;
     }
     setFieldErrors({});
+    setPassword('');
+    setPasswordVisible(false);
     submitting.current = true;
     setBusy(true);
     Keyboard.dismiss();
@@ -56,7 +57,7 @@ export default function LoginScreen() {
           icon={Mail}
           placeholder="tu.correo@ejemplo.com"
           value={email}
-          onChangeText={setEmail}
+          onChangeText={value => { setEmail(value); setFieldErrors(fields => ({ ...fields, email: undefined })); setSubmitError(undefined); }}
           error={fieldErrors.email}
           keyboardType="email-address"
           textContentType="username"
@@ -75,7 +76,7 @@ export default function LoginScreen() {
           placeholder="Escribe tu contraseña"
           rightAccessory={<IconButton icon={passwordVisible ? EyeOff : Eye} label={passwordVisible ? 'Ocultar contraseña' : 'Mostrar contraseña'} disabled={busy} onPress={() => setPasswordVisible((visible) => !visible)} />}
           value={password}
-          onChangeText={setPassword}
+          onChangeText={value => { setPassword(value); setFieldErrors(fields => ({ ...fields, password: undefined })); setSubmitError(undefined); }}
           error={fieldErrors.password}
           secureTextEntry={!passwordVisible}
           textContentType="password"
@@ -93,6 +94,7 @@ export default function LoginScreen() {
       <Text style={styles.note}>
         Usa la misma cuenta que en la aplicación web. Si todavía no tienes acceso, contacta al administrador.
       </Text>
+      <Button title="Ayuda y uso de datos" variant="secondary" onPress={() => router.push('/about')} />
       {Platform.OS === 'web' ? (
         <Text style={styles.note}>En esta vista web, la sesión termina al recargar o cerrar la página.</Text>
       ) : null}
