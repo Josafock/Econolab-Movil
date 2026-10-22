@@ -36,3 +36,7 @@ El prebuild y la exportación de JavaScript **no compilan, firman ni ejecutan un
 5. Completar ficha, acceso seguro de revisión, privacidad, datos, declaración de salud y pruebas requeridas por Google; después solicitar producción.
 
 Consulta la [guía paso a paso](PUBLICAR_GOOGLE_PLAY.md). No se creó una cuenta, no se contrató una compilación ni se envió una publicación a Google Play.
+
+## Corrección del hook de EAS — 21/10/2026
+
+La primera compilación preview del propietario falló en `PRE_INSTALL_HOOK`: la comprobación rechazaba la carpeta `android`, aunque EAS solo había conservado el directorio vacío. Se reprodujo el problema con `eas build:inspect --stage archive`, verificando que no había archivos de Gradle, manifiesto Android ni `.env.integration` en ese paquete. Se eliminó únicamente esa condición; el hook sigue rechazando credenciales privadas y manteniendo los requisitos de publicación. Dos pruebas ejecutan el script real en directorios temporales: permiten las carpetas nativas vacías y rechazan un archivo de credenciales sin mostrar su contenido. El conjunto de CI/configuración pasa de 19 a 21 pruebas. La vinculación de Expo creada por el propietario se conserva en su copia local.

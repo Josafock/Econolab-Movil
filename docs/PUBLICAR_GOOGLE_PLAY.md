@@ -171,6 +171,8 @@ Para una actualización, cambia la versión visible en `app.json` y `package.jso
 | Google no puede revisar Cortes | Revisa el rol de la cuenta de demostración y las instrucciones de acceso |
 | `versionCode` ya usado | Ajusta la numeración remota de EAS para superar el último código subido y genera otro AAB |
 | Advertencia de API o 16 KB | Revisa el AAB y sus bibliotecas nativas; no ocultes la advertencia ni cambies versiones mayores sin probar compatibilidad |
-| EAS detecta archivos privados o Android preexistente | Revisa que se use el `.easignore` de esta entrega y ejecuta desde `mobile` |
+| EAS detecta archivos privados | Revisa que se use el `.easignore` de esta entrega y ejecuta desde `mobile` |
+
+Corrección del 21/10/2026: el archivo que prepara EAS puede conservar carpetas vacías, incluido `android`, aunque sus archivos estén correctamente excluidos. Se retiró el bloqueo que trataba su sola existencia como error. Si una copia anterior falla en `Pre-install hook` con «Excluye las carpetas nativas generadas», utiliza el `scripts/check-release.cjs` actualizado y vuelve a compilar. Se mantienen las comprobaciones de credenciales privadas y de configuración para Google Play.
 
 No se creó ninguna cuenta de Google/Expo, no se cargó una clave de firma y no se contrató ni inició una compilación remota durante esta preparación.

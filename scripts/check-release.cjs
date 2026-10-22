@@ -47,7 +47,9 @@ function main() {
     const privateFiles = fs.readdirSync(root).filter(file => /^\.env(\.|$)/.test(file) && !['.env.example', '.env.integration.example'].includes(file)
       || /\.(jks|keystore|p8|p12|pem|key)$/.test(file) || file === 'credentials.json' || /service[-_]account.*\.json$/i.test(file));
     if (privateFiles.length) issues.push('El paquete de EAS contiene archivos privados. Revisa .easignore antes de compilar.');
-    if (fs.existsSync(path.join(root, 'android')) || fs.existsSync(path.join(root, 'ios'))) issues.push('Excluye las carpetas nativas generadas en .easignore para que se aplique app.json.');
+    // EAS puede conservar directorios nativos vacíos o prepararlos en el servidor.
+    // Su existencia aquí no prueba que se haya incluido código nativo en el archivo.
+    // La exclusión se comprueba sobre el archivo de subida, no sobre el builder.
   }
   if (issues.length) {
     process.stderr.write(`Falta completar la preparación:\n${issues.map(issue => `- ${issue}`).join('\n')}\n`);
