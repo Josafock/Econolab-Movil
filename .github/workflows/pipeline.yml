@@ -68,7 +68,9 @@ jobs:
         run: npm ci --no-audit --no-fund
       - name: Probar la selección del pipeline
         id: ci_tests
-        run: node --test tests/ci/*.test.cjs
+        run: |
+          node --test tests/ci/*.test.cjs
+          npm run release:check
       - name: ESLint
         id: lint
         run: |

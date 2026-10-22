@@ -7,6 +7,7 @@ export type RequestOptions = {
   signal?: AbortSignal;
   authenticated?: boolean;
   expireOnUnauthorized?: boolean;
+  timeoutMs?: number;
 };
 
 // Tokens are held in memory here. Persistence belongs exclusively to SecureStore.
@@ -28,7 +29,7 @@ export class ApiClient {
     const abort = () => controller.abort();
     if (options.signal?.aborted) controller.abort();
     options.signal?.addEventListener('abort', abort);
-    const timer = setTimeout(() => { timedOut = true; controller.abort(); }, this.timeoutMs);
+    const timer = setTimeout(() => { timedOut = true; controller.abort(); }, options.timeoutMs ?? this.timeoutMs);
     try {
       const response = await fetch(`${base}${path}`, {
         method: options.method ?? 'GET',
@@ -37,16 +38,20 @@ export class ApiClient {
         signal: controller.signal,
         redirect: 'error',
       });
+      if (controller.signal.aborted) throw new Error('aborted');
       if (!response.ok) {
         if (response.status === 401 && token && token === this.token && options.expireOnUnauthorized !== false) this.onUnauthorized?.();
         // Do not surface raw backend messages: they may contain internal data.
         throw httpError(response.status);
       }
       if (response.status === 204) return null;
-      try { return await response.json(); } catch {
+      let data: unknown;
+      try { data = await response.json(); } catch {
         if (controller.signal.aborted) throw new Error('aborted');
         throw new AppError('unexpected', 'El servicio envió una respuesta que no pudimos leer.');
       }
+      if (controller.signal.aborted) throw new Error('aborted');
+      return data;
     } catch (error) {
       if (timedOut) throw new AppError('timeout', 'La conexión tardó demasiado. Inténtalo de nuevo.');
       if (options.signal?.aborted) { const cancelled = new Error('Cancelled'); cancelled.name = 'AbortError'; throw cancelled; }
