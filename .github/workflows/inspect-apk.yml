@@ -3,7 +3,7 @@ name: Inspeccionar APK firmado de distribución
 on:
   push:
     branches: ['fix/HU-08-seguridad-rubrica']
-    paths: ['.github/workflows/inspect-apk.yml', 'scripts/security/inspect-distribution.cjs', 'docs/evidencias-rubrica/APK_1_1_0_CODE3_INSPECCION.json']
+    paths: ['.github/workflows/inspect-apk.yml', 'scripts/security/inspect-distribution.cjs', 'docs/evidencias-rubrica/APK_ACTUAL.json']
   workflow_dispatch:
 
 permissions:
@@ -20,8 +20,9 @@ jobs:
       - name: Descargar el APK identificado y verificar firma
         run: |
           mkdir -p reports/distribution
-          curl -fL https://expo.dev/artifacts/eas/CawfXOxkWr0ApGpT0JPhyYFiL40iJKfqmYXrJ7-mx7w.apk -o /tmp/econolab.apk
-          EXPECTED=$(node -p "require('./docs/evidencias-rubrica/APK_1_1_0_CODE3_INSPECCION.json').sha256")
+          APK_URL=$(node -e "const u=new URL(require('./docs/evidencias-rubrica/APK_ACTUAL.json').downloadUrl);if(u.protocol!=='https:'||u.hostname!=='expo.dev'||!u.pathname.startsWith('/artifacts/eas/'))throw Error('URL de APK no autorizada');process.stdout.write(u.href)")
+          curl --proto '=https' --proto-redir '=https' -fL "$APK_URL" -o /tmp/econolab.apk
+          EXPECTED=$(node -p "require('./docs/evidencias-rubrica/APK_ACTUAL.json').sha256")
           echo "$EXPECTED  /tmp/econolab.apk" | sha256sum --check
           APKSIGNER=$(find "$ANDROID_HOME/build-tools" -name apksigner -type f | sort -V | tail -1)
           test -n "$APKSIGNER"

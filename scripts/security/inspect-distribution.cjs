@@ -5,7 +5,7 @@ const { spawnSync } = require('node:child_process');
 
 const [apk, jadx] = process.argv.slice(2);
 if (!apk || !jadx) throw new Error('Uso: node scripts/security/inspect-distribution.cjs <apk> <jadx>');
-const expected = require('../../docs/evidencias-rubrica/APK_1_1_0_CODE3_INSPECCION.json');
+const expected = require('../../docs/evidencias-rubrica/APK_ACTUAL.json');
 const hash = crypto.createHash('sha256').update(fs.readFileSync(apk)).digest('hex');
 if (hash !== expected.sha256) throw new Error('El APK no coincide con el build de distribución identificado.');
 const dir = path.resolve('reports/distribution');
