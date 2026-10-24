@@ -71,10 +71,19 @@ name: Acceso consentimiento estudios perfil y cierre de sesión
 - extendedWaitUntil:
     visible: Mi perfil
     timeout: 60000
+- scrollUntilVisible:
+    element: Privacidad y mis datos
+    direction: DOWN
 - tapOn: Privacidad y mis datos
 - extendedWaitUntil:
-    visible: .*Aviso aceptado.*
+    visible: Privacidad y mis datos
     timeout: 60000
+- scrollUntilVisible:
+    element:
+      text: '.*Aviso aceptado.*'
+    direction: DOWN
+    timeout: 60000
+- assertVisible: '.*Aviso aceptado.*'
 - takeScreenshot: privacidad
 - scrollUntilVisible:
     element: Permitir comunicaciones opcionales
@@ -91,7 +100,13 @@ name: Acceso consentimiento estudios perfil y cierre de sesión
 - extendedWaitUntil:
     visible: Tus decisiones de privacidad se guardaron.
     timeout: 60000
+- scrollUntilVisible:
+    element: Permitir comunicaciones opcionales
+    direction: DOWN
 - tapOn: Permitir comunicaciones opcionales
+- scrollUntilVisible:
+    element: Guardar mis decisiones
+    direction: DOWN
 - tapOn: Guardar mis decisiones
 - extendedWaitUntil:
     visible: Tus decisiones de privacidad se guardaron.
