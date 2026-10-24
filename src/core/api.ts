@@ -1,6 +1,5 @@
 import { getApiUrl } from './config';
 import { AppError, httpError } from './errors';
-import { ensurePinnedTransport } from './pinning';
 
 export type RequestOptions = {
   method?: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE';
@@ -19,10 +18,11 @@ export class ApiClient {
   private onRefresh: ((expectedToken: string) => Promise<string | null>) | undefined;
   private refreshing: { token: string; promise: Promise<string | null> } | undefined;
   private readonly renewedTokens = new Map<string, string>();
-  constructor(private readonly baseUrl: () => string = getApiUrl, private readonly timeoutMs = 15000, private readonly prepare?: () => Promise<void>) {}
+  constructor(private readonly baseUrl: () => string = getApiUrl, private readonly timeoutMs = 15000, private prepare?: () => Promise<void>) {}
   setToken(token: string | null) { this.token = token; if (!token) this.renewedTokens.clear(); }
   setUnauthorizedHandler(handler: (() => void) | undefined) { this.onUnauthorized = handler; }
   setRefreshHandler(handler: ((expectedToken: string) => Promise<string | null>) | undefined) { this.onRefresh = handler; }
+  setTransportPreparation(prepare: () => Promise<void>) { this.prepare = prepare; }
 
   private refresh(token: string) {
     if (this.refreshing?.token === token) return this.refreshing.promise;
@@ -101,4 +101,6 @@ export class ApiClient {
 }
 
 /** Singleton at the composition root; constructible instances keep tests isolated. */
-export const api = new ApiClient(getApiUrl, 15000, ensurePinnedTransport);
+export const api = new ApiClient(getApiUrl, 15000, async () => {
+  throw new AppError('configuration', 'La conexión segura todavía no está preparada.');
+});

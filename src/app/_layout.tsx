@@ -8,6 +8,11 @@ import { Brand, Button, Feedback, Heading, Loading, Screen, colors } from '@/ui'
 import ConnectionBanner from '@/ui/ConnectionBanner';
 import BottomNavigation from '@/ui/BottomNavigation';
 import PrivacyConsentGate from '@/features/privacy/PrivacyConsentGate';
+import { api } from '@/core/api';
+import { ensurePinnedTransport } from '@/core/pinning';
+
+// Composition root: every app request awaits native pinning initialization.
+api.setTransportPreparation(ensurePinnedTransport);
 
 export function ErrorBoundary({ retry }: ErrorBoundaryProps) {
   return <SafeAreaProvider><SafeAreaView style={{ flex: 1 }}><Screen>

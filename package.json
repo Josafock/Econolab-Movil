@@ -61,6 +61,7 @@
     "build": "expo export --platform android --platform ios",
     "verify": "npm run lint && npm run typecheck && npm test -- --runInBand && npm run build",
     "test:integration": "node --env-file=.env.integration scripts/integration.cjs",
+    "test:integration:security": "node --env-file=.env.integration scripts/security/integration-session.cjs",
     "generate:icons": "node scripts/generate-icons.cjs",
     "release:check": "node scripts/check-release.cjs",
     "generate:store-assets": "node scripts/generate-store-assets.cjs",

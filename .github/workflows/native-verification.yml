@@ -48,7 +48,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           repository: DavidHdz117/Backend_Econolab_Escuela
-          ref: c64f3f91dd20413d626ebec7145347f112f3fc0e
+          ref: 602f9e2969edba026618437415f1242e662e0d1a
           path: qa-backend
           persist-credentials: false
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
@@ -98,6 +98,20 @@ jobs:
           grep -F 'android.enableMinifyInReleaseBuilds=true' android/gradle.properties
           grep -F 'android.enableShrinkResourcesInReleaseBuilds=true' android/gradle.properties
           grep -F 'android:allowBackup="false"' android/app/src/main/AndroidManifest.xml
+      - name: Recuperar dependencias y compilaciones C++ de Android
+        id: gradle_cache
+        uses: actions/cache/restore@caa296126883cff596d87d8935842f9db880ef25 # v5
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            android/app/.cxx
+            android/app/build/intermediates/cxx
+            node_modules/**/android/.cxx
+            node_modules/**/android/build/intermediates/cxx
+          key: native-android-v1-${{ runner.os }}-${{ hashFiles('package-lock.json', 'app.config.js', 'plugins/**', 'native-tests/**') }}-${{ github.sha }}
+          restore-keys: |
+            native-android-v1-${{ runner.os }}-${{ hashFiles('package-lock.json', 'app.config.js', 'plugins/**', 'native-tests/**') }}-
       - name: Compilar Debug Release y pruebas TLS nativas
         id: native_build
         working-directory: android
@@ -105,7 +119,19 @@ jobs:
           NODE_ENV: production
         run: |
           chmod +x gradlew
-          ./gradlew :app:assembleDebug :app:assembleRelease :app:testReleaseUnitTest -PreactNativeArchitectures=x86_64 --no-daemon --max-workers=2 -Dorg.gradle.jvmargs=-Xmx4g > ../reports/native/gradle.log 2>&1
+          ./gradlew :app:assembleDebug :app:assembleRelease :app:testReleaseUnitTest -PreactNativeArchitectures=x86_64 --build-cache --no-daemon --max-workers=2 -Dorg.gradle.jvmargs=-Xmx4g > ../reports/native/gradle.log 2>&1
+      - name: Guardar caché de Android incluso ante un fallo posterior
+        if: always() && steps.gradle_cache.outputs.cache-primary-key != '' && steps.gradle_cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@caa296126883cff596d87d8935842f9db880ef25 # v5
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            android/app/.cxx
+            android/app/build/intermediates/cxx
+            node_modules/**/android/.cxx
+            node_modules/**/android/build/intermediates/cxx
+          key: ${{ steps.gradle_cache.outputs.cache-primary-key }}
       - name: Instalar Maestro con checksum publicado
         run: |
           curl -fL https://github.com/mobile-dev-inc/Maestro/releases/download/cli-2.11.0/maestro.zip -o /tmp/maestro.zip
@@ -150,6 +176,7 @@ jobs:
           if [ -n "$QA_METRO_PID" ]; then kill "$QA_METRO_PID" || true; fi
           cp -R android/app/build/test-results reports/native/ 2>/dev/null || true
           cp android/app/build/outputs/mapping/release/mapping.txt reports/native/ 2>/dev/null || true
+          node scripts/security/redact-qa-reports.cjs
       - name: Conservar evidencias nativas
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7

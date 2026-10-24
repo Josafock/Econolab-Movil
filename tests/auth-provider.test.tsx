@@ -4,7 +4,7 @@ import type { PropsWithChildren } from 'react';
 import { api } from '@/core/api';
 import { AppError } from '@/core/errors';
 import { AuthProvider, useAuth } from '@/features/auth/AuthProvider';
-import { loginRequest, logoutRequest, validateSession } from '@/features/auth/api';
+import { loginRequest, logoutRequest, refreshRequest, validateSession } from '@/features/auth/api';
 import { readSession, removeSession, saveSession, type Session } from '@/features/auth/session';
 
 jest.mock('@/core/api', () => ({ api: { setToken: jest.fn(), setUnauthorizedHandler: jest.fn(), setRefreshHandler: jest.fn() } }));
@@ -131,4 +131,37 @@ it('keeps access blocked when secure deletion fails and retry performs deletion'
   act(() => result.current.retry());
   await waitFor(() => expect(result.current.status).toBe('anonymous'));
   expect(removeSession).toHaveBeenCalledTimes(2);
+});
+
+it('rotates and persists refresh once while a foreground verification waits for the new session', async () => {
+  const stored = { ...session, refreshToken: 'refresh-fixture', refreshExpiresAt: Date.now() + 86400000 };
+  const next = { ...stored, token: 'renewed-access-fixture', refreshToken: 'rotated-refresh-fixture' };
+  jest.mocked(readSession).mockResolvedValueOnce(stored);
+  let complete!: (value: Session) => void;
+  jest.mocked(refreshRequest).mockImplementationOnce(() => new Promise(resolve => { complete = resolve; }));
+  const { result } = renderHook(useAuth, { wrapper });
+  await waitFor(() => expect(result.current.status).toBe('authenticated'));
+  const handler = jest.mocked(api.setRefreshHandler).mock.calls[0][0]!;
+  let renewing!: Promise<string | null>;
+  act(() => { renewing = handler(stored.token); result.current.retry(); });
+  await act(async () => { complete(next); await renewing; });
+  await waitFor(() => expect(result.current.session?.token).toBe(next.token));
+  expect(saveSession).toHaveBeenCalledTimes(1);
+  expect(refreshRequest).toHaveBeenCalledTimes(1);
+  expect(result.current.status).toBe('authenticated');
+});
+
+it('discards a refresh reply after logout and never rewrites the removed secure session', async () => {
+  const stored = { ...session, refreshToken: 'refresh-fixture', refreshExpiresAt: Date.now() + 86400000 };
+  jest.mocked(readSession).mockResolvedValueOnce(stored);
+  let complete!: (value: Session) => void;
+  jest.mocked(refreshRequest).mockImplementationOnce(() => new Promise(resolve => { complete = resolve; }));
+  const { result } = renderHook(useAuth, { wrapper });
+  await waitFor(() => expect(result.current.status).toBe('authenticated'));
+  const handler = jest.mocked(api.setRefreshHandler).mock.calls[0][0]!;
+  let renewing!: Promise<string | null>;
+  act(() => { renewing = handler(stored.token); });
+  await act(async () => { await result.current.logout(); });
+  await act(async () => { complete({ ...stored, token: 'late-renewal' }); await renewing; });
+  expect(result.current.status).toBe('anonymous'); expect(saveSession).not.toHaveBeenCalled();
 });

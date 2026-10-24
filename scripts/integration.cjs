@@ -47,6 +47,9 @@ async function main() {
 
   // These are the same transport and study schemas bundled in the mobile app.
   const { api } = loadTypeScript('src/core/api.ts');
+  // Node verifies platform TLS. This script tests real contracts, not native pinning.
+  // The exported client otherwise fails closed until an entry point configures it.
+  api.setTransportPreparation(async () => {});
   const { listStudies, getStudy, getStudyDetails } = loadTypeScript('src/features/studies/api.ts');
   const { getProfile } = loadTypeScript('src/features/profile/api.ts');
   const { getCashCut } = loadTypeScript('src/features/cash-cuts/api.ts');

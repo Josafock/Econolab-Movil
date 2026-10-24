@@ -1,8 +1,22 @@
-import { ApiClient } from '@/core/api';
+import { ApiClient, api } from '@/core/api';
 
 const response = (status: number) => ({ status, ok: status === 200, json: async () => ({ ok: true }) } as Response);
 const originalFetch = global.fetch;
 afterEach(() => { global.fetch = originalFetch; });
+
+it('the shared client fails closed until its composition root configures transport security', async () => {
+  const fetcher = jest.fn(); global.fetch = fetcher; api.setToken('fixture');
+  const previous = process.env.EXPO_PUBLIC_API_URL;
+  process.env.EXPO_PUBLIC_API_URL = 'https://example.test/api';
+  try {
+    await expect(api.request('/profile')).rejects.toMatchObject({ kind: 'configuration', message: 'La conexión segura todavía no está preparada.' });
+    expect(fetcher).not.toHaveBeenCalled();
+  } finally {
+    api.setToken(null);
+    if (previous === undefined) delete process.env.EXPO_PUBLIC_API_URL;
+    else process.env.EXPO_PUBLIC_API_URL = previous;
+  }
+});
 
 it('coalesces simultaneous 401 responses into one rotation and retries each request once', async () => {
   const client = new ApiClient(() => 'https://example.test/api');

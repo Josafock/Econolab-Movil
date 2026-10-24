@@ -30,7 +30,7 @@ module.exports = function withSecurityVerification(config) {
       fs.mkdirSync(path.join(res, 'raw'), { recursive: true });
       fs.mkdirSync(path.join(res, 'xml'), { recursive: true });
       fs.copyFileSync(cert, path.join(res, 'raw/econolab_qa_ca.pem'));
-      fs.writeFileSync(path.join(res, 'xml/econolab_qa_network_security.xml'), '<?xml version="1.0" encoding="utf-8"?><network-security-config><base-config cleartextTrafficPermitted="false"><trust-anchors><certificates src="system" /></trust-anchors></base-config><domain-config cleartextTrafficPermitted="false"><domain>10.0.2.2</domain><trust-anchors><certificates src="@raw/econolab_qa_ca" /></trust-anchors></domain-config></network-security-config>');
+      fs.writeFileSync(path.join(res, 'xml/econolab_qa_network_security.xml'), '<?xml version="1.0" encoding="utf-8"?><network-security-config><base-config cleartextTrafficPermitted="false"><trust-anchors><certificates src="system" /></trust-anchors></base-config><domain-config cleartextTrafficPermitted="false"><domain includeSubdomains="false">10.0.2.2</domain><trust-anchors><certificates src="@raw/econolab_qa_ca" /></trust-anchors></domain-config></network-security-config>');
     }
     return mod;
   }]);

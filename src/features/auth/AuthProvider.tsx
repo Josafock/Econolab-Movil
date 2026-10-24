@@ -78,6 +78,10 @@ export function AuthProvider({ children }: PropsWithChildren) {
   }, [clearSession, isCurrent]);
 
   const restore = useCallback(async () => {
+    // Foreground/retry must not invalidate a rotation whose reply is still being saved.
+    if (refreshing.current && refreshing.current.token === currentSession.current?.token) {
+      try { await refreshing.current.promise; } catch { /* Restore classifies the current state below. */ }
+    }
     if (pendingRemoval.current) {
       await clearSession('La sesión local se cerró. Puedes iniciar sesión de nuevo.');
       return;
