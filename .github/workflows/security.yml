@@ -78,7 +78,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           repository: DavidHdz117/Backend_Econolab_Escuela
-          ref: 602f9e2969edba026618437415f1242e662e0d1a
+          ref: 8634ba3dc1071703cb263622809b3fe244acd026
           path: qa-backend
           persist-credentials: false
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
