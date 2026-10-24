@@ -102,7 +102,7 @@ name: Acceso consentimiento estudios perfil y cierre de sesión
     timeout: 60000
 - scrollUntilVisible:
     element: Permitir comunicaciones opcionales
-    direction: DOWN
+    direction: UP
 - tapOn: Permitir comunicaciones opcionales
 - scrollUntilVisible:
     element: Guardar mis decisiones
