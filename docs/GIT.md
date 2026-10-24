@@ -1,5 +1,7 @@
 # Trazabilidad
 
+> **Actualización de lectura del 23 de octubre de 2026:** se conserva la trazabilidad original de este documento. El propietario ya integró cambios en `main`; las frases históricas que indican que todos los PR permanecen sin integración no describen el estado actual. La [revisión de la rúbrica](REVISION_RUBRICA_2026-10-23.md) registra el `main` consultado, PR57 abierto, estados del Project y la diferencia respecto de la rama `develop` solicitada por el instrumento. No se cambió el flujo, los Sprints ni sus estados durante esta revisión.
+
 La planificación oficial está en las issues y el Project existentes de Josafock/Econolab-Movil. No se crean HUs, sprints ni fechas alternativos. Se consultaron las relaciones sub-issue por API el 2026-10-05.
 
 | HU | Issue | Sub-issues | Rama |
@@ -17,4 +19,6 @@ La planificación oficial está en las issues y el Project existentes de Josafoc
 
 Los números TH del tablero se mantienen; los mensajes de commit emplean HU-XX/T-XX.YY y referencias a las issues reales. SemVer MAJOR.MINOR.PATCH conforme a #13. No se crean tags sprint ni se decide un cierre de sprint.
 
-La sesión disponible carece de `read:project`. Las issues y su jerarquía fueron consultadas, pero Sprint/fechas/estados del Project no pudieron verificarse. No se infieren ni se modifican. Para habilitar lectura, el titular puede ejecutar `gh auth refresh -s read:project`.
+El titular habilitó `read:project` el 6 de octubre y se verificó el Project oficial número 4, «Econolab Movil»: 14 campos, 37 issues y seis Sprints. La [verificación del Project](PROJECT_VERIFICATION.md) registra fechas, responsables y estados reales, además de las 29 subtareas sin Sprint individual. No se modificó la planificación.
+
+Las correcciones posteriores se publican en ramas `fix/HU-XX-...` y PR dependientes. El perfil completo está en `fix/HU-06-perfil-completo`, el icono nativo en `fix/HU-02-icono-aplicacion`, la verificación en `fix/HU-01-verificacion-project` y la evidencia de publicación en `fix/HU-06-publicacion-render`. La rama acumulada HU08 incorpora esos commits mediante avance de su referencia, sin merge. El PR original HU06 conserva la versión parcial histórica; PR49 añade la consulta y edición completas. El propietario autorizó integrar únicamente el PR1 del backend, cuyo perfil se verificó después en Render. Los PR y `main` del móvil permanecen sin integración.

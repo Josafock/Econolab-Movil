@@ -28,6 +28,11 @@ test('task references select their parent HU', t => {
   const result = selectFeatures({ root: fixture(t), text: 'Implementa #19 y #29' });
   assert.deepEqual(result.map(feature => feature.id), ['HU-03', 'HU-06']);
 });
+
+test('Build Validaciones y Pruebas conservan la HU01 del Project oficial', t => {
+  const result = selectFeatures({ root: fixture(t), text: 'Referencias #36 #37 #38' });
+  assert.deepEqual(result.map(feature => feature.id), ['HU-01']);
+});
 test('changed study files are recognized on an arbitrary branch', t => {
   const result = selectFeatures({ root: fixture(t), changed: ['src/features/studies/api.ts'] });
   assert.deepEqual(result.map(feature => feature.id), ['HU-05']);
