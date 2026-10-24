@@ -14,9 +14,13 @@ name: Acceso consentimiento estudios perfil y cierre de sesión
 - extendedWaitUntil:
     visible: Bienvenido
     timeout: 60000
-- tapOn: Correo electrónico
+- tapOn:
+    text: Correo electrónico
+    below: Correo electrónico
 - inputText: ${EMAIL}
-- tapOn: Contraseña
+- tapOn:
+    text: Contraseña
+    below: Contraseña
 - inputText: ${PASSWORD}
 - hideKeyboard
 - tapOn: Iniciar sesión
@@ -125,31 +129,54 @@ name: Acceso consentimiento estudios perfil y cierre de sesión
     direction: DOWN
 - tapOn: Quiero cancelar mi cuenta
 - scrollUntilVisible:
-    element: Contraseña actual para cancelar
+    element:
+      text: Contraseña actual para cancelar
+      below: Contraseña actual para cancelar
     direction: DOWN
-- tapOn: Contraseña actual para cancelar
+- tapOn:
+    text: Contraseña actual para cancelar
+    below: Contraseña actual para cancelar
 - inputText: ${PASSWORD}
 - hideKeyboard
 - scrollUntilVisible:
-    element: Escribe ELIMINAR MI CUENTA
+    element:
+      text: Escribe ELIMINAR MI CUENTA
+      below: Escribe ELIMINAR MI CUENTA
     direction: DOWN
-- tapOn: Escribe ELIMINAR MI CUENTA
+- tapOn:
+    text: Escribe ELIMINAR MI CUENTA
+    below: Escribe ELIMINAR MI CUENTA
+- assertVisible:
+    text: Escribe ELIMINAR MI CUENTA
+    focused: true
 - inputText: ELIMINAR MI CUENTA
+- assertVisible: ELIMINAR MI CUENTA
 - hideKeyboard
 - scrollUntilVisible:
     element: Cancelar mi cuenta definitivamente
     direction: DOWN
-- tapOn: Cancelar mi cuenta definitivamente
+- assertVisible:
+    text: Cancelar mi cuenta definitivamente
+    enabled: true
+- tapOn:
+    text: Cancelar mi cuenta definitivamente
+    enabled: true
 - assertVisible: Cancelar tu cuenta de acceso
 - takeScreenshot: confirmacion-cancelacion
-- tapOn: Cancelar mi cuenta
+- tapOn:
+    text: Cancelar mi cuenta
+    below: Cancelar tu cuenta de acceso
 - extendedWaitUntil:
     visible: Bienvenido
     timeout: 60000
 - takeScreenshot: cuenta-cancelada
-- tapOn: Correo electrónico
+- tapOn:
+    text: Correo electrónico
+    below: Correo electrónico
 - inputText: ${EMAIL}
-- tapOn: Contraseña
+- tapOn:
+    text: Contraseña
+    below: Contraseña
 - inputText: ${PASSWORD}
 - hideKeyboard
 - tapOn: Iniciar sesión
