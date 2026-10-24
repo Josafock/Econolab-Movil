@@ -131,7 +131,9 @@ En **Política y programas → Contenido de la aplicación**, completa los apart
 
 ## 8. Generar el AAB de Google Play
 
-Con la configuración y las pruebas del APK completas:
+En esta entrega ya se generó el [AAB 1.1.0, código 5](https://expo.dev/artifacts/eas/wg3M-w2wvV8g5IL6L45URJ2ak9pp9vk6Q-IkCHDnJ4w.aab). Su firma, manifiesto, estructura y alineación de empaquetado de 16 KB se verificaron con jarsigner, keytool y bundletool 1.18.3. Este archivo está preparado para la carga manual en tu cuenta de Play Console; no ha sido enviado a revisión.
+
+Los comandos siguientes generan otra compilación cuando cambie la app o su configuración:
 
 ```powershell
 npm run verify
