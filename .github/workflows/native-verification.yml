@@ -142,14 +142,19 @@ jobs:
           unzip -q maestro.zip -d /tmp
           echo /tmp/maestro/bin >> "$GITHUB_PATH"
       - name: Preparar emulador y Metro de Debug
+        env:
+          NODE_ENV: development
+          EXPO_OFFLINE: '1'
         run: |
           sudo sh -c 'echo "KERNEL==\"kvm\", GROUP=\"kvm\", MODE=\"0666\", OPTIONS+=\"static_node=kvm\"" > /etc/udev/rules.d/99-kvm4all.rules'
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
           npx expo start --localhost --port 8081 > /tmp/econolab-metro.log 2>&1 &
-          echo "QA_METRO_PID=$!" >> "$GITHUB_ENV"
+          METRO_PID=$!
+          echo "QA_METRO_PID=$METRO_PID" >> "$GITHUB_ENV"
           for n in $(seq 1 60); do
-            curl -fsS http://127.0.0.1:8081/status | grep -q 'packager-status:running' && exit 0
+            if ! kill -0 "$METRO_PID" 2>/dev/null; then cat /tmp/econolab-metro.log; exit 1; fi
+            curl --max-time 3 -fsS http://127.0.0.1:8081/status | grep -q 'packager-status:running' && exit 0
             sleep 2
           done
           cat /tmp/econolab-metro.log
