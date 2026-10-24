@@ -1,0 +1,42 @@
+name: Inspeccionar APK firmado de distribución
+
+on:
+  push:
+    branches: ['fix/HU-08-seguridad-rubrica']
+    paths: ['.github/workflows/inspect-apk.yml', 'scripts/security/inspect-distribution.cjs', 'docs/evidencias-rubrica/APK_1_1_0_CODE3_INSPECCION.json']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Descargar el APK identificado y verificar firma
+        run: |
+          mkdir -p reports/distribution
+          curl -fL https://expo.dev/artifacts/eas/CawfXOxkWr0ApGpT0JPhyYFiL40iJKfqmYXrJ7-mx7w.apk -o /tmp/econolab.apk
+          EXPECTED=$(node -p "require('./docs/evidencias-rubrica/APK_1_1_0_CODE3_INSPECCION.json').sha256")
+          echo "$EXPECTED  /tmp/econolab.apk" | sha256sum --check
+          APKSIGNER=$(find "$ANDROID_HOME/build-tools" -name apksigner -type f | sort -V | tail -1)
+          test -n "$APKSIGNER"
+          "$APKSIGNER" verify --verbose --print-certs /tmp/econolab.apk > reports/distribution/apksigner.txt
+          cat reports/distribution/apksigner.txt
+      - name: Analizar el APK final con JADX
+        run: |
+          curl -fL https://github.com/skylot/jadx/releases/download/v1.5.6/jadx-1.5.6.zip -o /tmp/jadx.zip
+          unzip -q /tmp/jadx.zip -d /tmp/jadx
+          node scripts/security/inspect-distribution.cjs /tmp/econolab.apk /tmp/jadx/bin/jadx
+      - name: Conservar evidencia de distribución
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: production-apk-inspection
+          path: reports/distribution/
+          if-no-files-found: error
+          retention-days: 30
