@@ -25,7 +25,7 @@ jobs:
           POSTGRES_PASSWORD_FILE: /proc/sys/kernel/random/uuid
           POSTGRES_DB: econolab_native_test
         ports: ['5432:5432']
-        options: --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
+        options: --health-cmd "pg_isready -U econolab_test -d econolab_native_test" --health-interval 5s --health-timeout 5s --health-retries 10
     env:
       CI: '1'
       EXPO_NO_TELEMETRY: '1'
@@ -112,6 +112,7 @@ jobs:
           key: native-android-v1-${{ runner.os }}-${{ hashFiles('package-lock.json', 'app.config.js', 'plugins/**', 'native-tests/**') }}-${{ github.sha }}
           restore-keys: |
             native-android-v1-${{ runner.os }}-${{ hashFiles('package-lock.json', 'app.config.js', 'plugins/**', 'native-tests/**') }}-
+            native-android-v1-${{ runner.os }}-
       - name: Compilar Debug Release y pruebas TLS nativas
         id: native_build
         working-directory: android
@@ -147,6 +148,12 @@ jobs:
           sudo udevadm trigger --name-match=kvm
           npx expo start --localhost --port 8081 > /tmp/econolab-metro.log 2>&1 &
           echo "QA_METRO_PID=$!" >> "$GITHUB_ENV"
+          for n in $(seq 1 60); do
+            curl -fsS http://127.0.0.1:8081/status | grep -q 'packager-status:running' && exit 0
+            sleep 2
+          done
+          cat /tmp/econolab-metro.log
+          exit 1
       - name: Ejecutar caja negra en ambos builds
         uses: ReactiveCircus/android-emulator-runner@4c44018e59b437e86cdfc41da381398f93ed8808 # v2
         with:
@@ -176,6 +183,8 @@ jobs:
           if [ -n "$QA_METRO_PID" ]; then kill "$QA_METRO_PID" || true; fi
           cp -R android/app/build/test-results reports/native/ 2>/dev/null || true
           cp android/app/build/outputs/mapping/release/mapping.txt reports/native/ 2>/dev/null || true
+          cp /tmp/econolab-metro.log reports/native/metro.log 2>/dev/null || true
+          cp /tmp/econolab-native-backend.log reports/native/backend.log 2>/dev/null || true
           node scripts/security/redact-qa-reports.cjs
       - name: Conservar evidencias nativas
         if: always()
