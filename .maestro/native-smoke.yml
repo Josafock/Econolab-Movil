@@ -107,3 +107,13 @@ name: Acceso consentimiento estudios perfil y cierre de sesión
     visible: Bienvenido
     timeout: 60000
 - takeScreenshot: cuenta-cancelada
+- tapOn: Correo electrónico
+- inputText: ${EMAIL}
+- tapOn: Contraseña
+- inputText: ${PASSWORD}
+- hideKeyboard
+- tapOn: Iniciar sesión
+- extendedWaitUntil:
+    visible: El correo o la contraseña no son correctos.
+    timeout: 60000
+- takeScreenshot: acceso-cancelado-rechazado

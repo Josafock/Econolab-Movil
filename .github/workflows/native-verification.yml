@@ -11,7 +11,7 @@ permissions:
 
 concurrency:
   group: native-verification-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   android:
@@ -149,7 +149,7 @@ jobs:
           sudo sh -c 'echo "KERNEL==\"kvm\", GROUP=\"kvm\", MODE=\"0666\", OPTIONS+=\"static_node=kvm\"" > /etc/udev/rules.d/99-kvm4all.rules'
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
-          npx expo start --lan --port 8081 > /tmp/econolab-metro.log 2>&1 &
+          node node_modules/expo/bin/cli start --lan --port 8081 > /tmp/econolab-metro.log 2>&1 &
           METRO_PID=$!
           echo "QA_METRO_PID=$METRO_PID" >> "$GITHUB_ENV"
           for n in $(seq 1 60); do
@@ -173,6 +173,15 @@ jobs:
             maestro test -e APP_ID=com.econolab.mobile.qa -e EMAIL=native-debug@example.test -e PASSWORD="$SECURITY_QA_UI_PASSWORD" --format junit --output reports/native/maestro-debug.xml --test-output-dir reports/native/debug .maestro/native-smoke.yml
             adb uninstall com.econolab.mobile.qa
             kill "$QA_METRO_PID"
+            for n in $(seq 1 15); do
+              kill -0 "$QA_METRO_PID" 2>/dev/null || break
+              sleep 1
+            done
+            if curl --max-time 1 -fsS http://127.0.0.1:8081/status > /dev/null 2>&1; then
+              echo '::error::Metro sigue disponible; no se acredita Release independiente.'
+              exit 1
+            fi
+            echo 'Metro detenido: Release se prueba con su bundle incluido.'
             adb install android/app/build/outputs/apk/release/app-release.apk
             maestro test -e APP_ID=com.econolab.mobile.qa -e EMAIL=native-release@example.test -e PASSWORD="$SECURITY_QA_UI_PASSWORD" --format junit --output reports/native/maestro-release.xml --test-output-dir reports/native/release .maestro/native-smoke.yml
       - name: Analizar Release con JADX
