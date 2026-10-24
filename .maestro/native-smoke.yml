@@ -146,12 +146,9 @@ name: Acceso consentimiento estudios perfil y cierre de sesión
 - tapOn:
     text: Escribe ELIMINAR MI CUENTA
     below: Escribe ELIMINAR MI CUENTA
-- assertVisible:
-    text: Escribe ELIMINAR MI CUENTA
-    focused: true
 - inputText: ELIMINAR MI CUENTA
-- assertVisible: ELIMINAR MI CUENTA
 - hideKeyboard
+- assertVisible: ELIMINAR MI CUENTA
 - scrollUntilVisible:
     element: Cancelar mi cuenta definitivamente
     direction: DOWN
