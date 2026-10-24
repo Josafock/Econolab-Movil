@@ -6,12 +6,12 @@ Guía actualizada el **24 de octubre de 2026**. Los nombres de algunos menús pu
 
 - Expo SDK 57, marca original, icono y pantalla de arranque.
 - `eas.json`: `preview` genera **APK** instalable y `production` genera **AAB** para Google Play. Ambos usan el backend real de Render con `/api` y HTTPS.
-- Versión visible `1.1.0`. El APK de esta entrega tiene `versionCode` 3; EAS incrementa los códigos futuros.
+- Versión visible `1.1.0`. El APK de esta entrega tiene `versionCode` 4; EAS incrementa los códigos futuros.
 - `.easignore` excluye credenciales, archivos `.env` privados, capturas, resultados y carpetas nativas generadas. EAS genera Android desde `app.json`.
 - Ayuda, privacidad y soporte configurados. Responsable de solicitudes de la cuenta: Jesús David Saldaña Hernández, `20230009@uthh.edu.mx`.
 - `assets/store/icon-512.png` y `feature-1024x500.png` para la ficha. Se regeneran con `npm run generate:store-assets`.
 
-Ya existe un [APK 1.1.0 firmado en EAS](https://expo.dev/accounts/dravix117/projects/econolab-mobile/builds/619b70bd-c37d-4d2d-a419-7bb0bbf17c91). **No acredita envío ni publicación en Google Play.** Falta completar Play Console, sus declaraciones y las pruebas del equipo. Consulta los resultados actuales en [Seguridad y privacidad](SEGURIDAD_Y_PRIVACIDAD.md).
+Ya existe un [APK 1.1.0 firmado en EAS](https://expo.dev/accounts/dravix117/projects/econolab-mobile/builds/941f3ecb-3c27-47be-8fb0-e494036060ee). **No acredita envío ni publicación en Google Play.** Falta completar Play Console, sus declaraciones y las pruebas del equipo. Consulta los resultados actuales en [Seguridad y privacidad](SEGURIDAD_Y_PRIVACIDAD.md).
 
 ## 1. Abrir la carpeta correcta
 
@@ -41,9 +41,9 @@ EAS Build tiene cuotas y planes: revisa los límites que aparezcan en tu cuenta 
 Dentro de `mobile`:
 
 ```powershell
-npx eas-cli@latest login
-npx eas-cli@latest whoami
-npx eas-cli@latest init
+npx eas-cli@25.3.0 login
+npx eas-cli@25.3.0 whoami
+npx eas-cli@25.3.0 init
 ```
 
 La copia local ya tiene el `extra.eas.projectId` real. Ejecuta `init` solo al vincular una copia que todavía no lo tenga; conserva el proyecto existente, su firma y `eas.json`. [Configuración oficial](https://docs.expo.dev/build/setup/).
@@ -75,7 +75,7 @@ Este comando comprueba que haya datos configurados; verifica tú que la página 
 ## 5. Generar e instalar el APK de prueba
 
 ```powershell
-npx eas-cli@latest build --platform android --profile preview
+npx eas-cli@25.3.0 build --platform android --profile preview
 ```
 
 Si EAS pregunta por la firma Android, permite generar una **keystore nueva** únicamente si es la primera firma de esta app. Si ya hubo una publicación, utiliza su clave de carga existente. Conserva un respaldo seguro desde `eas credentials`; no lo subas al repositorio.
@@ -136,7 +136,7 @@ Con la configuración y las pruebas del APK completas:
 ```powershell
 npm run verify
 npm run release:check -- --store
-npx eas-cli@latest build --platform android --profile production
+npx eas-cli@25.3.0 build --platform android --profile production
 ```
 
 Espera el resultado exitoso y descarga el **`.aab`** del enlace de Expo. El AAB no se instala directamente tocándolo en el celular: se sube a Play Console. La exportación `npm run build` solo genera bundles JavaScript y tampoco sustituye al AAB firmado. [Compilación para Play](https://docs.expo.dev/submit/android/).

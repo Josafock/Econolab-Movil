@@ -10,6 +10,8 @@ El cliente agrupa respuestas 401 concurrentes, renueva una sola vez y repite cad
 
 La reutilización de un refresh consumido revoca su familia en el servidor. Un corte de red después de rotar y antes de recibir/guardar la respuesta puede exigir iniciar sesión nuevamente: no se conserva la contraseña para evitarlo.
 
+Los registros nuevos, incluidos los de Google, quedan sin rol hasta que un administrador les asigne acceso. Se retiró la promoción automática a administrador del modo de pruebas anterior. No se cambian los roles de cuentas existentes. Para obtener el contrato móvil renovable después de actualizar una instalación con sesión antigua, cerrar sesión y volver a entrar.
+
 ## Certificate pinning
 
 `config/pinning.json` contiene hashes SHA-256 del SPKI, no el hash del archivo APK. Se observaron por conexión TLS con validación de confianza y hostname el 24/10/2026 UTC (23/10 en Ciudad de México): clave del certificado `onrender.com`, intermedia Google Trust Services WE1 y GTS Root R4.

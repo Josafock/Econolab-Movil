@@ -41,6 +41,8 @@ La entrega 1.1 está en `fix/HU-08-seguridad-rubrica`, [PR58](https://github.com
 
 ## Documentación
 
+- [Estado de implementación y evidencias 1.1](docs/RESULTADO_TECNICO_RUBRICA_1_1.md): APK final, resultados comprobados y tareas del equipo.
+
 - [Cambios técnicos de la versión 1.1](docs/SEGURIDAD_Y_PRIVACIDAD.md): renovación de sesión, pinning, privacidad, R8 y comprobaciones del CI.
 - [Diagnóstico anterior a la versión 1.1](docs/REVISION_RUBRICA_2026-10-23.md): historial de los 15 criterios; los cambios posteriores están en Seguridad y privacidad.
 - [Evidencias de la rúbrica](docs/evidencias-rubrica/GUIA_EVIDENCIAS.md): capturas necesarias y matriz para pruebas nativas Debug/Release.
