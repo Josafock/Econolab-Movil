@@ -67,7 +67,9 @@ jobs:
           echo "SECURITY_QA_TLS_CERT=$GITHUB_WORKSPACE/.native-qa/server.pem" >> "$GITHUB_ENV"
           echo "SECURITY_QA_TLS_KEY=$GITHUB_WORKSPACE/.native-qa/server.key" >> "$GITHUB_ENV"
           echo "SECURITY_QA_UI_PASSWORD=$PASSWORD" >> "$GITHUB_ENV"
-          echo "JWT_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          JWT_VALUE=$(openssl rand -hex 32)
+          echo "::add-mask::$JWT_VALUE"
+          echo "JWT_SECRET=$JWT_VALUE" >> "$GITHUB_ENV"
           DB_PASSWORD=$(openssl rand -hex 32)
           echo "::add-mask::$DB_PASSWORD"
           docker exec "${{ job.services.postgres.id }}" psql -U econolab_test -d econolab_native_test -c "ALTER ROLE econolab_test WITH PASSWORD '$DB_PASSWORD';"
@@ -90,12 +92,12 @@ jobs:
       - name: Generar Android y verificar R8 y permisos
         run: |
           npx expo prebuild --platform android --no-install
-          rg 'android.enableMinifyInReleaseBuilds=true' android/gradle.properties
-          rg 'android.enableShrinkResourcesInReleaseBuilds=true' android/gradle.properties
-          rg 'android:allowBackup="false"' android/app/src/main/AndroidManifest.xml
           cp android/app/build.gradle reports/native/build.gradle
           cp android/gradle.properties reports/native/gradle.properties
           cp android/app/src/main/AndroidManifest.xml reports/native/AndroidManifest.xml
+          grep -F 'android.enableMinifyInReleaseBuilds=true' android/gradle.properties
+          grep -F 'android.enableShrinkResourcesInReleaseBuilds=true' android/gradle.properties
+          grep -F 'android:allowBackup="false"' android/app/src/main/AndroidManifest.xml
       - name: Compilar Debug Release y pruebas TLS nativas
         id: native_build
         working-directory: android
@@ -109,7 +111,7 @@ jobs:
           curl -fL https://github.com/mobile-dev-inc/Maestro/releases/download/cli-2.11.0/maestro.zip -o /tmp/maestro.zip
           curl -fL https://github.com/mobile-dev-inc/Maestro/releases/download/cli-2.11.0/checksums_sha256.txt -o /tmp/maestro-checksums.txt
           cd /tmp
-          rg 'maestro.zip$' maestro-checksums.txt | sha256sum --check
+          grep 'maestro.zip$' maestro-checksums.txt | sha256sum --check
           unzip -q maestro.zip -d /tmp
           echo /tmp/maestro/bin >> "$GITHUB_PATH"
       - name: Preparar emulador y Metro de Debug

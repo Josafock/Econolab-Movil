@@ -49,4 +49,3 @@ flowchart LR
 `ManagePrivacy` y `SearchStudies` representan reglas de aplicación. Los ViewModels controlan carga, cancelación, respuestas tardías y presentación; las vistas controlan interacción y distribución visual. Las pruebas de `/test` utilizan los contratos Repository para comprobar reglas, paginación, consentimiento y carreras de respuestas.
 
 La composición conecta los adaptadores reales al crear los ViewModels. La arquitectura anterior que sigue describe la base del proyecto; no implica que todos los módulos se hayan reescrito como casos de uso separados. [Sesiones, pinning, privacidad y Release](SEGURIDAD_Y_PRIVACIDAD.md).
-

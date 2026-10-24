@@ -67,4 +67,3 @@ export type StudyDetail = z.infer<typeof studyDetailSchema>;
 export type StudyType = z.infer<typeof studyTypeSchema>;
 export type StudyStatus = z.infer<typeof studyStatusSchema>;
 export type StudiesResponse = z.infer<typeof studiesResponseSchema>;
-

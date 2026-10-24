@@ -87,7 +87,10 @@ jobs:
           cache: npm
           cache-dependency-path: qa-backend/package-lock.json
       - name: Preparar secreto exclusivo de esta ejecución
-        run: echo "JWT_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+        run: |
+          JWT_VALUE=$(openssl rand -hex 32)
+          echo "::add-mask::$JWT_VALUE"
+          echo "JWT_SECRET=$JWT_VALUE" >> "$GITHUB_ENV"
       - name: Generar contraseña exclusiva del PostgreSQL desechable
         run: |
           DB_PASSWORD=$(openssl rand -hex 32)
