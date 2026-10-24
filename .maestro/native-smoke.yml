@@ -50,8 +50,21 @@ name: Acceso consentimiento estudios perfil y cierre de sesión
 - takeScreenshot: estudios
 - tapOn: .*Estudio QA seguro.*
 - extendedWaitUntil:
-    visible: .*Parametro QA.*
+    visible: Información del estudio
     timeout: 60000
+- scrollUntilVisible:
+    element:
+      text: '.*120[.]00.*'
+    direction: DOWN
+    timeout: 60000
+- assertVisible: '.*120[.]00.*'
+- takeScreenshot: precios
+- scrollUntilVisible:
+    element:
+      text: '.*Parametro QA.*'
+    direction: DOWN
+    timeout: 60000
+- assertVisible: '.*Parametro QA.*'
 - takeScreenshot: detalle
 - back
 - tapOn: Perfil
@@ -93,6 +106,10 @@ name: Acceso consentimiento estudios perfil y cierre de sesión
     direction: DOWN
 - tapOn: Contraseña actual para cancelar
 - inputText: ${PASSWORD}
+- hideKeyboard
+- scrollUntilVisible:
+    element: Escribe ELIMINAR MI CUENTA
+    direction: DOWN
 - tapOn: Escribe ELIMINAR MI CUENTA
 - inputText: ELIMINAR MI CUENTA
 - hideKeyboard
