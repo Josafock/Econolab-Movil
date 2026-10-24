@@ -9,9 +9,13 @@ import { parseResponse } from '@/core/validation';
 import { identifierSchema, userSchema, type User } from './user';
 export { userSchema } from './user';
 export type { User } from './user';
-export type Session = { token: string; usuario: User; expiresAt: number };
+export type Session = { token: string; usuario: User; expiresAt: number; refreshToken?: string; refreshExpiresAt?: number };
 
-export const sessionDataSchema = z.object({ token: z.string().min(1), usuario: userSchema });
+export const sessionDataSchema = z.object({
+  token: z.string().min(1), usuario: userSchema,
+  refreshToken: z.string().regex(/^[0-9a-f-]{36}\.[A-Za-z0-9_-]{43}$/).optional(),
+  refreshExpiresAt: z.union([z.string().datetime().transform(value => Date.parse(value)), z.number().int().positive()]).optional(),
+});
 const claimsSchema = z.object({
   sub: identifierSchema,
   nombre: z.string().min(1),
@@ -25,8 +29,8 @@ export function isSessionExpired(session: Session, now = Date.now()): boolean {
 }
 
 /** Decoding only checks local consistency. The server verifies signature and revocation. */
-export function createSession(data: unknown, now = Date.now()): Session {
-  const { token, usuario } = parseResponse(sessionDataSchema, data);
+export function createSession(data: unknown, now = Date.now(), allowExpiredAccess = false): Session {
+  const { token, usuario, refreshToken, refreshExpiresAt } = parseResponse(sessionDataSchema, data);
   let decoded: unknown;
   try { decoded = jwtDecode(token); } catch {
     throw new AppError('unauthorized', 'La sesión recibida no es válida. Inicia sesión de nuevo.');
@@ -38,8 +42,10 @@ export function createSession(data: unknown, now = Date.now()): Session {
     throw new AppError('unauthorized', 'La sesión recibida no es válida. Inicia sesión de nuevo.');
   }
   if (usuario.rol === 'unassigned') throw new AppError('forbidden', 'Esta cuenta aún no tiene acceso. Contacta al administrador.');
-  const session = { token, usuario, expiresAt: claims.exp * 1000 };
-  if (!Number.isSafeInteger(session.expiresAt) || isSessionExpired(session, now)) {
+  const session: Session = { token, usuario, expiresAt: claims.exp * 1000,
+    ...(refreshToken && refreshExpiresAt ? { refreshToken, refreshExpiresAt } : {}),
+  };
+  if (!Number.isSafeInteger(session.expiresAt) || (isSessionExpired(session, now) && !(allowExpiredAccess && session.refreshToken && session.refreshExpiresAt! > now))) {
     throw new AppError('unauthorized', 'Tu sesión expiró. Inicia sesión de nuevo.');
   }
   return session;
@@ -73,7 +79,7 @@ export function readSession(): Promise<Session | null> {
     if (!sessionDataSchema.safeParse(value).success) {
       throw new AppError('unauthorized', 'La sesión guardada no es válida. Inicia sesión de nuevo.');
     }
-    return createSession(value);
+    return createSession(value, Date.now(), true);
   });
 }
 
@@ -82,7 +88,9 @@ export function saveSession(session: Session): Promise<void> {
     const validated = createSession(session);
     if (Platform.OS === 'web') return;
     try {
-      await SecureStore.setItemAsync(storageKey, JSON.stringify({ token: validated.token, usuario: validated.usuario }), storageOptions);
+      await SecureStore.setItemAsync(storageKey, JSON.stringify({ token: validated.token, usuario: validated.usuario,
+        ...(validated.refreshToken ? { refreshToken: validated.refreshToken, refreshExpiresAt: validated.refreshExpiresAt } : {}),
+      }), storageOptions);
     } catch {
       throw new AppError('storage', 'No pudimos guardar tu sesión de forma segura. Inténtalo de nuevo.');
     }

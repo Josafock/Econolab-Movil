@@ -40,7 +40,10 @@ La entrega con pulido y preparación de Google Play está en `fix/HU-08-publicac
 
 ## Documentación
 
-- [Auditoría final](docs/AUDITORIA_FINAL.md): resultados, trazabilidad, CI y pendientes reales.
+- [Cambios técnicos de la versión 1.1](docs/SEGURIDAD_Y_PRIVACIDAD.md): renovación de sesión, pinning, privacidad, R8 y comprobaciones del CI.
+- [Revisión actual de la rúbrica — 23 de octubre](docs/REVISION_RUBRICA_2026-10-23.md): los 15 criterios, resultados comprobados, pendientes técnicos y acciones del equipo.
+- [Evidencias de la rúbrica](docs/evidencias-rubrica/GUIA_EVIDENCIAS.md): capturas necesarias y matriz para pruebas nativas Debug/Release.
+- [Auditoría histórica de octubre](docs/AUDITORIA_FINAL.md): conservar como historial; consultar la revisión actual para pruebas, APK, dependencias y estado del repositorio.
 - [Conexión actual a Render](docs/CONEXION_RENDER.md): dirección publicada, túnel, pruebas reales y CORS del preview.
 - [Diseño móvil actualizado](docs/DISENO_MOVIL.md): identidad de la web, pantallas y revisión visual del 6 de octubre.
 - [Icono de la aplicación](docs/ICONOS.md): recursos originales, generación nativa y cómo verlo al instalar la app.

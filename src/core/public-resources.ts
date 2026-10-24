@@ -11,7 +11,7 @@ export function publicResources(values: { privacyUrl?: string; supportEmail?: st
 
 export function getPublicResources() {
   return publicResources({
-    privacyUrl: process.env.EXPO_PUBLIC_PRIVACY_URL,
-    supportEmail: process.env.EXPO_PUBLIC_SUPPORT_EMAIL,
+    privacyUrl: process.env.EXPO_PUBLIC_PRIVACY_URL ?? 'https://backend-econolab-escuela-1.onrender.com/api/privacy',
+    supportEmail: process.env.EXPO_PUBLIC_SUPPORT_EMAIL ?? '20230009@uthh.edu.mx',
   });
 }

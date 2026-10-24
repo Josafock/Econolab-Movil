@@ -7,6 +7,7 @@ import { AuthProvider, useAuth } from '@/features/auth/AuthProvider';
 import { Brand, Button, Feedback, Heading, Loading, Screen, colors } from '@/ui';
 import ConnectionBanner from '@/ui/ConnectionBanner';
 import BottomNavigation from '@/ui/BottomNavigation';
+import PrivacyConsentGate from '@/features/privacy/PrivacyConsentGate';
 
 export function ErrorBoundary({ retry }: ErrorBoundaryProps) {
   return <SafeAreaProvider><SafeAreaView style={{ flex: 1 }}><Screen>
@@ -42,6 +43,7 @@ function AuthenticatedNavigation() {
         <Stack.Screen name="studies/index" options={{ title: 'Estudios' }} />
         <Stack.Screen name="studies/[id]" options={{ title: 'Detalle del estudio' }} />
         <Stack.Screen name="profile" options={{ title: 'Mi perfil' }} />
+        <Stack.Screen name="privacy" options={{ title: 'Privacidad y mis datos' }} />
         <Stack.Protected guard={(profile ?? session?.usuario)?.rol === 'admin'}>
           <Stack.Screen name="cash-cuts" options={{ title: 'Cortes' }} />
         </Stack.Protected>
@@ -57,7 +59,7 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <AuthProvider>
         <StatusBar style="dark" />
-        <AuthenticatedNavigation />
+        <PrivacyConsentGate><AuthenticatedNavigation /></PrivacyConsentGate>
       </AuthProvider>
     </SafeAreaProvider>
   );

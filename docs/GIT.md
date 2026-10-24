@@ -1,5 +1,7 @@
 # Trazabilidad
 
+> **Actualización de lectura del 23 de octubre de 2026:** se conserva la trazabilidad original de este documento. El propietario ya integró cambios en `main`; las frases históricas que indican que todos los PR permanecen sin integración no describen el estado actual. La [revisión de la rúbrica](REVISION_RUBRICA_2026-10-23.md) registra el `main` consultado, PR57 abierto, estados del Project y la diferencia respecto de la rama `develop` solicitada por el instrumento. No se cambió el flujo, los Sprints ni sus estados durante esta revisión.
+
 La planificación oficial está en las issues y el Project existentes de Josafock/Econolab-Movil. No se crean HUs, sprints ni fechas alternativos. Se consultaron las relaciones sub-issue por API el 2026-10-05.
 
 | HU | Issue | Sub-issues | Rama |

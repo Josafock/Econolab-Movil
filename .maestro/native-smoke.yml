@@ -1,0 +1,109 @@
+appId: ${APP_ID}
+name: Acceso consentimiento estudios perfil y cierre de sesión
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible: Bienvenido
+    timeout: 60000
+- tapOn: Correo electrónico
+- inputText: ${EMAIL}
+- tapOn: Contraseña
+- inputText: ${PASSWORD}
+- hideKeyboard
+- tapOn: Iniciar sesión
+- extendedWaitUntil:
+    visible: Privacidad y mis datos|Estudios
+    timeout: 90000
+- runFlow:
+    when:
+      visible: Privacidad y mis datos
+    commands:
+      - scrollUntilVisible:
+          element: He leído y acepto el aviso de privacidad de mi cuenta
+          direction: DOWN
+      - assertVisible:
+          text: He leído y acepto el aviso de privacidad de mi cuenta
+          checked: false
+      - takeScreenshot: consentimiento-inicial
+      - tapOn: He leído y acepto el aviso de privacidad de mi cuenta
+      - scrollUntilVisible:
+          element: Guardar mis decisiones
+          direction: DOWN
+      - tapOn: Guardar mis decisiones
+- extendedWaitUntil:
+    visible: Estudios
+    timeout: 90000
+- takeScreenshot: inicio
+- tapOn:
+    text: Estudios
+    index: 0
+- extendedWaitUntil:
+    visible: Buscar estudio
+    timeout: 60000
+- tapOn: Buscar estudio
+- inputText: Estudio QA
+- hideKeyboard
+- extendedWaitUntil:
+    visible: .*Estudio QA seguro.*
+    timeout: 60000
+- takeScreenshot: estudios
+- tapOn: .*Estudio QA seguro.*
+- extendedWaitUntil:
+    visible: .*Parametro QA.*
+    timeout: 60000
+- takeScreenshot: detalle
+- back
+- tapOn: Perfil
+- extendedWaitUntil:
+    visible: Mi perfil
+    timeout: 60000
+- tapOn: Privacidad y mis datos
+- extendedWaitUntil:
+    visible: .*Aviso aceptado.*
+    timeout: 60000
+- takeScreenshot: privacidad
+- scrollUntilVisible:
+    element: Permitir comunicaciones opcionales
+    direction: DOWN
+- assertVisible: Permitir comunicaciones opcionales
+- assertVisible:
+    text: Permitir comunicaciones opcionales
+    checked: false
+- tapOn: Permitir comunicaciones opcionales
+- scrollUntilVisible:
+    element: Guardar mis decisiones
+    direction: DOWN
+- tapOn: Guardar mis decisiones
+- extendedWaitUntil:
+    visible: Tus decisiones de privacidad se guardaron.
+    timeout: 60000
+- tapOn: Permitir comunicaciones opcionales
+- tapOn: Guardar mis decisiones
+- extendedWaitUntil:
+    visible: Tus decisiones de privacidad se guardaron.
+    timeout: 60000
+- takeScreenshot: oposicion
+- scrollUntilVisible:
+    element: Quiero cancelar mi cuenta
+    direction: DOWN
+- tapOn: Quiero cancelar mi cuenta
+- scrollUntilVisible:
+    element: Contraseña actual para cancelar
+    direction: DOWN
+- tapOn: Contraseña actual para cancelar
+- inputText: ${PASSWORD}
+- tapOn: Escribe ELIMINAR MI CUENTA
+- inputText: ELIMINAR MI CUENTA
+- hideKeyboard
+- scrollUntilVisible:
+    element: Cancelar mi cuenta definitivamente
+    direction: DOWN
+- tapOn: Cancelar mi cuenta definitivamente
+- assertVisible: Cancelar tu cuenta de acceso
+- takeScreenshot: confirmacion-cancelacion
+- tapOn: Cancelar mi cuenta
+- extendedWaitUntil:
+    visible: Bienvenido
+    timeout: 60000
+- takeScreenshot: cuenta-cancelada

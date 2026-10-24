@@ -24,3 +24,29 @@ Los endpoints de perfil del [PR1 del backend](https://github.com/DavidHdz117/Bac
 El cliente nativo no requiere cookies ni cambios CORS. El preview web sí requiere que su origen esté autorizado por la configuración existente del servidor. El backend sigue siendo la autoridad sobre roles y sesiones.
 
 `npm run build` exporta bundles Android/iOS para verificar compilación JavaScript/TypeScript con Metro; no produce APK/IPA ni acredita prueba física.
+# Actualización de arquitectura 1.1
+
+Se aplica MVVM con límites de Clean Architecture en privacidad y estudios, conservando contratos y adaptadores de los módulos existentes.
+
+```mermaid
+flowchart LR
+  View[Vista React Native] --> VM[ViewModel observable]
+  VM --> UC[Caso de uso]
+  UC --> Port[Contrato Repository]
+  HTTP[Adaptador HTTP] -. implementa .-> Port
+  HTTP --> API[ApiClient compartido]
+  Factory[Factory de composición] --> VM
+  Factory --> HTTP
+```
+
+| Patrón | Implementación real | Propósito |
+| --- | --- | --- |
+| Singleton de módulo | `src/core/api.ts`: instancia exportada `api` | Transporte y coordinación de renovación compartidos. Se permiten instancias independientes para pruebas. |
+| Factory | `createPrivacyViewModel`, `createStudiesViewModel`; `createSession` valida la sesión | Componer adaptadores/casos de uso e impedir sesiones locales inconsistentes. |
+| Repository | Contratos `PrivacyRepository` y `StudyRepository`; adaptadores `HttpPrivacyRepository` y `HttpStudyRepository` | Sustituir transporte por dobles de prueba sin convertir la vista en un cliente HTTP. |
+| Observer | `ObservableState.subscribe/getSnapshot`; vistas con `useSyncExternalStore` | Notificar estado y cancelar suscripciones sin acoplar casos de uso a React. |
+
+`ManagePrivacy` y `SearchStudies` representan reglas de aplicación. Los ViewModels controlan carga, cancelación, respuestas tardías y presentación; las vistas controlan interacción y distribución visual. Las pruebas de `/test` utilizan los contratos Repository para comprobar reglas, paginación, consentimiento y carreras de respuestas.
+
+La composición conecta los adaptadores reales al crear los ViewModels. La arquitectura anterior que sigue describe la base del proyecto; no implica que todos los módulos se hayan reescrito como casos de uso separados. [Sesiones, pinning, privacidad y Release](SEGURIDAD_Y_PRIVACIDAD.md).
+

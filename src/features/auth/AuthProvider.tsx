@@ -6,7 +6,7 @@ import { AppState } from 'react-native';
 
 import { api } from '@/core/api';
 import { AppError, errorMessage, isCancelled } from '@/core/errors';
-import { loginRequest, logoutRequest, validateSession } from './api';
+import { loginRequest, logoutRequest, refreshRequest, validateSession } from './api';
 import { isSessionExpired, readSession, removeSession, saveSession, type Session, type User } from './session';
 
 type AuthStatus = 'loading' | 'authenticated' | 'anonymous' | 'error';
@@ -28,6 +28,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
   const mounted = useRef(false);
   const pendingRemoval = useRef(false);
   const requestController = useRef<AbortController | null>(null);
+  const refreshing = useRef<{ token: string; promise: Promise<string | null> } | null>(null);
 
   const isCurrent = useCallback((id: number) => mounted.current && operation.current === id, []);
 
@@ -49,6 +50,33 @@ export function AuthProvider({ children }: PropsWithChildren) {
     }
   }, [isCurrent]);
 
+  const refresh = useCallback((expectedToken: string): Promise<string | null> => {
+    if (refreshing.current?.token === expectedToken) return refreshing.current.promise;
+    const candidate = currentSession.current;
+    if (!candidate || candidate.token !== expectedToken || !candidate.refreshToken) return Promise.resolve(null);
+    const id = operation.current;
+    const promise = (async () => {
+      try {
+        const next = await refreshRequest(candidate);
+        if (!isCurrent(id) || currentSession.current?.token !== expectedToken) return null;
+        await saveSession(next);
+        if (!isCurrent(id) || currentSession.current?.token !== expectedToken) return null;
+        currentSession.current = next;
+        api.setToken(next.token);
+        setState({ session: next, status: 'authenticated', profile: next.usuario });
+        return next.token;
+      } catch (error) {
+        if (isCurrent(id) && currentSession.current?.token === expectedToken && error instanceof AppError &&
+            ['unauthorized', 'forbidden', 'storage'].includes(error.kind)) await clearSession(expirationNotice);
+        throw error;
+      } finally {
+        if (refreshing.current?.token === expectedToken) refreshing.current = null;
+      }
+    })();
+    refreshing.current = { token: expectedToken, promise };
+    return promise;
+  }, [clearSession, isCurrent]);
+
   const restore = useCallback(async () => {
     if (pendingRemoval.current) {
       await clearSession('La sesión local se cerró. Puedes iniciar sesión de nuevo.');
@@ -68,19 +96,20 @@ export function AuthProvider({ children }: PropsWithChildren) {
         setState({ session: null, status: 'anonymous' });
         return;
       }
-      if (isSessionExpired(candidate)) {
-        await clearSession(expirationNotice);
-        return;
-      }
       currentSession.current = candidate;
       api.setToken(candidate.token);
+      if (isSessionExpired(candidate)) {
+        const renewed = await refresh(candidate.token);
+        if (!renewed) { await clearSession(expirationNotice); return; }
+      }
       await validateSession(controller.signal, false);
       if (!isCurrent(id)) return;
-      if (isSessionExpired(candidate)) {
+      const active = currentSession.current;
+      if (!active || isSessionExpired(active)) {
         await clearSession(expirationNotice);
         return;
       }
-      setState({ session: candidate, status: 'authenticated' });
+      setState({ session: active, status: 'authenticated' });
     } catch (error) {
       if (!isCurrent(id) || isCancelled(error)) return;
       api.setToken(null);
@@ -90,7 +119,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
         setState({ session: null, status: 'error', error: errorMessage(error) });
       }
     }
-  }, [clearSession, isCurrent]);
+  }, [clearSession, isCurrent, refresh]);
 
   const login = useCallback(async (email: string, password: string) => {
     if (pendingRemoval.current) throw new AppError('storage', 'Primero vuelve a intentar el cierre de la sesión guardada.');
@@ -130,7 +159,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
     // Capture the authenticated request before removing the in-memory token.
     if (currentSession.current) api.setToken(currentSession.current.token);
     const revocation = currentSession.current
-      ? logoutRequest().then(() => true, (error: unknown) => error instanceof AppError && error.status === 401)
+      ? logoutRequest(currentSession.current).then(() => true, (error: unknown) => error instanceof AppError && error.status === 401)
       : Promise.resolve(true);
     await clearSession('Cerraste sesión en este dispositivo.');
     const id = operation.current;
@@ -157,6 +186,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
   useEffect(() => {
     mounted.current = true;
     api.setUnauthorizedHandler(() => { void clearSession(expirationNotice); });
+    api.setRefreshHandler(refresh);
     void Promise.resolve().then(() => { if (mounted.current) void restore(); });
     return () => {
       mounted.current = false;
@@ -166,8 +196,9 @@ export function AuthProvider({ children }: PropsWithChildren) {
       requestController.current?.abort();
       api.setToken(null);
       api.setUnauthorizedHandler(undefined);
+      api.setRefreshHandler(undefined);
     };
-  }, [clearSession, restore]);
+  }, [clearSession, restore, refresh]);
 
   useEffect(() => {
     let previousState = AppState.currentState;
@@ -186,14 +217,22 @@ export function AuthProvider({ children }: PropsWithChildren) {
     const schedule = () => {
       const remaining = session.expiresAt - Date.now();
       if (remaining <= 0) {
-        if (currentSession.current?.token === session.token) void clearSession(expirationNotice);
+        if (currentSession.current?.token === session.token) {
+          if (session.refreshToken) {
+            void refresh(session.token).catch(error => {
+              if (currentSession.current?.token === session.token && mounted.current) {
+                setState({ session: null, status: 'error', error: errorMessage(error) });
+              }
+            });
+          } else void clearSession(expirationNotice);
+        }
       } else {
         timer = setTimeout(schedule, Math.min(remaining, 2_147_483_647));
       }
     };
     schedule();
     return () => clearTimeout(timer);
-  }, [clearSession, state.session, state.status]);
+  }, [clearSession, refresh, state.session, state.status]);
 
   const value = useMemo(() => ({ ...state, login, logout, retry, applyProfile }), [state, login, logout, retry, applyProfile]);
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

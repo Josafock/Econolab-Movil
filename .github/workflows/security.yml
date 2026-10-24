@@ -1,0 +1,123 @@
+name: Seguridad móvil SAST y DAST
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sast:
+    name: Semgrep y dependencias
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - name: Instalar Semgrep fijado
+        run: |
+          python3 -m venv /tmp/econolab-semgrep
+          /tmp/econolab-semgrep/bin/pip install 'semgrep==1.182.1'
+      - name: SAST del código móvil y scripts
+        run: |
+          mkdir -p reports/security
+          /tmp/econolab-semgrep/bin/semgrep scan --config .semgrep.yml --metrics=off --disable-version-check --error --json --output reports/security/semgrep.json src scripts app.config.js
+      - name: Auditar dependencias y bloquear críticas
+        run: npm audit --audit-level=critical --json > reports/security/dependencies.json
+      - name: Conservar evidencia SAST
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: security-sast-${{ github.run_id }}-${{ github.run_attempt }}
+          path: reports/security/
+          if-no-files-found: error
+          retention-days: 30
+
+  dast:
+    name: Seguridad HTTP del backend aislado
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:17.6
+        env:
+          POSTGRES_USER: econolab_test
+          POSTGRES_PASSWORD_FILE: /proc/sys/kernel/random/uuid
+          POSTGRES_DB: econolab_mobile_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready --health-interval 5s
+          --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_HOST: 127.0.0.1
+      DATABASE_PORT: '5432'
+      DATABASE_USER: econolab_test
+      DATABASE_NAME: econolab_mobile_test
+      DATABASE_SSL: 'false'
+      DATABASE_SYNCHRONIZE: 'true'
+      NODE_ENV: test
+      GOOGLE_CLIENT_ID: local-qa-client
+      GOOGLE_CALLBACK_URL: http://127.0.0.1:3109/api/auth/google/callback
+      GMAIL_USER: qa@example.test
+      PORT: '3109'
+      THROTTLE_LIMIT: '10000'
+      APP_ENABLE_HSTS: 'false'
+      COOKIE_SECURE: 'false'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Obtener backend real para pruebas aisladas
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          repository: DavidHdz117/Backend_Econolab_Escuela
+          ref: c64f3f91dd20413d626ebec7145347f112f3fc0e
+          path: qa-backend
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: qa-backend/package-lock.json
+      - name: Preparar secreto exclusivo de esta ejecución
+        run: echo "JWT_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+      - name: Generar contraseña exclusiva del PostgreSQL desechable
+        run: |
+          DB_PASSWORD=$(openssl rand -hex 32)
+          echo "::add-mask::$DB_PASSWORD"
+          docker exec "${{ job.services.postgres.id }}" psql -U econolab_test -d econolab_mobile_test -c "ALTER ROLE econolab_test WITH PASSWORD '$DB_PASSWORD';"
+          echo "DATABASE_PASS=$DB_PASSWORD" >> "$GITHUB_ENV"
+      - name: Instalar backend
+        working-directory: qa-backend
+        run: npm ci --no-audit --no-fund
+      - name: Ejecutar pruebas dinámicas de autenticación y ARCO
+        working-directory: qa-backend
+        env:
+          SECURITY_SCAN_HOLD: '1'
+        run: |
+          node node_modules/ts-node/dist/bin.js --transpile-only -r tsconfig-paths/register test/mobile-security.ts > /tmp/econolab-dast.log 2>&1 &
+          BACKEND_PID=$!
+          trap 'kill "$BACKEND_PID" 2>/dev/null || true' EXIT
+          for n in $(seq 1 90); do
+            test -f reports/mobile-security/ready && break
+            kill -0 "$BACKEND_PID" || { cat /tmp/econolab-dast.log; exit 1; }
+            sleep 2
+          done
+          test -f reports/mobile-security/ready
+          chmod a+w reports/mobile-security
+          docker run --rm --network host -v "$PWD/reports/mobile-security:/zap/wrk:rw" ghcr.io/zaproxy/zaproxy:2.17.0 zap-baseline.py -t http://127.0.0.1:3109/api/privacy -m 1 -I -r zap-baseline.html -J zap-baseline.json
+      - name: Conservar evidencia DAST
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: security-dast-${{ github.run_id }}-${{ github.run_attempt }}
+          path: qa-backend/reports/mobile-security/
+          if-no-files-found: error
+          retention-days: 30

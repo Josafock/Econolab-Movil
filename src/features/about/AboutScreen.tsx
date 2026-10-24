@@ -32,7 +32,7 @@ export default function AboutScreen() {
       <Text accessibilityRole="header" style={styles.title}>Uso de tu información</Text>
       <Text style={styles.body}>Tu correo y contraseña se envían al servidor de Econolab para verificar el acceso. Puedes consultar y editar tu nombre y correo en Mi perfil. El rol determina qué módulos puedes abrir.</Text>
       <Text style={styles.body}>En Android y iOS guardamos la sesión en el almacenamiento seguro del dispositivo. La contraseña no se guarda. Al cerrar sesión se elimina el acceso local y se solicita su revocación al servidor.</Text>
-      <Text style={styles.body}>Para solicitar cambios o la eliminación de tu cuenta y conocer la conservación de tus datos, contacta al administrador de Econolab.</Text>
+      <Text style={styles.body}>Puedes administrar el consentimiento, las finalidades opcionales y la cancelación de tu cuenta en Mi perfil → Privacidad y mis datos. Para solicitudes sobre expedientes clínicos, contacta al laboratorio.</Text>
       {resources.privacyUrl ? <Button title="Política de privacidad" icon={ExternalLink} variant="secondary" onPress={() => { void open(resources.privacyUrl!); }} /> : null}
     </Card>
     {error ? <Feedback kind="error" message={error} /> : null}

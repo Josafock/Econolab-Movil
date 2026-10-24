@@ -8,6 +8,8 @@ coverage/
 reports/
 artifacts/
 .codex-tmp/
+.native-qa/
+qa-backend/
 .claude/
 .vscode/
 android/

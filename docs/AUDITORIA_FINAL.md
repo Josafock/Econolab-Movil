@@ -1,5 +1,7 @@
 # Auditoría final de ECONOLAB Mobile
 
+> **Registro histórico.** Para el estado comprobado el 23 de octubre de 2026, consultar la [revisión de la rúbrica](REVISION_RUBRICA_2026-10-23.md). Los totales de pruebas y dependencias, la disponibilidad de APK y el estado de `main` indicados abajo corresponden a revisiones anteriores; no describen la entrega actual.
+
 Fecha de revisión: 6 de octubre de 2026, horario de Ciudad de México. Repositorio: [Josafock/Econolab-Movil](https://github.com/Josafock/Econolab-Movil).
 
 **Actualización:** la app usa `https://backend-econolab-escuela-1.onrender.com/api` y Expo inicia por túnel. Se adaptaron el logo de la web, las pantallas y la navegación inferior en [PR47](https://github.com/Josafock/Econolab-Movil/pull/47) y [PR48](https://github.com/Josafock/Econolab-Movil/pull/48). El perfil completo está implementado en [PR49](https://github.com/Josafock/Econolab-Movil/pull/49), y el icono nativo en [PR50](https://github.com/Josafock/Econolab-Movil/pull/50). El Project oficial ya pudo verificarse: 14 campos y seis Sprints. El propietario autorizó integrar el backend el 6 de octubre; [PR1](https://github.com/DavidHdz117/Backend_Econolab_Escuela/pull/1) quedó integrado en `933215a` y su CI de `main` se habilitó en `35d9fb7`. El perfil está publicado y comprobado en Render: siete comprobaciones de integración y edición HTTP/móvil aprobadas, con la cuenta de pruebas restaurada. Los PR y `main` del móvil permanecen sin merges. Ver [perfil](PROFILE_COMPATIBILITY.md), [iconos](ICONOS.md) y [Project](PROJECT_VERIFICATION.md).

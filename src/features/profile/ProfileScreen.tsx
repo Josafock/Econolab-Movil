@@ -72,6 +72,7 @@ export default function ProfileScreen() {
   return <Screen>
     <Heading eyebrow="Tu cuenta" title="Mi perfil" subtitle="Tu información de acceso a Econolab." />
     <ProfileCard disabled={busy} />
+    <Button title="Privacidad y mis datos" icon={ShieldCheck} variant="secondary" disabled={busy} onPress={() => router.push('/privacy')} />
     <Card>
       <IconBadge icon={LockKeyhole} />
       <Text accessibilityRole="header" style={styles.title}>Cambiar contraseña</Text>

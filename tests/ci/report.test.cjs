@@ -1,11 +1,11 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const { evaluate, buildReport } = require('../../scripts/ci/report.cjs');
-const needs = () => ({ plan: { result: 'success', outputs: { 'has-features': 'true' } }, quality: { result: 'success' }, features: { result: 'success' }, build: { result: 'success' } });
+const needs = () => ({ security: { result: 'success' }, plan: { result: 'success', outputs: { 'has-features': 'true' } }, quality: { result: 'success' }, features: { result: 'success' }, build: { result: 'success' } });
 const context = { runUrl: 'https://github.com/example/repo/actions/runs/1', branch: 'feature/HU-01', createdAt: '2026-10-15', headSha: 'abc', testedSha: 'def' };
 
 test('a failing or cancelled stage cannot pass the final merge gate', () => {
-  for (const id of ['plan', 'quality', 'features', 'build']) for (const status of ['failure', 'cancelled', 'skipped']) {
+  for (const id of ['security', 'plan', 'quality', 'features', 'build']) for (const status of ['failure', 'cancelled', 'skipped']) {
     const jobs = needs(); jobs[id].result = status;
     assert.equal(evaluate(jobs).approved, false, `${id}: ${status}`);
   }

@@ -7,8 +7,8 @@ import { AuthProvider, useAuth } from '@/features/auth/AuthProvider';
 import { loginRequest, logoutRequest, validateSession } from '@/features/auth/api';
 import { readSession, removeSession, saveSession, type Session } from '@/features/auth/session';
 
-jest.mock('@/core/api', () => ({ api: { setToken: jest.fn(), setUnauthorizedHandler: jest.fn() } }));
-jest.mock('@/features/auth/api', () => ({ loginRequest: jest.fn(), logoutRequest: jest.fn(), validateSession: jest.fn() }));
+jest.mock('@/core/api', () => ({ api: { setToken: jest.fn(), setUnauthorizedHandler: jest.fn(), setRefreshHandler: jest.fn() } }));
+jest.mock('@/features/auth/api', () => ({ loginRequest: jest.fn(), logoutRequest: jest.fn(), refreshRequest: jest.fn(), validateSession: jest.fn() }));
 jest.mock('@/features/auth/session', () => ({
   readSession: jest.fn(), saveSession: jest.fn(), removeSession: jest.fn(),
   isSessionExpired: (session: Session) => session.expiresAt <= Date.now(),

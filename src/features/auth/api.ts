@@ -14,7 +14,7 @@ export async function loginRequest(email: string, password: string, signal?: Abo
   if (!result.success) throw new AppError('validation', 'Revisa tu correo y contraseña antes de continuar.');
   try {
     const data = await api.request('/auth/login', {
-      method: 'POST', body: result.data, authenticated: false, signal, timeoutMs: 60000,
+      method: 'POST', body: { ...result.data, mobile: true }, authenticated: false, signal, timeoutMs: 60000,
     });
     return createSession(data);
   } catch (error) {
@@ -33,6 +33,23 @@ export async function validateSession(signal?: AbortSignal, expireOnUnauthorized
   await api.request('/studies?page=1&limit=1', { signal, expireOnUnauthorized, timeoutMs: 60000 });
 }
 
-export async function logoutRequest(): Promise<void> {
+export async function logoutRequest(session?: Session): Promise<void> {
+  if (session?.refreshToken) {
+    await api.request('/auth/mobile/logout', {
+      method: 'POST', body: { refreshToken: session.refreshToken }, authenticated: false,
+      expireOnUnauthorized: false, retryUnauthorized: false,
+    });
+    return;
+  }
   await api.request('/auth/logout', { method: 'POST', expireOnUnauthorized: false });
+}
+
+export async function refreshRequest(session: Session, signal?: AbortSignal): Promise<Session> {
+  if (!session.refreshToken || !session.refreshExpiresAt || session.refreshExpiresAt <= Date.now()) {
+    throw new AppError('unauthorized', 'Tu sesión terminó. Inicia sesión de nuevo.', 401);
+  }
+  return createSession(await api.request('/auth/refresh', {
+    method: 'POST', body: { refreshToken: session.refreshToken }, authenticated: false,
+    expireOnUnauthorized: false, retryUnauthorized: false, signal, timeoutMs: 60000,
+  }));
 }

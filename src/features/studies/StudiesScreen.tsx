@@ -1,17 +1,15 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ChevronRight, FlaskConical, Package, Search, SearchX } from 'lucide-react-native';
 
-import { errorMessage } from '@/core/errors';
 import { Button, Card, colors, Feedback, Field, Heading, IconBadge, Loading, Screen } from '@/ui';
 import {
-  formatPrice, listStudies, studyTypeLabels,
-  type Study, type StudiesResponse, type StudyStatus, type StudyType,
+  formatPrice, studyTypeLabels,
+  type Study, type StudyStatus, type StudyType,
 } from './api';
 
-type LoadMode = 'initial' | 'refresh' | 'more';
-type LoadFailure = { message: string; page: number; mode: LoadMode };
+import { createStudiesViewModel, type LoadMode } from './StudiesViewModel';
 
 const typeOptions: { value: StudyType | 'all'; label: string }[] = [
   { value: 'all', label: 'Todos' },
@@ -31,12 +29,8 @@ export default function StudiesScreen() {
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [type, setType] = useState<StudyType | 'all'>('all');
   const [status, setStatus] = useState<StudyStatus | 'all'>('all');
-  const [studies, setStudies] = useState<Study[]>([]);
-  const [meta, setMeta] = useState<StudiesResponse['meta'] | null>(null);
-  const [loading, setLoading] = useState<LoadMode | null>('initial');
-  const [failure, setFailure] = useState<LoadFailure | null>(null);
-  const requestRef = useRef<{ controller: AbortController; sequence: number } | null>(null);
-  const sequenceRef = useRef(0);
+  const vm = useMemo(() => createStudiesViewModel(), []);
+  const { studies, meta, loading, failure } = useSyncExternalStore(vm.subscribe, vm.getSnapshot, vm.getSnapshot);
   const listRef = useRef<FlatList<Study>>(null);
 
   useEffect(() => {
@@ -44,54 +38,20 @@ export default function StudiesScreen() {
     return () => clearTimeout(timer);
   }, [search]);
 
-  const loadPage = useCallback(async (page: number, mode: LoadMode) => {
-    requestRef.current?.controller.abort();
-    const controller = new AbortController();
-    const sequence = ++sequenceRef.current;
-    requestRef.current = { controller, sequence };
-    setLoading(mode);
-    setFailure(null);
-
-    try {
-      const response = await listStudies({
-        page,
-        search: debouncedSearch,
-        type: type === 'all' ? undefined : type,
-        status: status === 'all' ? undefined : status,
-        signal: controller.signal,
-      });
-      if (controller.signal.aborted || sequence !== sequenceRef.current) return;
-      setStudies((previous) => mode === 'more'
-        ? Array.from(new Map([...previous, ...response.data].map((study) => [study.id, study])).values())
-        : response.data);
-      setMeta(response.meta);
-    } catch (error) {
-      if (controller.signal.aborted || sequence !== sequenceRef.current) return;
-      setFailure({
-        message: errorMessage(error),
-        page,
-        mode,
-      });
-    } finally {
-      if (!controller.signal.aborted && sequence === sequenceRef.current) setLoading(null);
-    }
-  }, [debouncedSearch, type, status]);
+  const loadPage = useCallback((page: number, mode: LoadMode) => vm.load({
+    page, search: debouncedSearch, type: type === 'all' ? undefined : type,
+    status: status === 'all' ? undefined : status,
+  }, mode), [vm, debouncedSearch, type, status]);
 
   useEffect(() => {
     let active = true;
     void Promise.resolve().then(() => {
       if (!active) return;
-      setStudies([]);
-      setMeta(null);
       listRef.current?.scrollToOffset({ offset: 0, animated: false });
       void loadPage(1, 'initial');
     });
-    return () => {
-      active = false;
-      requestRef.current?.controller.abort();
-      sequenceRef.current += 1;
-    };
-  }, [loadPage]);
+    return () => { active = false; vm.dispose(); };
+  }, [loadPage, vm]);
 
   const searching = search.trim() !== debouncedSearch;
   const hasNextPage = !!meta && meta.page * meta.limit < meta.total;

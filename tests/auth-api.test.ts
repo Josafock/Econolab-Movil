@@ -18,7 +18,7 @@ it('uses the real login body and accepts numeric IDs in the response and JWT', a
   jest.mocked(api.request).mockResolvedValueOnce({ message: 'Autenticado...', token, usuario });
   const session = await loginRequest(' equipo@example.test ', 'test-only-password');
   expect(api.request).toHaveBeenCalledWith('/auth/login', {
-    method: 'POST', body: { email: usuario.email, password: 'test-only-password' }, authenticated: false, signal: undefined, timeoutMs: 60000,
+    method: 'POST', body: { email: usuario.email, password: 'test-only-password', mobile: true }, authenticated: false, signal: undefined, timeoutMs: 60000,
   });
   expect(session.usuario.id).toBe('13');
 });
