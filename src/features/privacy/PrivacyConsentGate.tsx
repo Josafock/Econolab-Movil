@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState, type PropsWithChildren } from 'react';
-import { View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '@/features/auth/AuthProvider';
 import { errorMessage } from '@/core/errors';
 import { Button, Feedback, Heading, Loading, Screen } from '@/ui';
@@ -23,7 +23,7 @@ function ConsentBoundary({ children }: PropsWithChildren) {
     return () => controller.abort();
   }, [attempt]);
   if (phase === 'ready') return children;
-  if (phase === 'required') return <View style={{ flex: 1 }}><PrivacyScreen onAccepted={accepted} /><Button title="Cerrar sesión sin aceptar" variant="secondary" onPress={() => { void logout(); }} /></View>;
+  if (phase === 'required') return <SafeAreaView edges={['top', 'bottom']} style={{ flex: 1 }}><PrivacyScreen onAccepted={accepted} /><Button title="Cerrar sesión sin aceptar" variant="secondary" onPress={() => { void logout(); }} /></SafeAreaView>;
   return <Screen topInset bottomInset>
     <Heading title="Tu privacidad" subtitle="Comprobamos el aviso vigente y tus decisiones antes de continuar." />
     {phase === 'checking' ? <Loading /> : <Feedback kind="error" message={failure} onRetry={() => { setPhase('checking'); setAttempt(value => value + 1); }} />}
