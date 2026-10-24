@@ -145,20 +145,21 @@ jobs:
         env:
           NODE_ENV: development
           EXPO_OFFLINE: '1'
+          EXPO_UNSTABLE_HEADLESS: '1'
         run: |
           sudo sh -c 'echo "KERNEL==\"kvm\", GROUP=\"kvm\", MODE=\"0666\", OPTIONS+=\"static_node=kvm\"" > /etc/udev/rules.d/99-kvm4all.rules'
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
-          node node_modules/expo/bin/cli start --lan --port 8081 > /tmp/econolab-metro.log 2>&1 &
+          node node_modules/expo/bin/cli start --lan --port 8081 --max-workers 2 > /tmp/econolab-metro.log 2>&1 &
           METRO_PID=$!
           echo "QA_METRO_PID=$METRO_PID" >> "$GITHUB_ENV"
           for n in $(seq 1 60); do
             if ! kill -0 "$METRO_PID" 2>/dev/null; then cat /tmp/econolab-metro.log; exit 1; fi
-            curl --max-time 3 -fsS http://127.0.0.1:8081/status | grep -q 'packager-status:running' && exit 0
+            curl --max-time 3 -fsS http://127.0.0.1:8081/status | grep -q 'packager-status:running' && break
             sleep 2
           done
-          cat /tmp/econolab-metro.log
-          exit 1
+          curl --max-time 3 -fsS http://127.0.0.1:8081/status | grep -q 'packager-status:running'
+          curl --max-time 180 -fsS 'http://127.0.0.1:8081/.expo/.virtual-metro-entry.bundle?platform=android&dev=true&minify=false' -o /dev/null
       - name: Ejecutar caja negra en ambos builds
         uses: ReactiveCircus/android-emulator-runner@4c44018e59b437e86cdfc41da381398f93ed8808 # v2
         with:
@@ -168,6 +169,7 @@ jobs:
           profile: pixel_6
           disable-animations: true
           script: |
+            adb shell am force-stop com.google.android.apps.nexuslauncher
             adb reverse tcp:8081 tcp:8081
             adb install android/app/build/outputs/apk/debug/app-debug.apk
             maestro test -e APP_ID=com.econolab.mobile.qa -e EMAIL=native-debug@example.test -e PASSWORD="$SECURITY_QA_UI_PASSWORD" --format junit --output reports/native/maestro-debug.xml --test-output-dir reports/native/debug .maestro/native-smoke.yml

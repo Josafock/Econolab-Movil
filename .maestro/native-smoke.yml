@@ -4,6 +4,14 @@ name: Acceso consentimiento estudios perfil y cierre de sesión
 - launchApp:
     clearState: true
 - extendedWaitUntil:
+    visible: Bienvenido|Pixel Launcher isn't responding
+    timeout: 90000
+- runFlow:
+    when:
+      visible: Pixel Launcher isn't responding
+    commands:
+      - tapOn: Close app
+- extendedWaitUntil:
     visible: Bienvenido
     timeout: 60000
 - tapOn: Correo electrónico
