@@ -9,13 +9,14 @@ Aplicación React Native con Expo SDK 57 y TypeScript. Reutiliza la API NestJS e
 3. En una instalación nueva, copiar `.env.example` a `.env` y completar `EXPO_PUBLIC_API_URL` con la base del backend, incluido `/api`.
 4. Ejecutar `npm start` y escanear el QR con Expo Go compatible con SDK 57. El arranque usa un túnel; mantener computadora e internet disponibles. `npm run start:lan` permite usar la misma red Wi-Fi. `npm run android` requiere un emulador o teléfono Android configurado.
 
-En un teléfono, `localhost` apunta al propio teléfono: para un backend local utiliza la IP de la computadora en la misma red. Android Emulator usa `10.0.2.2`. HTTP se permite durante desarrollo; la versión publicada requiere HTTPS. El preview web necesita un origen autorizado por el CORS existente del backend; la prueba local se ejecutó con `npx expo start --web --port 5173`.
+La distribución usa HTTPS y pinning nativo con Render. Expo Go permite revisar interfaz, pero no acredita pinning. El Debug QA permite HTTP a `10.0.2.2` solo para Metro; su API conserva TLS y pinning. El preview web necesita un origen autorizado por el CORS del backend.
 
 La app está configurada con `https://backend-econolab-escuela-1.onrender.com/api`; no necesita iniciar el backend local. La copia de trabajo tiene una cuenta independiente válida para ese servidor en `.env.integration`. Esos archivos son privados y están ignorados por Git. Nunca subirlos, imprimir la contraseña o incluirla en capturas. Render restringe los orígenes localhost del preview web; utiliza Expo Go para probar el acceso con datos.
 
 ## Funcionalidades
 
-- Login, sesión almacenada con SecureStore en Android/iOS, restauración validada, expiración y logout con revocación.
+- Login, SecureStore en Android/iOS, JWT corto, renovación agrupada ante 401 y logout con revocación.
+- Consentimiento explícito, aviso público, preferencias opcionales y cancelación de la cuenta propia desde Privacidad y mis datos.
 - Dashboard con acceso a estudios y perfil; pantallas protegidas.
 - Cortes por fecha para administradores: periodo/sucursal, importes reales registrados, cancelaciones, desglose diario y detalle paginado. [Alcance y planeación de Cortes](docs/CORTES.md).
 - Logo original de la web en las pantallas, icono nativo de ECONOLAB, tarjetas con su paleta y navegación inferior entre Inicio, Estudios y Perfil.
@@ -36,12 +37,12 @@ El perfil utiliza `GET/PATCH /api/users/me` del backend existente. El PR1 del ba
 
 Las issues y el Project de [Econolab-Movil](https://github.com/Josafock/Econolab-Movil) son la planificación oficial. Cada HU tiene su rama y PR hacia `main`; las ramas dependientes incluyen el código de las anteriores. El responsable integra los PR según sus sprints. No se realizaron merges en el móvil ni cambios de calendario. El propietario autorizó integrar únicamente el backend para habilitar el perfil.
 
-La entrega con pulido y preparación de Google Play está en `fix/HU-08-publicacion-play-store`, basada en `feature/HU-04-cortes`. La acumulada `feature/HU-08-pruebas` conserva la versión anterior. Se conserva el `main` integrado por el propietario y la integración de los PR queda a su cargo, sin cambiar el calendario del Project.
+La entrega 1.1 está en `fix/HU-08-seguridad-rubrica`, [PR58](https://github.com/Josafock/Econolab-Movil/pull/58), basada en el pulido de publicación y Cortes. Se conserva el `main` integrado por el propietario y la integración de los PR queda a su cargo, sin cambiar el calendario del Project. El backend de sesión y privacidad sí se integró con autorización del usuario.
 
 ## Documentación
 
 - [Cambios técnicos de la versión 1.1](docs/SEGURIDAD_Y_PRIVACIDAD.md): renovación de sesión, pinning, privacidad, R8 y comprobaciones del CI.
-- [Revisión actual de la rúbrica — 23 de octubre](docs/REVISION_RUBRICA_2026-10-23.md): los 15 criterios, resultados comprobados, pendientes técnicos y acciones del equipo.
+- [Diagnóstico anterior a la versión 1.1](docs/REVISION_RUBRICA_2026-10-23.md): historial de los 15 criterios; los cambios posteriores están en Seguridad y privacidad.
 - [Evidencias de la rúbrica](docs/evidencias-rubrica/GUIA_EVIDENCIAS.md): capturas necesarias y matriz para pruebas nativas Debug/Release.
 - [Auditoría histórica de octubre](docs/AUDITORIA_FINAL.md): conservar como historial; consultar la revisión actual para pruebas, APK, dependencias y estado del repositorio.
 - [Conexión actual a Render](docs/CONEXION_RENDER.md): dirección publicada, túnel, pruebas reales y CORS del preview.
@@ -62,4 +63,4 @@ La entrega con pulido y preparación de Google Play está en `fix/HU-08-publicac
 Push y Pull Request ejecutan regresión y checks por HU. Después del merge, main valida el conjunto y entrega artifacts. Consulta [workflows, cobertura y entornos](docs/GITHUB_ACTIONS.md).
 - [Publicar en Google Play paso a paso](docs/PUBLICAR_GOOGLE_PLAY.md): cuentas, APK, AAB, ficha, privacidad, pruebas y producción.
 - [Pulido y preparación de publicación](docs/PULIDO_PUBLICACION.md): cambios, pruebas, trazabilidad y pendientes del responsable.
-- [Privacidad pendiente del responsable](docs/PRIVACIDAD_PENDIENTES.md): datos reales que debes confirmar antes de publicar.
+- [Revisión de privacidad](docs/PRIVACIDAD_PENDIENTES.md): datos confirmados y procesos externos que el responsable debe revisar.

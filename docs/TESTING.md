@@ -15,7 +15,7 @@ Completar `.env.integration` local, ignorado por Git, conforme a `.env.integrati
 
 La integración comprueba acceso anónimo rechazado, login válido, perfil actualizado del mismo usuario, paginación, búsqueda/filtros, detalle y revocación del token tras logout, incluido el endpoint de perfil. No altera perfiles, estudios ni contraseñas. Requiere el despliegue de `GET /users/me`: si falta, falla y no omite esa prueba. Si el catálogo está vacío, falla explícitamente: no inventa resultados. No se realizan intentos inválidos de login contra la cuenta real para evitar su bloqueo. No se imprime información de pacientes, tokens o contraseñas.
 
-El workflow integration.yml se activa con tags sprint-01 a sprint-06 y con workflow_dispatch. Solo el responsable decide cuándo emitir esos tags; no se crearon durante el desarrollo. Necesita secrets INTEGRATION_API_URL, INTEGRATION_EMAIL e INTEGRATION_PASSWORD que apunten a un backend HTTPS accesible desde GitHub. Una URL `127.0.0.1` del equipo del usuario no es accesible desde el runner; no subir esas credenciales como si fueran un entorno publicado. Faltan secrets → job falla claramente, nunca pasa como omitido.
+El workflow integration.yml verifica Render después de una entrega exitosa de main o mediante ejecución manual en main. Requiere secrets INTEGRATION_API_URL, INTEGRATION_EMAIL e INTEGRATION_PASSWORD. En modo automático, si faltan, registra integración pendiente y no acredita una ejecución; una solicitud manual falla. Solo el propietario puede configurarlos. La CI de seguridad aislada sí corre sin esos secrets; utiliza PostgreSQL y credenciales desechables propias.
 
 El workflow_dispatch solo será visible en GitHub cuando el workflow esté integrado por el responsable en la rama predeterminada. Las validaciones push/PR de ci.yml no requieren secretos. Ver [auditoría final](AUDITORIA_FINAL.md) para los resultados de CI y las pruebas realizadas.
 
@@ -31,6 +31,14 @@ Las siete comprobaciones del script habitual también pasaron contra AuthModule,
 
 Después de la integración del backend autorizada por el propietario, las siete comprobaciones pasaron también contra Render. La prueba HTTP adicional confirmó guardar nombre/correo, login con el nuevo correo y restauración de la cuenta. Se repitió el formulario móvil con todas las peticiones de datos dirigidas a Render: edición, contraseña requerida para correo, confirmación, saludo actualizado y restauración aprobados. No se usó el servidor local para esta última ejecución; el preview web sigue necesitando la herramienta externa de QA para retirar Origin, por el CORS existente. Los resultados locales anteriores se conservan como historial.
 
-## Prueba en dispositivo pendiente del equipo
+## Pruebas de la versión 1.1
 
-Abrir Expo Go compatible con SDK57 o una compilación de desarrollo, comprobar login, catálogo, filtros, detalle, volver, perfil y logout. Repetir con red desconectada y con una sesión revocada. Comprobar tamaño de texto y teclado en Android/iOS. El preview web y los bundles compilados complementan esta prueba, pero no sustituyen una ejecución física. Las capturas de la entrega deben proceder de esas ejecuciones reales.
+La regresión tiene 174 casos en 18 suites, además de 22 pruebas de CI. La integración contra Render incluye ocho comprobaciones de acceso/perfil/estudios y seis adicionales mediante `npm run test:integration:security` para renovación, rotación y privacidad. Esta última crea y revoca únicamente sus sesiones de prueba; no cancela cuentas del servidor real.
+
+`native-verification.yml` genera Debug y Release QA con los módulos reales del backend en una base desechable. Ejecuta tres casos TLS OkHttp, el recorrido Maestro y JADX. Los resultados aprobados deben obtenerse del run terminado y sus artifacts, no deducirse de la configuración. Release QA no usa la firma del titular ni se distribuye en Play.
+
+`inspect-apk.yml` verifica con apksigner el APK EAS distribuible, compara su SHA-256 y ejecuta JADX sobre ese mismo archivo. No sustituye la ejecución de la interfaz en Android ni la revisión de Play Console.
+
+## Prueba en dispositivo del equipo
+
+Instalar el APK propio de la versión 1.1 y comprobar login, consentimiento, catálogo, filtros, detalle, perfil, preferencias y logout. Expo Go sirve para interfaz, pero no acredita pinning ni R8. Repetir con red desconectada y con una sesión revocada. Comprobar tamaño de texto y teclado en Android/iOS. El preview web y los bundles compilados complementan esta prueba, pero no sustituyen una ejecución física. Las capturas de la entrega deben proceder de esas ejecuciones reales.

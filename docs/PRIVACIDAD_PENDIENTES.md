@@ -1,17 +1,25 @@
-# Información que debe completar el responsable
+# Privacidad: datos confirmados y revisión del responsable
 
-Esta lista ayuda a preparar la política de ECONOLAB; **no es una política publicada ni un texto legal aprobado**.
+Actualización: 24 de octubre de 2026. Responsable confirmado para las solicitudes sobre la cuenta móvil: **Jesús David Saldaña Hernández**, **20230009@uthh.edu.mx**.
 
-1. Nombre del responsable que controla las cuentas y el servicio, correo de soporte y medio para solicitudes sobre datos.
-2. URL HTTPS pública de la política, sin login ni PDF. Enlazarla también desde la app mediante `EXPO_PUBLIC_PRIVACY_URL` y en Play Console.
-3. Datos usados: cuenta (nombre, correo, identificador, rol), credenciales para autenticar, sesión y operaciones que el servidor registre. Confirmar registros técnicos, direcciones IP, copias de seguridad, datos administrativos de servicios y proveedores del backend.
-4. Finalidades: acceso del personal, permisos, consulta del catálogo, perfil y resumen de servicios por fecha. Explicar por separado cualquier otra finalidad real del servidor o SDK.
-5. Proveedores y destinatarios: alojamiento de Render, proveedor real de base de datos, correo y otros servicios utilizados. Confirmar qué reciben, para qué y si existen transferencias de datos.
-6. Plazos reales de conservación, incluyendo cuentas desactivadas, registros y respaldos. No prometer borrado inmediato si no existe el mecanismo.
-7. Forma de solicitar acceso, corrección y eliminación; verificar identidad y explicar las retenciones justificadas. No confundir desactivar la cuenta con eliminar sus datos.
-8. Revisar si el registro web está integrado en el flujo móvil. Si habilita creación de cuentas desde la app, implementar las vías de eliminación requeridas antes de publicar.
-9. Fecha, alcance de la política y un proceso para mantenerla actualizada si cambia la aplicación.
+El [aviso público](https://backend-econolab-escuela-1.onrender.com/api/privacy) y la [vía externa de cancelación](https://backend-econolab-escuela-1.onrender.com/api/privacy/account-deletion) ya están publicados. Los perfiles EAS preview/production y la app tienen el contacto y el enlace configurados.
 
-Comportamiento observado en el móvil: transporte HTTPS de producción; sesión en SecureStore Android/iOS; no guarda la contraseña; sin registro móvil, anuncios, analítica propia ni lectura de cámara, micrófono o ubicación en los módulos actuales. Esto describe el código inspeccionado, no sustituye revisar los servicios externos ni el binario final.
+## Implementado
 
-Fuentes: [datos de usuarios](https://support.google.com/googleplay/android-developer/answer/10144311), [formulario de Seguridad de los datos](https://support.google.com/googleplay/android-developer/answer/10787469), [eliminación de cuentas](https://support.google.com/googleplay/android-developer/answer/13327111).
+- Aceptación explícita inicialmente desmarcada, con versión y fecha del servidor; se exige antes de las pantallas de trabajo.
+- Consulta y rectificación del perfil. Cambiar correo requiere contraseña actual.
+- Preferencias opcionales desactivadas inicialmente y oposición persistida. Esta versión no incorpora campañas ni un SDK de analítica opcional.
+- Cancelación de la cuenta propia con contraseña, frase y confirmación. Elimina cuenta, sesiones, preferencias y registros de acceso vinculados; protege al último administrador.
+- Credenciales de sesión en SecureStore, sin guardar contraseñas. HTTPS y pinning en el APK propio. Respaldo Android desactivado.
+
+La cancelación de la cuenta móvil **no elimina expedientes clínicos ni servicios del laboratorio**. El aviso distingue este alcance; las solicitudes sobre esos datos deben ser atendidas por el laboratorio.
+
+## Revisión que corresponde al responsable
+
+1. Confirmar que tiene autorización para atender solicitudes de las cuentas del servicio y revisar el correo publicado. Mantener un procedimiento de verificación de identidad, respuesta y seguimiento.
+2. Confirmar proveedores reales de base de datos, correo y alojamiento, destinatarios, conservación y tratamiento de respaldos. No prometer eliminación de respaldos que el proveedor todavía conserva.
+3. Revisar el aviso técnico y el aviso del laboratorio con quien corresponda. El código y este documento no certifican cumplimiento legal ni determinan obligaciones de conservación clínica.
+4. Responder Seguridad de los datos y eliminación de cuentas en Play Console según la versión distribuida y las prácticas reales del servidor. No declarar que no se recopilan datos por usar HTTPS.
+5. Actualizar aviso y configuración cuando cambien finalidades, datos, contacto o proveedores. Un cambio de versión del aviso exige nueva aceptación en la app.
+
+Fuentes de publicación: [datos de usuarios](https://support.google.com/googleplay/android-developer/answer/10144311), [Seguridad de los datos](https://support.google.com/googleplay/android-developer/answer/10787469), [eliminación de cuentas](https://support.google.com/googleplay/android-developer/answer/13327111).

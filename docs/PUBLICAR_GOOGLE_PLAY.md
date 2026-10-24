@@ -1,17 +1,17 @@
 # Publicar ECONOLAB en Google Play
 
-Guía revisada el **20 de octubre de 2026**. Los nombres de algunos menús pueden variar según el idioma de Play Console.
+Guía actualizada el **24 de octubre de 2026**. Los nombres de algunos menús pueden variar según el idioma de Play Console.
 
 ## Qué ya está preparado
 
 - Expo SDK 57, marca original, icono y pantalla de arranque.
 - `eas.json`: `preview` genera **APK** instalable y `production` genera **AAB** para Google Play. Ambos usan el backend real de Render con `/api` y HTTPS.
-- Versión visible `1.0.0`. EAS administra e incrementa el `versionCode` de producción.
+- Versión visible `1.1.0`. El APK de esta entrega tiene `versionCode` 3; EAS incrementa los códigos futuros.
 - `.easignore` excluye credenciales, archivos `.env` privados, capturas, resultados y carpetas nativas generadas. EAS genera Android desde `app.json`.
-- Ayuda y uso de datos accesible desde el login y el perfil. Cuando configures los datos públicos del responsable aparecerán los botones de política de privacidad y soporte.
+- Ayuda, privacidad y soporte configurados. Responsable de solicitudes de la cuenta: Jesús David Saldaña Hernández, `20230009@uthh.edu.mx`.
 - `assets/store/icon-512.png` y `feature-1024x500.png` para la ficha. Se regeneran con `npm run generate:store-assets`.
 
-Esto prepara el proyecto; **no significa que exista una compilación firmada, una revisión de Google aprobada o una publicación**. Faltan tus cuentas, los datos del responsable, pruebas en un teléfono con el APK y el proceso de Play Console. Consulta también las alertas de dependencias en [DEPENDENCIES.md](DEPENDENCIES.md).
+Ya existe un [APK 1.1.0 firmado en EAS](https://expo.dev/accounts/dravix117/projects/econolab-mobile/builds/619b70bd-c37d-4d2d-a419-7bb0bbf17c91). **No acredita envío ni publicación en Google Play.** Falta completar Play Console, sus declaraciones y las pruebas del equipo. Consulta los resultados actuales en [Seguridad y privacidad](SEGURIDAD_Y_PRIVACIDAD.md).
 
 ## 1. Abrir la carpeta correcta
 
@@ -26,11 +26,11 @@ npm run verify
 npm run release:check
 ```
 
-Usa Node 24 LTS. En esta entrega los ajustes están en `fix/HU-08-publicacion-play-store`, que incluye Cortes. Conserva la planeación existente: el responsable revisa e integra el PR en el orden de los Sprints. No publiques desde una rama antigua que aún no tenga las funciones. No se necesita pagar ni abrir Play Console para realizar estas comprobaciones.
+Usa Node 24 LTS. La entrega está en `fix/HU-08-seguridad-rubrica` e incluye Cortes y seguridad. El responsable revisa e integra el PR según sus Sprints antes de publicar.
 
 ## 2. Crear las cuentas
 
-1. Crea una cuenta de [Expo](https://expo.dev/signup) que controle el responsable del proyecto.
+1. La copia local ya está vinculada al proyecto Expo de `dravix117`; conserva su acceso y firma. En otra computadora inicia sesión con esa cuenta autorizada. Solo crea otro proyecto si el titular decide trasladar la app.
 2. Entra a [Google Play Console](https://play.google.com/console/signup). Google exige al menos 18 años, cobra **25 USD una sola vez** y solicita verificación de identidad. Elige cuenta personal u organización según el responsable real; no uses datos ficticios. Las cuentas personales nuevas también requieren verificar un dispositivo Android con la app de Play Console. [Registro oficial](https://support.google.com/googleplay/android-developer/answer/6112435).
 3. Si el responsable es la escuela o el laboratorio, acuerda quién conservará la cuenta, los accesos y la firma para futuras actualizaciones.
 
@@ -46,25 +46,25 @@ npx eas-cli@latest whoami
 npx eas-cli@latest init
 ```
 
-Usa tu cuenta de Expo y acepta crear el proyecto, o selecciona el proyecto correcto si ya existe. El comando agrega el `extra.eas.projectId` real a `app.json`; no copies un identificador inventado. Revisa los cambios con `git diff`. Ya existe `eas.json`, así que no hace falta reemplazarlo con una plantilla. [Configuración oficial](https://docs.expo.dev/build/setup/).
+La copia local ya tiene el `extra.eas.projectId` real. Ejecuta `init` solo al vincular una copia que todavía no lo tenga; conserva el proyecto existente, su firma y `eas.json`. [Configuración oficial](https://docs.expo.dev/build/setup/).
 
 El identificador Android actual es **`com.econolab.mobile`**. Confirma que será el definitivo y que Play Console lo acepta antes de la primera subida. Si pertenece a otra aplicación tendrás que elegir uno propio en `app.json` y volver a compilar. Google trata el nombre de paquete como permanente. [Crear una app](https://support.google.com/googleplay/android-developer/answer/9859152).
 
 ## 4. Completar privacidad y soporte
 
-Publica una política real en una página HTTPS del sitio de Econolab. Debe abrir sin cuenta, sin restricciones geográficas y no ser un PDF. Debe identificar a ECONOLAB o al responsable de la ficha, explicar datos, fines, proveedores, protección, conservación y solicitudes de eliminación. La sección informativa de la app no sustituye esa política. [Requisito de Google](https://support.google.com/googleplay/android-developer/answer/10144311).
+El aviso ya está publicado en [Privacidad de ECONOLAB](https://backend-econolab-escuela-1.onrender.com/api/privacy), sin login y en HTML. Revisa que describa los procesos reales del responsable y los proveedores antes de declarar esas prácticas en Play. [Requisito de Google](https://support.google.com/googleplay/android-developer/answer/10144311).
 
-Revisa [PRIVACIDAD_PENDIENTES.md](PRIVACIDAD_PENDIENTES.md) antes de redactarla. No se creó un enlace falso ni un correo de soporte inventado.
+Consulta [la revisión del responsable](PRIVACIDAD_PENDIENTES.md). El aviso técnico no sustituye revisar las prácticas del laboratorio.
 
 Agrega los valores verdaderos a tu `.env` local, conservando la URL existente del backend:
 
 ```dotenv
 EXPO_PUBLIC_API_URL=https://backend-econolab-escuela-1.onrender.com/api
-EXPO_PUBLIC_PRIVACY_URL=URL_HTTPS_REAL_DE_TU_POLITICA
-EXPO_PUBLIC_SUPPORT_EMAIL=TU_CORREO_REAL_DE_SOPORTE
+EXPO_PUBLIC_PRIVACY_URL=https://backend-econolab-escuela-1.onrender.com/api/privacy
+EXPO_PUBLIC_SUPPORT_EMAIL=20230009@uthh.edu.mx
 ```
 
-Los dos últimos son ejemplos para sustituir, no valores utilizables. Después, en el proyecto de Expo → **Environment variables**, crea esas dos variables tanto para el entorno **preview** como para **production**, con visibilidad pública/plain text. El backend ya está fijado en cada perfil de `eas.json`. Las variables `EXPO_PUBLIC_*` van dentro de la app: nunca pongas contraseñas, tokens, claves de base de datos ni credenciales de integración ahí. [Variables en EAS](https://docs.expo.dev/eas/environment-variables/).
+Estos valores públicos ya están fijados en `eas.json` para preview/production. No necesitas crear otras variables para repetir esta configuración. Las variables `EXPO_PUBLIC_*` van dentro de la app: nunca pongas secretos ni credenciales de integración ahí. [Variables en EAS](https://docs.expo.dev/eas/environment-variables/).
 
 ```powershell
 npm run release:check -- --store
@@ -126,7 +126,7 @@ En **Política y programas → Contenido de la aplicación**, completa los apart
 3. **Anuncios:** en el código actual no hay anuncios; responde según la versión que finalmente publiques.
 4. **Público objetivo y clasificación de contenido:** responde los cuestionarios según el personal al que va dirigida. No marques una clasificación de edad sin completar el formulario.
 5. **Seguridad de los datos:** declara las prácticas reales. El código transmite nombre, correo, identificador de cuenta y credenciales de autenticación; los servicios y cortes se consultan al servidor. Revisa también registros del servidor, proveedores y SDK incluidos. No marques «no se recopilan datos» solo porque usa HTTPS. El responsable debe confirmar las respuestas y la conservación. [Guía de Seguridad de los datos](https://support.google.com/googleplay/android-developer/answer/10787469).
-6. **Eliminación de cuentas:** la app móvil actual no incorpora registro ni eliminación automática. Revisa el flujo de cuentas de la web y responde con exactitud. Si la app permite crear cuentas, incluso derivando al registro web, Google exige una vía dentro de la app y otra web para solicitar la eliminación; implementa ese flujo antes de declarar que existe. [Requisitos de eliminación](https://support.google.com/googleplay/android-developer/answer/13327111).
+6. **Eliminación de cuentas:** la versión 1.1 permite la cancelación propia en Perfil → Privacidad y mis datos. La vía externa está en `https://backend-econolab-escuela-1.onrender.com/api/privacy/account-deletion`. Elimina cuenta y datos de acceso asociados; no expedientes clínicos. El último administrador debe transferir primero esa responsabilidad. Declara este alcance con exactitud. [Requisitos de eliminación](https://support.google.com/googleplay/android-developer/answer/13327111).
 7. **Declaración de salud:** completa el formulario que Google exige, también a apps que declaran no ofrecer funciones de salud. Evalúa el catálogo de laboratorio según las funciones efectivas; no atribuyas diagnósticos ni funcionalidades clínicas que esta app no tiene. [Declaración oficial](https://support.google.com/googleplay/android-developer/answer/14738291).
 
 ## 8. Generar el AAB de Google Play
@@ -175,4 +175,4 @@ Para una actualización, cambia la versión visible en `app.json` y `package.jso
 
 Corrección del 21/10/2026: el archivo que prepara EAS puede conservar carpetas vacías, incluido `android`, aunque sus archivos estén correctamente excluidos. Se retiró el bloqueo que trataba su sola existencia como error. Si una copia anterior falla en `Pre-install hook` con «Excluye las carpetas nativas generadas», utiliza el `scripts/check-release.cjs` actualizado y vuelve a compilar. Se mantienen las comprobaciones de credenciales privadas y de configuración para Google Play.
 
-No se creó ninguna cuenta de Google/Expo, no se cargó una clave de firma y no se contrató ni inició una compilación remota durante esta preparación.
+La cuenta Expo fue vinculada por el titular; esta entrega reutiliza su firma Android. No se creó una cuenta de Google, no se realizaron pagos ni se envió la app a Play Console.
