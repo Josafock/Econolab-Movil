@@ -1,0 +1,4 @@
+> Task :app:packageReleaseResources
+> Task :app:minifyReleaseWithR8
+> Task :app:packageRelease
+BUILD SUCCESSFUL in 14m 23s

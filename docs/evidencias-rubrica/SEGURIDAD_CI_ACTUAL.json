@@ -1,0 +1,35 @@
+{
+  "runId": 40229958547,
+  "source": "https://github.com/Josafock/Econolab-Movil/actions/runs/40229958547",
+  "scope": "Semgrep local rules, dependency audit, isolated backend HTTP assertions and public-notice ZAP baseline",
+  "http": {
+    "total": 16,
+    "passed": 16
+  },
+  "zap": {
+    "alerts": [
+      {
+        "name": "Non-Storable Content",
+        "risk": 0
+      },
+      {
+        "name": "Storable and Cacheable Content",
+        "risk": 0
+      }
+    ]
+  },
+  "dependencies": {
+    "info": 0,
+    "low": 0,
+    "moderate": 3,
+    "high": 5,
+    "critical": 0,
+    "total": 8
+  },
+  "semgrep": {
+    "version": "1.182.1",
+    "scanned": 66,
+    "findings": 0,
+    "errors": 0
+  }
+}

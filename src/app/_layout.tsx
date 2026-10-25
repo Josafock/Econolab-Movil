@@ -1,6 +1,71 @@
-import { Stack } from 'expo-router';
+import { Stack, type ErrorBoundaryProps } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { View } from 'react-native';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+
+import { AuthProvider, useAuth } from '@/features/auth/AuthProvider';
+import { Brand, Button, Feedback, Heading, Loading, Screen, colors } from '@/ui';
+import ConnectionBanner from '@/ui/ConnectionBanner';
+import BottomNavigation from '@/ui/BottomNavigation';
+import PrivacyConsentGate from '@/features/privacy/PrivacyConsentGate';
+import { api } from '@/core/api';
+import { ensurePinnedTransport } from '@/core/pinning';
+
+// Composition root: every app request awaits native pinning initialization.
+api.setTransportPreparation(ensurePinnedTransport);
+
+export function ErrorBoundary({ retry }: ErrorBoundaryProps) {
+  return <SafeAreaProvider><SafeAreaView style={{ flex: 1 }}><Screen>
+    <Heading title="No pudimos abrir esta pantalla" subtitle="Puedes volver a intentarlo para continuar." />
+    <Button title="Volver a intentar" onPress={retry} />
+  </Screen></SafeAreaView></SafeAreaProvider>;
+}
+
+function AuthenticatedNavigation() {
+  const { status, session, profile, error, notice, retry, logout } = useAuth();
+  if (status === 'loading') {
+    return <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}><Loading /></SafeAreaView>;
+  }
+  if (status === 'error') {
+    return (
+      <SafeAreaView edges={['top', 'bottom']} style={{ flex: 1 }}>
+        <Screen>
+          <Heading title="No pudimos verificar tu sesión" subtitle="Necesitamos comprobar tu acceso antes de abrir la aplicación." />
+          <Feedback kind="error" message={error ?? 'Vuelve a intentarlo.'} onRetry={retry} />
+          {notice ? <Feedback message={notice} /> : null}
+          <Button title="Cerrar sesión en este dispositivo" variant="secondary" onPress={() => { void logout(); }} />
+        </Screen>
+      </SafeAreaView>
+    );
+  }
+  return (
+    <View style={{ flex: 1, backgroundColor: colors.background }}><Stack initialRouteName={status === 'authenticated' ? 'index' : 'login'} screenOptions={{ headerTitle: () => <Brand compact />, headerTitleAlign: 'center', headerTintColor: colors.text, headerStyle: { backgroundColor: colors.card }, headerShadowVisible: false, contentStyle: { backgroundColor: colors.background } }}>
+      <Stack.Protected guard={status === 'anonymous'}>
+        <Stack.Screen name="login" options={{ title: 'Iniciar sesión', headerShown: false }} />
+      </Stack.Protected>
+      <Stack.Protected guard={status === 'authenticated'}>
+        <Stack.Screen name="index" options={{ title: 'Inicio' }} />
+        <Stack.Screen name="studies/index" options={{ title: 'Estudios' }} />
+        <Stack.Screen name="studies/[id]" options={{ title: 'Detalle del estudio' }} />
+        <Stack.Screen name="profile" options={{ title: 'Mi perfil' }} />
+        <Stack.Screen name="privacy" options={{ title: 'Privacidad y mis datos' }} />
+        <Stack.Protected guard={(profile ?? session?.usuario)?.rol === 'admin'}>
+          <Stack.Screen name="cash-cuts" options={{ title: 'Cortes' }} />
+        </Stack.Protected>
+      </Stack.Protected>
+      <Stack.Screen name="about" options={{ title: 'Ayuda y uso de datos' }} />
+      <Stack.Screen name="+not-found" options={{ title: 'Pantalla no encontrada' }} />
+    </Stack><ConnectionBanner />{status === 'authenticated' ? <BottomNavigation /> : null}</View>
+  );
+}
 
 export default function RootLayout() {
-  return <><StatusBar style="dark" /><Stack screenOptions={{ headerTitle: 'ECONOLAB', headerTintColor: '#b91c1c' }} /></>;
+  return (
+    <SafeAreaProvider>
+      <AuthProvider>
+        <StatusBar style="dark" />
+        <PrivacyConsentGate><AuthenticatedNavigation /></PrivacyConsentGate>
+      </AuthProvider>
+    </SafeAreaProvider>
+  );
 }

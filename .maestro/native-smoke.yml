@@ -1,0 +1,183 @@
+appId: ${APP_ID}
+name: Acceso consentimiento estudios perfil y cierre de sesión
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible: Bienvenido|Pixel Launcher isn't responding
+    timeout: 90000
+- runFlow:
+    when:
+      visible: Pixel Launcher isn't responding
+    commands:
+      - tapOn: Close app
+- extendedWaitUntil:
+    visible: Bienvenido
+    timeout: 60000
+- tapOn:
+    text: Correo electrónico
+    below: Correo electrónico
+- inputText: ${EMAIL}
+- tapOn:
+    text: Contraseña
+    below: Contraseña
+- inputText: ${PASSWORD}
+- hideKeyboard
+- tapOn: Iniciar sesión
+- extendedWaitUntil:
+    visible: Privacidad y mis datos|Estudios
+    timeout: 90000
+- runFlow:
+    when:
+      visible: Privacidad y mis datos
+    commands:
+      - scrollUntilVisible:
+          element: He leído y acepto el aviso de privacidad de mi cuenta
+          direction: DOWN
+      - assertVisible:
+          text: He leído y acepto el aviso de privacidad de mi cuenta
+          checked: false
+      - takeScreenshot: consentimiento-inicial
+      - tapOn: He leído y acepto el aviso de privacidad de mi cuenta
+      - scrollUntilVisible:
+          element: Guardar mis decisiones
+          direction: DOWN
+      - tapOn: Guardar mis decisiones
+- extendedWaitUntil:
+    visible: Estudios
+    timeout: 90000
+- takeScreenshot: inicio
+- tapOn:
+    text: Estudios
+    index: 0
+- extendedWaitUntil:
+    visible: Buscar estudio
+    timeout: 60000
+- tapOn: Buscar estudio
+- inputText: Estudio QA
+- hideKeyboard
+- extendedWaitUntil:
+    visible: .*Estudio QA seguro.*
+    timeout: 60000
+- takeScreenshot: estudios
+- tapOn: .*Estudio QA seguro.*
+- extendedWaitUntil:
+    visible: Información del estudio
+    timeout: 60000
+- scrollUntilVisible:
+    element:
+      text: '.*120[.]00.*'
+    direction: DOWN
+    timeout: 60000
+- assertVisible: '.*120[.]00.*'
+- takeScreenshot: precios
+- scrollUntilVisible:
+    element:
+      text: '.*Parametro QA.*'
+    direction: DOWN
+    timeout: 60000
+- assertVisible: '.*Parametro QA.*'
+- takeScreenshot: detalle
+- back
+- tapOn: Perfil
+- extendedWaitUntil:
+    visible: Mi perfil
+    timeout: 60000
+- scrollUntilVisible:
+    element: Privacidad y mis datos
+    direction: DOWN
+- tapOn: Privacidad y mis datos
+- extendedWaitUntil:
+    visible: Privacidad y mis datos
+    timeout: 60000
+- scrollUntilVisible:
+    element:
+      text: '.*Aviso aceptado.*'
+    direction: DOWN
+    timeout: 60000
+- assertVisible: '.*Aviso aceptado.*'
+- takeScreenshot: privacidad
+- scrollUntilVisible:
+    element: Permitir comunicaciones opcionales
+    direction: DOWN
+- assertVisible: Permitir comunicaciones opcionales
+- assertVisible:
+    text: Permitir comunicaciones opcionales
+    checked: false
+- tapOn: Permitir comunicaciones opcionales
+- scrollUntilVisible:
+    element: Guardar mis decisiones
+    direction: DOWN
+- tapOn: Guardar mis decisiones
+- extendedWaitUntil:
+    visible: Tus decisiones de privacidad se guardaron.
+    timeout: 60000
+- scrollUntilVisible:
+    element: Permitir comunicaciones opcionales
+    direction: UP
+- tapOn: Permitir comunicaciones opcionales
+- scrollUntilVisible:
+    element: Guardar mis decisiones
+    direction: DOWN
+- tapOn: Guardar mis decisiones
+- extendedWaitUntil:
+    visible: Tus decisiones de privacidad se guardaron.
+    timeout: 60000
+- takeScreenshot: oposicion
+- scrollUntilVisible:
+    element: Quiero cancelar mi cuenta
+    direction: DOWN
+- tapOn: Quiero cancelar mi cuenta
+- scrollUntilVisible:
+    element:
+      text: Contraseña actual para cancelar
+      below: Contraseña actual para cancelar
+    direction: DOWN
+- tapOn:
+    text: Contraseña actual para cancelar
+    below: Contraseña actual para cancelar
+- inputText: ${PASSWORD}
+- hideKeyboard
+- scrollUntilVisible:
+    element:
+      text: Escribe ELIMINAR MI CUENTA
+      below: Escribe ELIMINAR MI CUENTA
+    direction: DOWN
+- tapOn:
+    text: Escribe ELIMINAR MI CUENTA
+    below: Escribe ELIMINAR MI CUENTA
+- inputText: ELIMINAR MI CUENTA
+- hideKeyboard
+- assertVisible: ELIMINAR MI CUENTA
+- scrollUntilVisible:
+    element: Cancelar mi cuenta definitivamente
+    direction: DOWN
+- assertVisible:
+    text: Cancelar mi cuenta definitivamente
+    enabled: true
+- tapOn:
+    text: Cancelar mi cuenta definitivamente
+    enabled: true
+- assertVisible: Cancelar tu cuenta de acceso
+- takeScreenshot: confirmacion-cancelacion
+- tapOn:
+    text: Cancelar mi cuenta
+    below: Cancelar tu cuenta de acceso
+- extendedWaitUntil:
+    visible: Bienvenido
+    timeout: 60000
+- takeScreenshot: cuenta-cancelada
+- tapOn:
+    text: Correo electrónico
+    below: Correo electrónico
+- inputText: ${EMAIL}
+- tapOn:
+    text: Contraseña
+    below: Contraseña
+- inputText: ${PASSWORD}
+- hideKeyboard
+- tapOn: Iniciar sesión
+- extendedWaitUntil:
+    visible: El correo o la contraseña no son correctos.
+    timeout: 60000
+- takeScreenshot: acceso-cancelado-rechazado

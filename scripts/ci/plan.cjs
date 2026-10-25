@@ -2,7 +2,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { execFileSync } = require('node:child_process');
 const features = require('../../ci/features.json');
-const isGlobalFile = file => /^(package(-lock)?\.json|tsconfig\.json|app\.json|eslint\.config\.|\.github\/|scripts\/ci\/|ci\/|tests\/ci\/)/.test(file);
+const isGlobalFile = file => /^(package(-lock)?\.json|tsconfig\.json|app\.json|app\.config\.|plugins\/|config\/pinning\.json|eslint\.config\.|\.github\/|scripts\/ci\/|ci\/|tests\/ci\/)/.test(file);
 
 function implemented(root, feature) {
   return feature.markers.some(file => fs.existsSync(path.join(root, file)));

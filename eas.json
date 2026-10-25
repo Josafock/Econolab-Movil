@@ -1,0 +1,36 @@
+{
+  "cli": {
+    "version": ">= 25.3.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "preview": {
+      "autoIncrement": true,
+      "distribution": "internal",
+      "environment": "preview",
+      "node": "24.22.0",
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://backend-econolab-escuela-1.onrender.com/api",
+        "EXPO_PUBLIC_PRIVACY_URL": "https://backend-econolab-escuela-1.onrender.com/api/privacy",
+        "EXPO_PUBLIC_SUPPORT_EMAIL": "20230009@uthh.edu.mx"
+      },
+      "android": {
+        "buildType": "apk"
+      }
+    },
+    "production": {
+      "distribution": "store",
+      "environment": "production",
+      "node": "24.22.0",
+      "autoIncrement": true,
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://backend-econolab-escuela-1.onrender.com/api",
+        "EXPO_PUBLIC_PRIVACY_URL": "https://backend-econolab-escuela-1.onrender.com/api/privacy",
+        "EXPO_PUBLIC_SUPPORT_EMAIL": "20230009@uthh.edu.mx"
+      },
+      "android": {
+        "buildType": "app-bundle"
+      }
+    }
+  }
+}

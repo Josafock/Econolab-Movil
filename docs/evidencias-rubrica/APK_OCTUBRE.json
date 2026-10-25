@@ -1,0 +1,28 @@
+{
+  "buildId": "674c2b2f-a3a2-4932-9a46-0b9156ddae25",
+  "sourceCommit": "e037d41bae8349c0652a83f7b8aaa7a3f7fd694e",
+  "downloadUrl": "https://expo.dev/artifacts/eas/NLVl_tl1b0FQUKpFBAAypHZEF3Y8E-H1_8AtwIJcJTI.apk",
+  "package": "com.econolab.mobile",
+  "name": "ECONOLAB",
+  "version": "1.1.0",
+  "versionCode": "6",
+  "minSdk": "24",
+  "targetSdk": "36",
+  "bytes": 100493454,
+  "sha256": "933b5c6a5e5956dee7b54c868aeae9b5ba60965780326c78d0ed58070f3f54d3",
+  "permissions": [
+    "android.permission.ACCESS_NETWORK_STATE",
+    "android.permission.ACCESS_WIFI_STATE",
+    "android.permission.INTERNET",
+    "android.permission.VIBRATE",
+    "com.econolab.mobile.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+  ],
+  "debuggable": "false",
+  "allowBackup": "false",
+  "usesCleartextTraffic": "false",
+  "signatureV2Present": true,
+  "certificatesSha256": [
+    "ce941921641076f0db2185f4951d89848b7a59beb407dd0e7c44d8c861be15ad"
+  ],
+  "scope": "Extracción estática del APK de octubre; la verificación criptográfica se conserva por separado con apksigner. No incluye una nueva prueba de JADX."
+}
