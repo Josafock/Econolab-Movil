@@ -16,9 +16,13 @@ name: Octubre acceso catalogo cortes perfil ayuda y regreso
     text: Correo electrónico
     below: Correo electrónico
 - inputText: ${EMAIL}
-- tapOn:
-    text: Contraseña
-    below: Contraseña
+- pressKey: Enter
+- extendedWaitUntil:
+    visible:
+      text: Contraseña
+      below: Contraseña
+    timeout: 15000
+- takeScreenshot: 01b-teclado-acceso
 - inputText: ${PASSWORD}
 - hideKeyboard
 - scrollUntilVisible:

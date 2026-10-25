@@ -1,7 +1,8 @@
-import { forwardRef, useId, useState, type PropsWithChildren, type ReactNode } from 'react';
+import { createContext, forwardRef, useCallback, useContext, useEffect, useId, useRef, useState, type PropsWithChildren, type ReactNode } from 'react';
 import {
   ActivityIndicator,
   Image,
+  Keyboard,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -17,25 +18,81 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { type LucideIcon } from 'lucide-react-native';
 
 import { colors, layout } from './theme';
+import { focusedFieldOffset } from './keyboard';
 
 export { colors } from './theme';
+const FocusedField = createContext(() => {});
 
 /** El encabezado de Stack atiende el borde superior del dispositivo. */
 export function Screen({ children, scroll = true, topInset = false, bottomInset = false }: PropsWithChildren<{ scroll?: boolean; topInset?: boolean; bottomInset?: boolean }>) {
   const { width } = useWindowDimensions();
   const contentStyle = [styles.content, width >= 600 && styles.wideContent];
+  const scrollView = useRef<ScrollView>(null);
+  const focusedInput = useRef<ReturnType<typeof TextInput.State.currentlyFocusedInput> | null>(null);
+  const offset = useRef(0);
+  const keyboardOpen = useRef(false);
+  const frame = useRef<number | null>(null);
+  const [keyboardPadding, setKeyboardPadding] = useState(0);
+  const revealInput = useCallback(() => {
+    if (Platform.OS !== 'android' || !scroll || !keyboardOpen.current) return;
+    if (frame.current !== null) cancelAnimationFrame(frame.current);
+    frame.current = requestAnimationFrame(() => {
+      frame.current = null;
+      const input = focusedInput.current;
+      if (!input || input !== TextInput.State.currentlyFocusedInput() || !keyboardOpen.current) return;
+      input.measureInWindow((_x, inputTop, _width, inputHeight) => {
+        scrollView.current?.getNativeScrollRef()?.measureInWindow((_sx, viewportTop, _sw, viewportHeight) => {
+          if (input !== TextInput.State.currentlyFocusedInput() || !keyboardOpen.current) return;
+          const y = focusedFieldOffset({ offset: offset.current, inputTop, inputHeight, viewportTop, viewportHeight,
+            keyboardTop: Keyboard.metrics()?.screenY });
+          if (y !== null) scrollView.current?.scrollTo({ y, animated: true });
+        });
+      });
+    });
+  }, [scroll]);
+  const rememberFocus = useCallback(() => {
+    if (Platform.OS !== 'android') return;
+    focusedInput.current = TextInput.State.currentlyFocusedInput();
+    if (Keyboard.isVisible()) {
+      keyboardOpen.current = true;
+      setKeyboardPadding(Keyboard.metrics()?.height ?? 0);
+      revealInput();
+    }
+  }, [revealInput]);
+  useEffect(() => {
+    if (Platform.OS !== 'android' || !scroll) return;
+    const show = Keyboard.addListener('keyboardDidShow', event => {
+      if (!focusedInput.current || focusedInput.current !== TextInput.State.currentlyFocusedInput()) return;
+      keyboardOpen.current = true;
+      // Edge-to-edge Android can leave the viewport under the IME. Allow enough scroll travel.
+      setKeyboardPadding(event.endCoordinates.height);
+      revealInput();
+    });
+    const hide = Keyboard.addListener('keyboardDidHide', () => {
+      keyboardOpen.current = false; setKeyboardPadding(0);
+    });
+    return () => {
+      show.remove(); hide.remove();
+      if (frame.current !== null) cancelAnimationFrame(frame.current);
+    };
+  }, [scroll, revealInput]);
 
   return (
-    <SafeAreaView edges={topInset ? ['top', 'left', 'right', 'bottom'] : bottomInset ? ['left', 'right', 'bottom'] : ['left', 'right']} style={styles.screen}>
+    <FocusedField.Provider value={rememberFocus}><SafeAreaView edges={topInset ? ['top', 'left', 'right', 'bottom'] : bottomInset ? ['left', 'right', 'bottom'] : ['left', 'right']} style={styles.screen}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         style={styles.fill}
       >
         {scroll ? (
           <ScrollView
-            contentContainerStyle={styles.scrollContent}
+            ref={scrollView}
+            contentContainerStyle={[styles.scrollContent, keyboardPadding > 0 && { paddingBottom: keyboardPadding }]}
             keyboardShouldPersistTaps="handled"
             keyboardDismissMode="on-drag"
+            onScroll={event => { offset.current = event.nativeEvent.contentOffset.y; }}
+            scrollEventThrottle={16}
+            onLayout={revealInput}
+            onContentSizeChange={revealInput}
           >
             <View style={contentStyle}>{children}</View>
           </ScrollView>
@@ -43,7 +100,7 @@ export function Screen({ children, scroll = true, topInset = false, bottomInset 
           <View style={[...contentStyle, styles.fill]}>{children}</View>
         )}
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </SafeAreaView></FocusedField.Provider>
   );
 }
 
@@ -125,6 +182,7 @@ export const Field = forwardRef<TextInput, FieldProps>(function Field(
 ) {
   const [focused, setFocused] = useState(false);
   const labelId = useId();
+  const rememberFocus = useContext(FocusedField);
 
   return (
     <View style={styles.field}>
@@ -140,6 +198,7 @@ export const Field = forwardRef<TextInput, FieldProps>(function Field(
         {...inputProps}
         onFocus={(event) => {
           setFocused(true);
+          rememberFocus();
           onFocus?.(event);
         }}
         onBlur={(event) => {
