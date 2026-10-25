@@ -16,6 +16,10 @@ name: Octubre acceso catalogo cortes perfil ayuda y regreso
     text: Correo electrónico
     below: Correo electrónico
 - inputText: ${EMAIL}
+- assertVisible:
+    text: Correo electrónico
+    below: Correo electrónico
+- takeScreenshot: 01a-teclado-correo
 - pressKey: Enter
 - extendedWaitUntil:
     visible:
@@ -60,13 +64,15 @@ name: Octubre acceso catalogo cortes perfil ayuda y regreso
 - tapOn: Buscar estudio
 - inputText: Estudio QA
 - hideKeyboard
-- extendedWaitUntil:
-    visible: .*Estudio QA seguro.*
+- scrollUntilVisible:
+    element: .*Estudio QA seguro.*
+    direction: DOWN
     timeout: 60000
 - takeScreenshot: 03-catalogo
 - tapOn: .*Estudio QA seguro.*
-- extendedWaitUntil:
-    visible: Información del estudio
+- scrollUntilVisible:
+    element: Información del estudio
+    direction: DOWN
     timeout: 60000
 - scrollUntilVisible:
     element:
@@ -78,10 +84,14 @@ name: Octubre acceso catalogo cortes perfil ayuda y regreso
     direction: DOWN
 - takeScreenshot: 05-parametros
 - back
+- scrollUntilVisible:
+    element: Buscar estudio
+    direction: UP
 - assertVisible: Buscar estudio
 - tapOn: Cortes
-- extendedWaitUntil:
-    visible: Fecha inicial \(AAAA-MM-DD\)
+- scrollUntilVisible:
+    element: Fecha inicial \(AAAA-MM-DD\)
+    direction: DOWN
     timeout: 60000
 - takeScreenshot: 06-filtros
 - scrollUntilVisible:
@@ -130,8 +140,9 @@ name: Octubre acceso catalogo cortes perfil ayuda y regreso
     element: Ayuda y uso de datos
     direction: DOWN
 - tapOn: Ayuda y uso de datos
-- extendedWaitUntil:
-    visible: Tu acceso al laboratorio
+- scrollUntilVisible:
+    element: Tu acceso al laboratorio
+    direction: DOWN
     timeout: 60000
 - takeScreenshot: 11-ayuda
 - back
