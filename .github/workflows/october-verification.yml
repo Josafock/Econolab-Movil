@@ -1,0 +1,199 @@
+name: Octubre navegacion Android
+
+on:
+  push:
+    branches: ['feature/HU-08-evidencias-octubre']
+    paths: ['.github/workflows/october-verification.yml', 'native-tests/october-server.cjs', '.maestro/october-navigation.yml', 'src/**']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: october-verification-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  security:
+    uses: ./.github/workflows/security.yml
+  android:
+    needs: security
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    services:
+      postgres:
+        image: postgres:17.6
+        env:
+          POSTGRES_USER: econolab_test
+          POSTGRES_PASSWORD_FILE: /proc/sys/kernel/random/uuid
+          POSTGRES_DB: econolab_native_test
+        ports: ['5432:5432']
+        options: --health-cmd "pg_isready -U econolab_test -d econolab_native_test" --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      CI: '1'
+      EXPO_NO_TELEMETRY: '1'
+      EXPO_PUBLIC_API_URL: https://10.0.2.2:3110/api
+      ECONOLAB_NATIVE_QA: '1'
+      NODE_ENV: test
+      DATABASE_HOST: 127.0.0.1
+      DATABASE_PORT: '5432'
+      DATABASE_USER: econolab_test
+      DATABASE_NAME: econolab_native_test
+      DATABASE_SSL: 'false'
+      THROTTLE_LIMIT: '10000'
+      APP_ENABLE_HSTS: 'false'
+      SECURITY_SCAN_HOLD: '1'
+      SECURITY_QA_UI_EMAIL: octubre@example.test
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          repository: DavidHdz117/Backend_Econolab_Escuela
+          ref: 8634ba3dc1071703cb263622809b3fe244acd026
+          path: qa-backend
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Preparar TLS y credenciales desechables
+        run: |
+          mkdir -p .native-qa reports/native
+          openssl req -x509 -newkey rsa:2048 -nodes -keyout .native-qa/server.key -out .native-qa/server.pem -days 2 -subj '/CN=10.0.2.2' -addext 'subjectAltName=IP:10.0.2.2,IP:127.0.0.1,DNS:localhost'
+          PIN=$(openssl x509 -in .native-qa/server.pem -pubkey -noout | openssl pkey -pubin -outform DER | openssl dgst -sha256 -binary | openssl enc -base64)
+          PASSWORD=$(openssl rand -hex 24)
+          echo "::add-mask::$PASSWORD"
+          echo "ECONOLAB_QA_TLS_PIN=$PIN" >> "$GITHUB_ENV"
+          echo "ECONOLAB_QA_CA_FILE=$GITHUB_WORKSPACE/.native-qa/server.pem" >> "$GITHUB_ENV"
+          echo "SECURITY_QA_TLS_CERT=$GITHUB_WORKSPACE/.native-qa/server.pem" >> "$GITHUB_ENV"
+          echo "SECURITY_QA_TLS_KEY=$GITHUB_WORKSPACE/.native-qa/server.key" >> "$GITHUB_ENV"
+          echo "SECURITY_QA_UI_PASSWORD=$PASSWORD" >> "$GITHUB_ENV"
+          JWT_VALUE=$(openssl rand -hex 32)
+          echo "::add-mask::$JWT_VALUE"
+          echo "JWT_SECRET=$JWT_VALUE" >> "$GITHUB_ENV"
+          DB_PASSWORD=$(openssl rand -hex 32)
+          echo "::add-mask::$DB_PASSWORD"
+          docker exec "${{ job.services.postgres.id }}" psql -U econolab_test -d econolab_native_test -c "ALTER ROLE econolab_test WITH PASSWORD '$DB_PASSWORD';"
+          echo "DATABASE_PASS=$DB_PASSWORD" >> "$GITHUB_ENV"
+      - run: npm ci --no-audit --no-fund
+      - name: Instalar backend aislado
+        working-directory: qa-backend
+        run: npm ci --no-audit --no-fund
+      - name: Iniciar backend de pruebas
+        working-directory: qa-backend
+        run: |
+          cp ../native-tests/october-server.cjs test/october-server.cjs
+          node -r ts-node/register/transpile-only -r tsconfig-paths/register test/october-server.cjs > /tmp/econolab-native-backend.log 2>&1 &
+          echo "QA_BACKEND_PID=$!" >> "$GITHUB_ENV"
+          for n in $(seq 1 90); do
+            test -f reports/october/ready && exit 0
+            sleep 2
+          done
+          cat /tmp/econolab-native-backend.log
+          exit 1
+      - name: Generar Android y verificar R8 y permisos
+        run: |
+          npx expo prebuild --platform android --no-install
+          cp android/app/build.gradle reports/native/build.gradle
+          cp android/gradle.properties reports/native/gradle.properties
+          cp android/app/src/main/AndroidManifest.xml reports/native/AndroidManifest.xml
+          grep -F 'android.enableMinifyInReleaseBuilds=true' android/gradle.properties
+          grep -F 'android.enableShrinkResourcesInReleaseBuilds=true' android/gradle.properties
+          grep -F 'android:allowBackup="false"' android/app/src/main/AndroidManifest.xml
+      - name: Recuperar dependencias y compilaciones C++ de Android
+        id: gradle_cache
+        uses: actions/cache/restore@caa296126883cff596d87d8935842f9db880ef25 # v5
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            android/app/.cxx
+            android/app/build/intermediates/cxx
+            node_modules/**/android/.cxx
+            node_modules/**/android/build/intermediates/cxx
+          key: native-android-v1-${{ runner.os }}-${{ hashFiles('package-lock.json', 'app.config.js', 'plugins/**', 'native-tests/**') }}-${{ github.sha }}
+          restore-keys: |
+            native-android-v1-${{ runner.os }}-${{ hashFiles('package-lock.json', 'app.config.js', 'plugins/**', 'native-tests/**') }}-
+            native-android-v1-${{ runner.os }}-
+      - name: Compilar Android para la revision de octubre
+        id: native_build
+        working-directory: android
+        env:
+          NODE_ENV: production
+        run: |
+          chmod +x gradlew
+          ./gradlew :app:assembleRelease -PreactNativeArchitectures=x86_64 --build-cache --no-daemon --max-workers=2 -Dorg.gradle.jvmargs=-Xmx4g > ../reports/native/gradle.log 2>&1
+      - name: Guardar caché de Android incluso ante un fallo posterior
+        if: always() && steps.gradle_cache.outputs.cache-primary-key != '' && steps.gradle_cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@caa296126883cff596d87d8935842f9db880ef25 # v5
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            android/app/.cxx
+            android/app/build/intermediates/cxx
+            node_modules/**/android/.cxx
+            node_modules/**/android/build/intermediates/cxx
+          key: ${{ steps.gradle_cache.outputs.cache-primary-key }}
+      - name: Instalar Maestro con checksum publicado
+        run: |
+          curl -fL https://github.com/mobile-dev-inc/Maestro/releases/download/cli-2.11.0/maestro.zip -o /tmp/maestro.zip
+          curl -fL https://github.com/mobile-dev-inc/Maestro/releases/download/cli-2.11.0/checksums_sha256.txt -o /tmp/maestro-checksums.txt
+          cd /tmp
+          grep 'maestro.zip$' maestro-checksums.txt | sha256sum --check
+          unzip -q maestro.zip -d /tmp
+          echo /tmp/maestro/bin >> "$GITHUB_PATH"
+      - name: Habilitar KVM
+        run: |
+          sudo sh -c 'echo "KERNEL==\"kvm\", GROUP=\"kvm\", MODE=\"0666\", OPTIONS+=\"static_node=kvm\"" > /etc/udev/rules.d/99-kvm4all.rules'
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Navegacion en telefono normal y compacto con texto grande
+        uses: ReactiveCircus/android-emulator-runner@4c44018e59b437e86cdfc41da381398f93ed8808 # v2
+        with:
+          api-level: 35
+          arch: x86_64
+          target: google_apis
+          profile: pixel_6
+          ram-size: 2048M
+          heap-size: 512M
+          disable-animations: true
+          disable-spellchecker: true
+          script: |
+            adb wait-for-device
+            adb shell input keyevent 82
+            adb shell am force-stop com.google.android.apps.nexuslauncher
+            adb install android/app/build/outputs/apk/release/app-release.apk
+            adb logcat -c
+            adb shell wm size 1080x2400
+            adb shell wm density 420
+            adb shell settings put system font_scale 1.0
+            sleep 10
+            maestro test -e APP_ID=com.econolab.mobile.qa -e EMAIL=octubre@example.test -e PASSWORD="$SECURITY_QA_UI_PASSWORD" --format junit --output reports/native/octubre-normal.xml --test-output-dir reports/native/normal .maestro/october-navigation.yml
+            adb shell am force-stop com.econolab.mobile.qa
+            adb shell wm size 720x1280
+            adb shell wm density 320
+            adb shell settings put system font_scale 1.3
+            sleep 5
+            maestro test -e APP_ID=com.econolab.mobile.qa -e EMAIL=octubre@example.test -e PASSWORD="$SECURITY_QA_UI_PASSWORD" --format junit --output reports/native/octubre-compacto.xml --test-output-dir reports/native/compacto .maestro/october-navigation.yml
+            adb logcat -d -b crash > reports/native/android-crashes.log
+      - name: Cerrar entorno de prueba
+        if: always()
+        run: |
+          if [ -n "$QA_BACKEND_PID" ]; then kill "$QA_BACKEND_PID" || true; fi
+          if [ -n "$QA_METRO_PID" ]; then kill "$QA_METRO_PID" || true; fi
+          cp -R qa-backend/reports/october reports/native/fixture 2>/dev/null || true
+          cp android/app/build/outputs/mapping/release/mapping.txt reports/native/ 2>/dev/null || true
+          cp /tmp/econolab-metro.log reports/native/metro.log 2>/dev/null || true
+          cp /tmp/econolab-native-backend.log reports/native/backend.log 2>/dev/null || true
+          node scripts/security/redact-qa-reports.cjs
+      - name: Conservar evidencias nativas
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: octubre-navegacion-android
+          path: reports/native/
+          if-no-files-found: error
+          retention-days: 90
