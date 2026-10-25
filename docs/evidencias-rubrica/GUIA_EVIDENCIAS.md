@@ -1,5 +1,7 @@
 # Evidencias para la rúbrica de ECONOLAB móvil
 
+**Entrega de octubre actualizada el 25/10:** consultar [actividades 5 y 4](../ENTREGA_OCTUBRE_2026.md) y [aportaciones comprobadas](../APORTACIONES_EQUIPO_OCTUBRE.md). `develop` ya existe desde esta fecha; la matriz integral de Debug/Release que aparece abajo corresponde a noviembre y conserva los casos todavía no ejecutados.
+
 Revisión base: 23 de octubre de 2026. Este archivo organiza la entrega académica; el Project de GitHub sigue siendo la única planeación oficial. Los nombres E01–E15 identifican evidencias, no nuevas HUs ni Sprints.
 
 Cada captura o registro debe mostrar lo necesario para reconocer la función, versión y resultado. Anota fecha, responsable y dispositivo. Usa cuentas de prueba y evita datos clínicos, contraseñas, tokens, documentos de identidad, medios de pago y secretos de Actions.
@@ -8,7 +10,7 @@ Cada captura o registro debe mostrar lo necesario para reconocer la función, ve
 
 | Evidencia | Dónde obtenerla | Qué debe demostrar |
 | --- | --- | --- |
-| E01 · Versionamiento | GitHub → repositorio → Branches; después un PR real y su historial | `main`, ramas utilizadas y revisión colaborativa. La falta de `develop` debe resolverse o explicarse con la aceptación del docente. |
+| E01 · Versionamiento | GitHub → repositorio → Branches; después un PR real y su historial | `main`, `develop` y `feature/*`, con PR59 hacia develop. Mostrar la creación real de develop el 25/10 y el historial anterior; la aceptación de la actualización posterior al 22/10 corresponde al docente. |
 | E02 · Seguridad CI | GitHub → Actions → ejecución del análisis de seguridad → resumen y artifact del reporte | Herramienta, commit analizado, hallazgos y tratamiento. El pipeline 1.1 ejecuta Semgrep y pruebas HTTP del backend aislado más ZAP. Adjuntar JSON/HTML de la ejecución y explicar su alcance. |
 | E03 · Colaboración | Historial de PR/commits y Project oficial | Trabajo real de cada integrante y revisión del equipo. Agregar una tabla integrante → tarea oficial → PR/commit → aportación. No alterar fechas ni fabricar aportaciones. |
 | E04 · Interfaces | Teléfono → app instalada → acceso, Inicio, Estudios, detalle, Perfil y Cortes con rol permitido | Pantallas del framework móvil, logo, navegación y datos de prueba. Las capturas de navegador deben etiquetarse como web, no como Android. |

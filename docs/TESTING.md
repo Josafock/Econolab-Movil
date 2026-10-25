@@ -1,6 +1,6 @@
 # HU08 — pruebas y ejecución
 
-Issue #9; tareas #33 #34 #35. Datos ficticios se usan solamente en pruebas unitarias aisladas, nunca como catálogo o autenticación de la app. El script de integración utiliza el cliente HTTP y los esquemas de estudios reales de `src`; no levanta otra API ni sustituye el backend.
+Issue #9; tareas #33 #34 #35. Los datos ficticios se usan en pruebas unitarias y en el entorno Android QA aislado; nunca se incorporan como catálogo o autenticación alternativos de la app de producción. El script habitual de integración utiliza el cliente HTTP y los esquemas de estudios reales de `src`; no levanta otra API ni sustituye el backend.
 
 ## Comprobaciones automáticas
 
@@ -33,12 +33,18 @@ Después de la integración del backend autorizada por el propietario, las siete
 
 ## Pruebas de la versión 1.1
 
-La regresión tiene 174 casos en 18 suites, además de 22 pruebas de CI. La integración contra Render incluye ocho comprobaciones de acceso/perfil/estudios y seis adicionales mediante `npm run test:integration:security` para renovación, rotación y privacidad. Esta última crea y revoca únicamente sus sesiones de prueba; no cancela cuentas del servidor real.
+La regresión tiene 179 casos en 19 suites, además de 22 pruebas de CI. La integración contra Render incluye ocho comprobaciones de acceso/perfil/estudios y seis adicionales mediante `npm run test:integration:security` para renovación, rotación y privacidad. Esta última crea y revoca únicamente sus sesiones de prueba; no cancela cuentas del servidor real.
 
 `native-verification.yml` genera Debug y Release QA con los módulos reales del backend en una base desechable. Ejecuta tres casos TLS OkHttp, el recorrido Maestro y JADX. Los resultados aprobados deben obtenerse del run terminado y sus artifacts, no deducirse de la configuración. Release QA no usa la firma del titular ni se distribuye en Play.
 
 `inspect-apk.yml` verifica con apksigner el APK EAS distribuible, compara su SHA-256 y ejecuta JADX sobre ese mismo archivo. No sustituye la ejecución de la interfaz en Android ni la revisión de Play Console.
 
+## Evidencia Android de octubre
+
+[Run aprobado](https://github.com/Josafock/Econolab-Movil/actions/runs/40229958547), [metadatos, capturas y JUnit](evidencias-rubrica/OCTUBRE_2026.json). Dos recorridos completos en Android 15: normal y compacto con texto 1.3. La comparación de las fuentes confirma que el APK 6 contiene el mismo código de aplicación que se probó. La firma del paquete se verificó por separado.
+
 ## Prueba en dispositivo del equipo
+
+El [recorrido de octubre](ENTREGA_OCTUBRE_2026.md) usa `october-verification.yml`, separado de la matriz integral de noviembre. Compila Release QA y verifica acceso, estudios, Cortes, edición de perfil, ayuda, Atrás y logout en dos configuraciones del emulador Android 15, con texto 1.0 y 1.3. Su fixture crea datos sintéticos en módulos auténticos del backend y PostgreSQL desechable; no consulta ni modifica Render. El artifact contiene JUnit y capturas por configuración. Solo un run terminado con ambos recorridos aprobados acredita esa ejecución; una compilación correcta no basta.
 
 Instalar el APK propio de la versión 1.1 y comprobar login, consentimiento, catálogo, filtros, detalle, perfil, preferencias y logout. Expo Go sirve para interfaz, pero no acredita pinning ni R8. Repetir con red desconectada y con una sesión revocada. Comprobar tamaño de texto y teclado en Android/iOS. El preview web y los bundles compilados complementan esta prueba, pero no sustituyen una ejecución física. Las capturas de la entrega deben proceder de esas ejecuciones reales.

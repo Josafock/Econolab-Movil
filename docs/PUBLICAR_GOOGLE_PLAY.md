@@ -2,6 +2,8 @@
 
 Guía actualizada el **24 de octubre de 2026**. Los nombres de algunos menús pueden variar según el idioma de Play Console.
 
+**Actualización del 25/10:** el [APK código 6](evidencias-rubrica/APK_OCTUBRE.json) incorpora la corrección del teclado Android. El AAB código 5 descrito abajo corresponde a la compilación anterior; antes de enviarlo a Play, generar un AAB nuevo desde el código actualizado y repetir las comprobaciones de distribución. Publicar sigue siendo una actividad de noviembre; el APK de octubre no acredita un envío a revisión.
+
 ## Qué ya está preparado
 
 - Expo SDK 57, marca original, icono y pantalla de arranque.

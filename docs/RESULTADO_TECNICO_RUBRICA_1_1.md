@@ -1,12 +1,14 @@
 # Resultado técnico de la versión 1.1
 
-Verificación: **24 de octubre de 2026**. Esta entrega implementa los pendientes técnicos del diagnóstico anterior; no asigna una calificación ni acredita automáticamente todos los requisitos de publicación y trabajo en equipo.
+Verificación de implementación: **24 de octubre de 2026**. Estado de evidencias revisado el **25 de octubre de 2026**: consultar [la revisión actual de los 15 criterios](REVISION_RUBRICA_2026-10-25.md). No se acredita el 100 % de la rúbrica.
+
+**Actualización del cierre de octubre:** el [APK código 6](evidencias-rubrica/APK_OCTUBRE.json), fuente `e037d41`, añade la corrección del formulario bajo el teclado Android. Su [firma criptográfica está verificada](evidencias-rubrica/APK_OCTUBRE_VERIFICACION.json) y la regresión actual tiene 179 pruebas en 19 suites. Los apartados que identifican el APK 4 y el AAB 5 conservan las evidencias de esas compilaciones; el análisis JADX del APK 4 no se atribuye al APK 6. Consultar [la entrega de octubre](ENTREGA_OCTUBRE_2026.md) para la evidencia vigente de interfaces.
 
 ## Entrega y planeación
 
 - Móvil: rama `fix/HU-08-seguridad-rubrica`, [PR58](https://github.com/Josafock/Econolab-Movil/pull/58). El propietario conserva la decisión de integrarlo según sus HUs y Sprints. No se fusionó `main` del móvil ni se modificó el Project.
 - Backend existente: [PR3](https://github.com/DavidHdz117/Backend_Econolab_Escuela/pull/3), [PR4](https://github.com/DavidHdz117/Backend_Econolab_Escuela/pull/4) y [PR5](https://github.com/DavidHdz117/Backend_Econolab_Escuela/pull/5) y [PR6](https://github.com/DavidHdz117/Backend_Econolab_Escuela/pull/6), integrados con autorización. Aviso y contratos comprobados en Render.
-- APK distribuible: versión **1.1.0**, código **4**, paquete **com.econolab.mobile**, fuente `d2d92c55057f42ea65503e29e288c2ad2d73f0a5`. Los cambios posteriores de QA/documentación no modifican el código de interfaz incluido en este APK.
+- APK 4 histórico: versión **1.1.0**, paquete **com.econolab.mobile**, fuente `d2d92c55057f42ea65503e29e288c2ad2d73f0a5`. El APK 6 posterior incorpora el ajuste del teclado; no se debe evaluar ese cambio usando el APK 4.
 
 ## Implementación
 
@@ -24,11 +26,12 @@ Verificación: **24 de octubre de 2026**. Esta entrega implementa los pendientes
 
 | Comprobación | Resultado y referencia |
 | --- | --- |
-| Lógica móvil | 174 pruebas aprobadas, 18 suites; lint, TypeScript y 22 comprobaciones de CI. |
+| Lógica móvil | 179 pruebas aprobadas, 19 suites; lint, TypeScript y 22 comprobaciones de CI. |
 | Backend publicado | Ocho comprobaciones funcionales y seis de sesión/privacidad aprobadas contra Render al repetir la verificación. Incluyen Cortes para administrador y rotación/revocación de refresh. |
 | CI del código de la app | [Run 40140891972](https://github.com/Josafock/Econolab-Movil/actions/runs/40140891972): aprobado. Semgrep 1.182.1, 65 archivos, cero hallazgos/errores; 16 casos HTTP aprobados. ZAP 2.17.0 registra dos avisos informativos de caché y cero hallazgos de riesgo bajo, medio o alto; las dos observaciones bajas de cabeceras se corrigieron. [Resumen conservado](evidencias-rubrica/SEGURIDAD_CI_ACTUAL.json). Este alcance no equivale a un pentest completo. |
 | TLS nativo | [Run 40059121558](https://github.com/Josafock/Econolab-Movil/actions/runs/40059121558): tres casos OkHttp aprobados, incluidos pin incorrecto y respaldo de CA. Esa ejecución falló posteriormente en la interfaz Debug por acceso de Metro; no se presenta como E2E aprobado. |
-| Debug/Release en emulador | En curso: [verificación final](https://github.com/Josafock/Econolab-Movil/actions/runs/40141522207). No se acredita como aprobada hasta revisar JUnit, capturas y ambas variantes. |
+| Recorrido de octubre | [Run aprobado](https://github.com/Josafock/Econolab-Movil/actions/runs/40229958547), Release QA en dos tamaños con texto 1.0/1.3. Correo visible con teclado, estudios, Cortes, perfil, Ayuda, Atrás y logout. [Evidencia](evidencias-rubrica/OCTUBRE_2026.json). No cierra la matriz Debug/Release de noviembre. |
+| Debug/Release en emulador | [Run 40142877531](https://github.com/Josafock/Econolab-Movil/actions/runs/40142877531) terminado con fallo: el controlador perdió conexión con el emulador (`device offline`). No hay recorrido completo aprobado de Debug/Release; queda pendiente estabilizar y repetir la verificación. |
 | APK firmado | [EAS finalizado](https://expo.dev/accounts/dravix117/projects/econolab-mobile/builds/941f3ecb-3c27-47be-8fb0-e494036060ee), [descarga del APK](https://expo.dev/artifacts/eas/NhHBQtUIA85BJc4iyt8UcVw2R2Len2EHAK7AJCKpPk8.apk). SHA-256 `a4c0e527e71d4775fea313d7bc3af5f0f754dd0028167911ff5ffb43a05e1779`. |
 | Firma criptográfica | [Run 40136912544](https://github.com/Josafock/Econolab-Movil/actions/runs/40136912544): `apksigner verify` aprobado, firma v2 y un firmante. [Salida conservada](evidencias-rubrica/APK_ACTUAL_FIRMA.txt). |
 | R8 del APK distribuible | EAS ejecutó `minifyReleaseWithR8` y terminó `BUILD SUCCESSFUL`. [Extracto del log](evidencias-rubrica/APK_ACTUAL_GRADLE.txt). |

@@ -1,6 +1,6 @@
 {
-  "runId": 40140891972,
-  "source": "https://github.com/Josafock/Econolab-Movil/actions/runs/40140891972",
+  "runId": 40229958547,
+  "source": "https://github.com/Josafock/Econolab-Movil/actions/runs/40229958547",
   "scope": "Semgrep local rules, dependency audit, isolated backend HTTP assertions and public-notice ZAP baseline",
   "http": {
     "total": 16,
@@ -28,7 +28,7 @@
   },
   "semgrep": {
     "version": "1.182.1",
-    "scanned": 65,
+    "scanned": 66,
     "findings": 0,
     "errors": 0
   }

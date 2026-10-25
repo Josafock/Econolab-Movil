@@ -4,6 +4,8 @@ Aplicación React Native con Expo SDK 57 y TypeScript. Reutiliza la API NestJS e
 
 ## Ejecutar
 
+Para la entrega de octubre se recomienda el [APK 1.1.0 código 6](https://expo.dev/artifacts/eas/NLVl_tl1b0FQUKpFBAAypHZEF3Y8E-H1_8AtwIJcJTI.apk), que incluye el ajuste del teclado en pantallas compactas. [Identidad e integridad](docs/evidencias-rubrica/APK_OCTUBRE.json) y [firma comprobada](docs/evidencias-rubrica/APK_OCTUBRE_VERIFICACION.json). El código 4 anterior sigue siendo evidencia histórica.
+
 1. Usar Node 24 LTS (`.nvmrc`).
 2. Ejecutar `npm ci` dentro de `mobile`.
 3. En una instalación nueva, copiar `.env.example` a `.env` y completar `EXPO_PUBLIC_API_URL` con la base del backend, incluido `/api`.
@@ -19,7 +21,7 @@ La app está configurada con `https://backend-econolab-escuela-1.onrender.com/ap
 - Consentimiento explícito, aviso público, preferencias opcionales y cancelación de la cuenta propia desde Privacidad y mis datos.
 - Dashboard con acceso a estudios y perfil; pantallas protegidas.
 - Cortes por fecha para administradores: periodo/sucursal, importes reales registrados, cancelaciones, desglose diario y detalle paginado. [Alcance y planeación de Cortes](docs/CORTES.md).
-- Logo original de la web en las pantallas, icono nativo de ECONOLAB, tarjetas con su paleta y navegación inferior entre Inicio, Estudios y Perfil.
+- Logo original de la web en las pantallas, icono nativo de ECONOLAB, tarjetas con su paleta y navegación inferior entre Inicio, Estudios, Perfil y Cortes para administradores.
 - Catálogo real con búsqueda, filtros, paginación, actualización y detalle con precios y parámetros disponibles.
 - Perfil actualizado desde el backend, edición de nombre/correo con confirmación de contraseña al cambiar correo; rol protegido y cambio de contraseña.
 - Validaciones y mensajes para errores de red, timeout, sesión, permisos y respuestas inesperadas.
@@ -35,12 +37,17 @@ El perfil utiliza `GET/PATCH /api/users/me` del backend existente. El PR1 del ba
 
 ## Planificación y entrega
 
-Las issues y el Project de [Econolab-Movil](https://github.com/Josafock/Econolab-Movil) son la planificación oficial. Cada HU tiene su rama y PR hacia `main`; las ramas dependientes incluyen el código de las anteriores. El responsable integra los PR según sus sprints. No se realizaron merges en el móvil ni cambios de calendario. El propietario autorizó integrar únicamente el backend para habilitar el perfil.
+Las issues y el Project de [Econolab-Movil](https://github.com/Josafock/Econolab-Movil) son la planificación oficial. Desde el 25 de octubre existen `main`, `develop` y ramas `feature/*`; el flujo vigente es feature/fix → PR a develop → PR de entrega a main. Se conservan los PR históricos y sus dependencias. El responsable integra según sus Sprints; no se cambia el calendario. [Flujo y trazabilidad](docs/GIT.md).
 
 La entrega 1.1 está en `fix/HU-08-seguridad-rubrica`, [PR58](https://github.com/Josafock/Econolab-Movil/pull/58), basada en el pulido de publicación y Cortes. Se conserva el `main` integrado por el propietario y la integración de los PR queda a su cargo, sin cambiar el calendario del Project. El backend de sesión y privacidad sí se integró con autorización del usuario.
 
 ## Documentación
 
+- [Reporte Word de octubre](docs/entregables/Reporte_octubre_Econolab.docx): criterios y capturas de Android.
+- [Entrega de octubre](docs/ENTREGA_OCTUBRE_2026.md): los siete criterios de las actividades 5 y 4, evidencias y límites.
+- [Aportaciones reales del equipo](docs/APORTACIONES_EQUIPO_OCTUBRE.md): tareas de David y Kristofer vinculadas con commits y PR.
+
+- [Revisión actual de la rúbrica — 25 de octubre](docs/REVISION_RUBRICA_2026-10-25.md): cumplimiento técnico, evidencias parciales y tareas pendientes.
 - [Estado de implementación y evidencias 1.1](docs/RESULTADO_TECNICO_RUBRICA_1_1.md): APK final, resultados comprobados y tareas del equipo.
 
 - [Cambios técnicos de la versión 1.1](docs/SEGURIDAD_Y_PRIVACIDAD.md): renovación de sesión, pinning, privacidad, R8 y comprobaciones del CI.
