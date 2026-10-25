@@ -106,8 +106,9 @@ name: Octubre acceso catalogo cortes perfil ayuda y regreso
 - tapOn:
     text: Nombre
     below: Nombre
+    point: '95%,50%'
 - eraseText: 50
-- inputText: Equipo QA Octubre
+- inputText: ${PROFILE_NAME}
 - hideKeyboard
 - takeScreenshot: 09-edicion-perfil
 - scrollUntilVisible:
@@ -119,6 +120,7 @@ name: Octubre acceso catalogo cortes perfil ayuda y regreso
 - extendedWaitUntil:
     visible: Tu perfil se actualizó correctamente.
     timeout: 60000
+- assertVisible: ${PROFILE_NAME}
 - takeScreenshot: 10-perfil-guardado
 - scrollUntilVisible:
     element: Ayuda y uso de datos
@@ -129,6 +131,9 @@ name: Octubre acceso catalogo cortes perfil ayuda y regreso
     timeout: 60000
 - takeScreenshot: 11-ayuda
 - back
+- scrollUntilVisible:
+    element: Mi perfil
+    direction: UP
 - assertVisible: Mi perfil
 - tapOn: Inicio
 - scrollUntilVisible:
