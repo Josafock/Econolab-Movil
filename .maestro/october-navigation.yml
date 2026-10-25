@@ -113,6 +113,9 @@ name: Octubre acceso catalogo cortes perfil ayuda y regreso
     direction: DOWN
 - tapOn: Editar perfil
 - scrollUntilVisible:
+    element: Mi perfil
+    direction: UP
+- scrollUntilVisible:
     element:
       text: Nombre
       below: Nombre
@@ -134,6 +137,9 @@ name: Octubre acceso catalogo cortes perfil ayuda y regreso
 - extendedWaitUntil:
     visible: Tu perfil se actualizó correctamente.
     timeout: 60000
+- scrollUntilVisible:
+    element: ${PROFILE_NAME}
+    direction: UP
 - assertVisible: ${PROFILE_NAME}
 - takeScreenshot: 10-perfil-guardado
 - scrollUntilVisible:
