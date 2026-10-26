@@ -6,6 +6,10 @@ on:
       full:
         type: boolean
         default: false
+      native:
+        description: Compilar APK Debug y Release y validar aceptación nativa antes de liberar
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -20,6 +24,9 @@ env:
   EXPO_PUBLIC_API_URL: https://example.invalid/api
 
 jobs:
+  security:
+    uses: ./.github/workflows/security.yml
+
   plan:
     name: Seleccionar issues y alcance
     runs-on: ubuntu-24.04
@@ -28,6 +35,8 @@ jobs:
       matrix: ${{ steps.plan.outputs.matrix }}
       has-features: ${{ steps.plan.outputs.has-features }}
       native: ${{ steps.plan.outputs.native }}
+      report: ${{ steps.plan.outputs.report }}
+      native-required: ${{ steps.plan.outputs.native-required }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -41,20 +50,16 @@ jobs:
         name: Asociar rama, archivos y referencias a HUs
         env:
           CI_FULL: ${{ inputs.full }}
+          CI_NATIVE_REQUIRED: ${{ inputs.native }}
         run: node scripts/ci/plan.cjs
-      - name: Guardar plan de pruebas
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
-        with:
-          name: plan-${{ github.run_id }}-${{ github.run_attempt }}
-          path: reports/plan.json
-          if-no-files-found: error
-          retention-days: 14
 
   quality:
     name: Lint, TypeScript y regresión completa
     needs: plan
     runs-on: ubuntu-24.04
     timeout-minutes: 20
+    outputs:
+      features: ${{ steps.features.outcome }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -63,12 +68,25 @@ jobs:
         with:
           node-version: '24'
           cache: npm
+      - name: Preparar plan y entorno de evidencia
+        env:
+          CI_PLAN_JSON: ${{ needs.plan.outputs.report }}
+        run: |
+          mkdir -p reports
+          node -e "require('fs').writeFileSync('reports/plan.json', process.env.CI_PLAN_JSON)"
       - name: Instalar dependencias reproducibles
         id: install
         run: npm ci --no-audit --no-fund
       - name: Probar la selección del pipeline
         id: ci_tests
-        run: node --test tests/ci/*.test.cjs
+        run: |
+          node --test tests/ci/*.test.cjs
+          npm run release:check
+          node scripts/ci/version.cjs
+      # TIPO análisis estático y formato; cualquier código distinto de cero bloquea CI.
+      - name: Formato de scripts y configuración CI con Prettier
+        id: format
+        run: npm run format:check 2>&1 | tee reports/format.log
       - name: ESLint
         id: lint
         run: |
@@ -77,9 +95,14 @@ jobs:
       - name: TypeScript en checkout limpio
         id: typecheck
         run: npm run typecheck 2>&1 | tee reports/typecheck.log
-      - name: Todas las pruebas de aplicación disponibles y cobertura
+      # TIPOS unitarias, componentes y regresión completa con Jest y RNTL.
+      - name: Pruebas unitarias componentes y regresión con cobertura
         id: tests
         run: node scripts/ci/run-tests.cjs all
+      # Las HUs se relacionan con la regresión ya ejecutada; no se duplican casos ni artifacts.
+      - name: Asociar resultados reales con cada HU e issue
+        id: features
+        run: node scripts/ci/feature-evidence.cjs
       - name: Registrar resultados de las etapas de calidad
         if: always()
         env:
@@ -89,7 +112,7 @@ jobs:
           const fs = require('node:fs');
           fs.mkdirSync('reports', { recursive: true });
           const steps = JSON.parse(process.env.CI_STEPS);
-          const ids = ['install', 'ci_tests', 'lint', 'typecheck', 'tests'];
+          const ids = ['install', 'ci_tests', 'format', 'lint', 'typecheck', 'tests', 'features'];
           fs.writeFileSync('reports/quality-steps.json', JSON.stringify(Object.fromEntries(ids.map(id => [id, steps[id]?.conclusion || 'unknown'])), null, 2));
           NODE
       - name: Guardar resultados de pruebas
@@ -99,11 +122,11 @@ jobs:
           name: regression-${{ github.run_id }}-${{ github.run_attempt }}
           path: reports/
           if-no-files-found: warn
-          retention-days: 14
+          retention-days: 1
 
   report:
     name: ${{ github.event_name == 'pull_request' && 'CI obligatorio PR' || 'Reporte CI' }}
-    needs: [plan, quality, features, build]
+    needs: [security, plan, quality, build, native]
     if: always()
     runs-on: ubuntu-24.04
     timeout-minutes: 10
@@ -118,23 +141,20 @@ jobs:
       - name: Recuperar plan
         id: plan_evidence
         if: always()
-        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
-        with:
-          pattern: plan-${{ github.run_id }}-${{ github.run_attempt }}
-          path: reports/evidence
-      - name: Recuperar regresión y diagnóstico
+        env:
+          CI_PLAN_JSON: ${{ needs.plan.outputs.report }}
+        run: |
+          mkdir -p reports/evidence
+          node -e "const fs=require('fs'); if(process.env.CI_PLAN_JSON) fs.writeFileSync('reports/evidence/plan.json',process.env.CI_PLAN_JSON)"
+      - name: Recuperar evidencia de calidad y seguridad
         id: quality_evidence
         if: always()
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
         with:
-          pattern: regression-${{ github.run_id }}-${{ github.run_attempt }}
-          path: reports/evidence
-      - name: Recuperar evidencia de las HUs
-        id: feature_evidence
-        if: always()
-        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
-        with:
-          pattern: tests-*-${{ github.run_id }}-${{ github.run_attempt }}
+          # Una repetición parcial conserva los jobs aprobados del mismo run/commit.
+          # v8 extrae un solo artifact sin subcarpeta: se descargan juntos los tres
+          # grupos obligatorios. Si faltan, el reporte rechaza la evidencia.
+          pattern: '{regression,security-sast,security-dast}-${{ github.run_id }}-*'
           path: reports/evidence
       - name: Generar reporte y plantilla de seguimiento
         id: report
@@ -148,7 +168,7 @@ jobs:
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: reporte-seguimiento-${{ github.run_id }}-${{ github.run_attempt }}
-          path: reports/final/
+          path: reports/
           if-no-files-found: error
           retention-days: 90
       - name: Exigir resultado completo del pipeline
@@ -161,44 +181,18 @@ jobs:
             exit 1
           fi
 
-  features:
-    name: ${{ matrix.feature }} · issue ${{ matrix.issue }} · ${{ matrix.title }}
-    needs: [plan, quality]
-    if: needs.plan.outputs.has-features == 'true'
-    runs-on: ubuntu-24.04
-    timeout-minutes: 15
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-        with:
-          persist-credentials: false
-      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
-        with:
-          node-version: '24'
-          cache: npm
-      - name: Instalar dependencias
-        run: npm ci --no-audit --no-fund
-      - name: Pruebas y cobertura pendiente de la issue
-        env:
-          CI_FEATURE: ${{ matrix.feature }}
-        run: node scripts/ci/run-tests.cjs "$CI_FEATURE"
-      - name: Guardar evidencia por HU
-        if: always()
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
-        with:
-          name: tests-${{ matrix.feature }}-${{ github.run_id }}-${{ github.run_attempt }}
-          path: reports/
-          if-no-files-found: warn
-          retention-days: 14
+  native:
+    # TIPO aceptación nativa Appium/Maestro y compilación real de APK en entorno desechable.
+    needs: [security, quality, plan]
+    if: inputs.native
+    uses: ./.github/workflows/native-verification.yml
 
   build:
     name: Entrega ${{ matrix.platform }}
-    needs: [plan, quality, features]
+    needs: [security, plan, quality]
     if: >-
-      always() && !cancelled() && needs.quality.result == 'success' &&
-      (needs.features.result == 'success' || needs.features.result == 'skipped')
+      always() && !cancelled() && needs.security.result == 'success' && needs.quality.result == 'success' &&
+      needs.plan.result == 'success'
     runs-on: ubuntu-24.04
     timeout-minutes: 25
     strategy:
@@ -241,10 +235,4 @@ jobs:
           fs.writeFileSync(path.join(root, 'delivery.json'), JSON.stringify({ commit: process.env.GITHUB_SHA, platform: process.env.CI_PLATFORM, run: process.env.GITHUB_RUN_ID, packageVersion: require('./package.json').version, kind: 'expo-bundle' }, null, 2));
           fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, `### Entrega ${process.env.CI_PLATFORM}\nBundle y recursos con checksums SHA-256. No es APK/AAB/IPA ni una instalación física comprobada.\n`);
           NODE
-      - name: Entregar artifact descargable
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
-        with:
-          name: econolab-${{ matrix.platform }}-${{ github.run_id }}-${{ github.run_attempt }}
-          path: dist/${{ matrix.platform }}/
-          if-no-files-found: error
-          retention-days: 14
+      # Los bundles se validan en el runner. Solo se conserva el reporte; el APK/AAB se entrega al liberar.

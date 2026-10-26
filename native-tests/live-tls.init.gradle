@@ -1,0 +1,10 @@
+// These tests contact the live per-run QA server and its ephemeral CA.
+// Compiler caches remain enabled; network test results must always be fresh.
+gradle.allprojects { project ->
+    project.tasks.withType(org.gradle.api.tasks.testing.Test).configureEach { task ->
+        if (task.path == ':app:testReleaseUnitTest') {
+            task.outputs.upToDateWhen { false }
+            task.outputs.doNotCacheIf('Live TLS fixture changes on every CI run') { true }
+        }
+    }
+}

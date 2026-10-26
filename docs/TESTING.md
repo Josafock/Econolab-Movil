@@ -1,0 +1,52 @@
+# HU08 — pruebas y ejecución
+
+Issue #9; tareas #33 #34 #35. Los datos ficticios se limitan a Jest y al entorno desechable de CI. Los builds QA usan módulos reales del backend y PostgreSQL con usuarios y catálogo propios; esos datos no se incorporan al catálogo operativo. El script `test:integration` utiliza el cliente HTTP y los esquemas reales de `src` contra el backend configurado; es una comprobación distinta del entorno aislado del pipeline.
+
+## Comprobaciones automáticas
+
+- `npm run lint`: ESLint sin warnings permitidos.
+- `npm run typecheck`: TypeScript estricto.
+- `npm run format:check`: Prettier sobre workflows, política de CI, scripts y fixtures.
+- `node --test tests/ci/*.test.cjs`: reglas de selección, reporte y bloqueo del pipeline.
+- `npm test -- --runInBand`: contratos, filtros, decimales, sesión, SecureStore, concurrencia, validaciones, errores y acceso protegido.
+- `npm run build`: bundles Android e iOS mediante Metro/Hermes. No genera APK/IPA.
+
+## Integración real
+
+Completar `.env.integration` local, ignorado por Git, conforme a `.env.integration.example`. La cuenta de pruebas debe ser independiente de usuarios operativos. Ejecutar `npm run test:integration` con backend activo. Para el backend local loopback HTTP, configurar `INTEGRATION_ALLOW_LOCAL_HTTP=1`.
+
+La integración comprueba acceso anónimo rechazado, login válido, perfil actualizado del mismo usuario, paginación, búsqueda/filtros, detalle y revocación del token tras logout, incluido el endpoint de perfil. No altera perfiles, estudios ni contraseñas. Requiere el despliegue de `GET /users/me`: si falta, falla y no omite esa prueba. Si el catálogo está vacío, falla explícitamente: no inventa resultados. No se realizan intentos inválidos de login contra la cuenta real para evitar su bloqueo. No se imprime información de pacientes, tokens o contraseñas.
+
+El workflow integration.yml verifica Render después de una entrega exitosa de main o mediante ejecución manual en main. Requiere secrets INTEGRATION_API_URL, INTEGRATION_EMAIL e INTEGRATION_PASSWORD. En modo automático, si faltan, registra integración pendiente y no acredita una ejecución; una solicitud manual falla. Solo el propietario puede configurarlos. La CI de seguridad aislada sí corre sin esos secrets; utiliza PostgreSQL y credenciales desechables propias.
+
+El workflow_dispatch solo será visible en GitHub cuando el workflow esté integrado por el responsable en la rama predeterminada. Las validaciones push/PR de ci.yml no requieren secretos. Ver [auditoría final](AUDITORIA_FINAL.md) para los resultados de CI y las pruebas realizadas.
+
+## Validación adicional realizada
+
+Se ejecutó una prueba real del cambio de contraseña exclusivamente sobre la cuenta independiente de pruebas: modificar, iniciar sesión con la nueva contraseña y restaurar la original. La restauración y los logout finalizaron correctamente. Esta prueba adicional no forma parte del script habitual porque modifica temporalmente la cuenta.
+
+El 6 de octubre se repitió el recorrido en Chromium: login, dashboard, listado, detalle, búsqueda vacía, perfil, validación, navegación inferior, logout y enlace protegido sin sesión. Se revisaron anchos de 320, 390 y 768 px sin desbordamiento horizontal. La edición de nombre/correo verificó persistencia, contraseña obligatoria para el nuevo correo, saludo actualizado y restauración de los datos originales. Las capturas locales están en `artifacts/01-login.png` a `artifacts/07-profile-edit.png`, ignoradas por Git. Se trata de un preview web, no de evidencia de ejecución Android/iOS.
+
+Login y catálogo usaron Render. Para consultar/editar el perfil, la herramienta externa de QA dirigió las peticiones al módulo Users real compilado del backend local con la misma base existente y la sincronización desactivada; no se simularon respuestas. También reenviaba las peticiones sin Origin por la restricción CORS de localhost. Este montaje de QA no está en la app ni acredita que los endpoints nuevos estén publicados en Render. [Perfil](PROFILE_COMPATIBILITY.md) y [diseño móvil](DISENO_MOVIL.md) explican el alcance.
+
+Las siete comprobaciones del script habitual también pasaron contra AuthModule, UsersModule y StudiesModule reales del backend local, con la base existente, jobs y modificaciones de esquema desactivados. Esta ejecución precedió a la publicación del perfil en Render.
+
+Después de la integración del backend autorizada por el propietario, las siete comprobaciones pasaron también contra Render. La prueba HTTP adicional confirmó guardar nombre/correo, login con el nuevo correo y restauración de la cuenta. Se repitió el formulario móvil con todas las peticiones de datos dirigidas a Render: edición, contraseña requerida para correo, confirmación, saludo actualizado y restauración aprobados. No se usó el servidor local para esta última ejecución; el preview web sigue necesitando la herramienta externa de QA para retirar Origin, por el CORS existente. Los resultados locales anteriores se conservan como historial.
+
+## Pruebas de la versión 1.1
+
+La corrección A4 del 26 de octubre contiene 181 casos de regresión en 18 suites y 30 comprobaciones del pipeline. El [run rápido 40397290436](https://github.com/Josafock/Econolab-Movil/actions/runs/40397290436) aprobó calidad, seguridad, 16 casos HTTP aislados y cuatro escenarios k6; omitió aceptación nativa explícitamente. La evidencia por HU se deriva de una única regresión, sin duplicar casos. Los fixtures de `tests/fixtures/config.json` se consumen desde Jest.
+
+La integración independiente contra Render incluye ocho comprobaciones de acceso/perfil/estudios y seis adicionales mediante `npm run test:integration:security` para renovación, rotación y privacidad. Esta última crea y revoca únicamente sus sesiones de prueba; no cancela cuentas del servidor real. La carga y el esfuerzo de CI se dirigen exclusivamente a la API aislada.
+
+`native-verification.yml` genera Debug y Release QA con los módulos reales del backend en una base desechable. Ejecuta cinco casos TLS OkHttp contra certificados efímeros locales, tres recorridos Appium y un flujo Maestro en cada variante; Release se prueba con Metro detenido. `live-tls.init.gradle` impide reutilizar resultados TLS y `check-native-tls.py` exige los cinco casos y un JUnit nuevo. JADX conserva su diagnóstico parcial separado. Los resultados aprobados deben obtenerse del run terminado y sus artifacts, no deducirse de la configuración. Release QA no usa la firma del titular ni se distribuye en Play.
+
+La aceptación nativa es obligatoria en PR a main/develop, main y liberación. Un push de trabajo ejecuta el alcance rápido. Los reportes incluyen JSON, Markdown, cobertura y plantilla de seguimiento; el artifact nativo conserva JUnit, logs y capturas. Ver [correcciones A4](CI_CORRECCIONES_A4.md) y [seguimiento real](evidencias-a4/SEGUIMIENTO.md) para causas, fallos y repeticiones.
+
+La [validación completa 40409669602](https://github.com/Josafock/Econolab-Movil/actions/runs/40409669602), commit 54128a6, aprobó los cinco casos TLS nuevos sin caché, los tres casos Appium y ambos flujos Maestro. Las capturas se obtienen mediante ADB sobre el mismo emulador; las aserciones permanecen en Appium. El [resumen verificado](evidencias-a4/ci-completo-40409669602.json) conserva resultados y procedencia. No es una publicación de tienda.
+
+`inspect-apk.yml` verifica con apksigner el APK EAS distribuible, compara su SHA-256 y ejecuta JADX sobre ese mismo archivo. No sustituye la ejecución de la interfaz en Android ni la revisión de Play Console.
+
+## Prueba en dispositivo del equipo
+
+Instalar el APK propio de la versión 1.1 y comprobar login, consentimiento, catálogo, filtros, detalle, perfil, preferencias y logout. Expo Go sirve para interfaz, pero no acredita pinning ni R8. Repetir con red desconectada y con una sesión revocada. Comprobar tamaño de texto y teclado en Android/iOS. El preview web y los bundles compilados complementan esta prueba, pero no sustituyen una ejecución física. Las capturas de la entrega deben proceder de esas ejecuciones reales.

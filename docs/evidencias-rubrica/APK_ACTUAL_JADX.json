@@ -1,0 +1,15 @@
+{
+  "executedAt": "2026-10-24T22:04:35.485Z",
+  "workflowCommit": "85ae2088b5dcac589196213f7dcbb0b9df3252e7",
+  "sourceCommit": "d2d92c55057f42ea65503e29e288c2ad2d73f0a5",
+  "buildId": "941f3ecb-3c27-47be-8fb0-e494036060ee",
+  "variant": "EAS preview Release firmado, paquete de distribución com.econolab.mobile",
+  "apkSha256": "a4c0e527e71d4775fea313d7bc3af5f0f754dd0028167911ff5ffb43a05e1779",
+  "apkSizeBytes": 100490958,
+  "signatureVerification": "apksigner verify --verbose --print-certs; salida completa en apksigner.txt",
+  "jadxVersion": "1.5.6",
+  "jadxExitCode": 3,
+  "recoveredJavaFiles": 9138,
+  "r8Evidence": "Tarea minifyReleaseWithR8 y BUILD SUCCESSFUL en el log de EAS; no se dispone del mapping de producción en este análisis.",
+  "limits": "La ofuscación no impide recuperar código ni cifra el bundle JavaScript. Los errores parciales de JADX se conservan en jadx.log. Este análisis no ejecuta la app ni acredita publicación en Play."
+}

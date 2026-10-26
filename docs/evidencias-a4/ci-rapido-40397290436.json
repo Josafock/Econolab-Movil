@@ -1,0 +1,172 @@
+{
+  "run": 40397290436,
+  "url": "https://github.com/Josafock/Econolab-Movil/actions/runs/40397290436",
+  "commit": "289a4a0bd220afeb10c94dac7b5a3500052856dc",
+  "approved": true,
+  "failures": [],
+  "jobs": {
+    "security": "success",
+    "plan": "success",
+    "quality": "success",
+    "build": "success",
+    "native": "skipped"
+  },
+  "tests": {
+    "passed": 181,
+    "failed": 0,
+    "pending": 0,
+    "total": 181,
+    "suitesPassed": 18,
+    "suitesFailed": 0
+  },
+  "coverage": {
+    "lines": {
+      "total": 906,
+      "covered": 636,
+      "skipped": 0,
+      "pct": 70.19
+    },
+    "statements": {
+      "total": 1182,
+      "covered": 792,
+      "skipped": 0,
+      "pct": 67
+    },
+    "functions": {
+      "total": 282,
+      "covered": 171,
+      "skipped": 0,
+      "pct": 60.63
+    },
+    "branches": {
+      "total": 917,
+      "covered": 541,
+      "skipped": 0,
+      "pct": 58.99
+    },
+    "branchesTrue": {
+      "total": 0,
+      "covered": 0,
+      "skipped": 0,
+      "pct": 100
+    }
+  },
+  "pending": [
+    "Appium y compilación nativa no solicitados en esta ejecución; son obligatorios en la liberación."
+  ],
+  "measurements": [
+    {
+      "scenario": "baseline",
+      "p95Ms": 6.2574840499999995,
+      "requests": 80,
+      "errorRate": 0
+    },
+    {
+      "scenario": "load",
+      "p95Ms": 8.026878499999999,
+      "requests": 591,
+      "errorRate": 0
+    },
+    {
+      "scenario": "recovery",
+      "p95Ms": 3.9342818499999996,
+      "requests": 60,
+      "errorRate": 0
+    },
+    {
+      "scenario": "stress",
+      "p95Ms": 7.438637549999996,
+      "requests": 8912,
+      "errorRate": 0
+    }
+  ],
+  "integration": [
+    {
+      "name": "Acceso anónimo y JWT alterado rechazados",
+      "passed": true
+    },
+    {
+      "name": "Validación de cuerpos y refresh malformado",
+      "passed": true
+    },
+    {
+      "name": "Login móvil usa JWT corto y refresh opaco; web conserva contrato",
+      "passed": true
+    },
+    {
+      "name": "Perfil propio sin hash; aliases GET y PUT con sobreasignación rechazada",
+      "passed": true
+    },
+    {
+      "name": "Refresh rota y solo almacena hashes; token anterior revoca la familia",
+      "passed": true
+    },
+    {
+      "name": "JWT expirado rechazado y sesión renovable con credencial independiente",
+      "passed": true
+    },
+    {
+      "name": "Logout revoca también refresh sin depender de un access token vigente",
+      "passed": true
+    },
+    {
+      "name": "Refresh concurrente no reutiliza una credencial de un solo uso",
+      "passed": true
+    },
+    {
+      "name": "Aviso público accesible sin autenticación y con contacto real",
+      "passed": true
+    },
+    {
+      "name": "Consentimiento ausente y opciones desactivadas por defecto",
+      "passed": true
+    },
+    {
+      "name": "Opt-in con versión y oposición persistida; versión incorrecta rechazada",
+      "passed": true
+    },
+    {
+      "name": "Cancelación exige confirmación y protege al último administrador",
+      "passed": true
+    },
+    {
+      "name": "Cancelación propia elimina cuenta, sesiones, preferencias y logs asociados",
+      "passed": true
+    },
+    {
+      "name": "Cuenta sin rol nunca obtiene sesión privilegiada",
+      "passed": true
+    },
+    {
+      "name": "Registro con contraseña no concede administración automáticamente",
+      "passed": true
+    },
+    {
+      "name": "Registro con Google no promueve cuentas nuevas a administrador",
+      "passed": true
+    }
+  ],
+  "scanners": {
+    "semgrepFindings": 0,
+    "dependencies": {
+      "info": 0,
+      "low": 0,
+      "moderate": 3,
+      "high": 5,
+      "critical": 0,
+      "total": 8
+    },
+    "performanceComparison": {
+      "baselineP95Ms": 6.2574840499999995,
+      "loadP95Ms": 8.026878499999999,
+      "maximumP95Ms": 800,
+      "multiplier": 1.2827645161956105,
+      "passed": true
+    }
+  },
+  "evidenceArtifacts": {
+    "regression": "regression-40397290436-1",
+    "security-dast": "security-dast-40397290436-1",
+    "security-sast": "security-sast-40397290436-1"
+  }
+}
