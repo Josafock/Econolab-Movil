@@ -6,8 +6,10 @@
 - Observado: Maestro no pudo lanzar la app; ADB informó `device offline`.
 - Tratamiento: esperar arranque, conexión y Package Manager estables; conservar
   diagnóstico y no reintentar aserciones funcionales para convertirlas en éxito.
-- Resultado de repetición: el run 40382607064 terminó aprobado, con cinco casos
-  TLS, tres recorridos Appium y un flujo Maestro por variante Debug/Release.
+- Resultado de repetición: el run 40382607064 ejecutó tres recorridos Appium y
+  un flujo Maestro por variante Debug/Release. Su JUnit TLS fue reutilizado,
+  según la revisión de caché siguiente. El run 40409669602 cerró la validación
+  completa con pruebas TLS nuevas y ambos recorridos nativos aprobados.
 
 ## Dependencia de Render en una prueba TLS
 
@@ -63,12 +65,74 @@ Se añadió `live-tls.init.gradle` para impedir la reutilización y escritura en
 caché del resultado de la tarea TLS, conservando las cachés de compilación.
 `check-native-tls.py` exige cinco casos obligatorios, cero fallos/omisiones y un
 JUnit posterior al inicio del build actual. Se probó contra el artifact de
-40382607064 y lo rechazó por contener `FROM-CACHE`. La repetición fresca debe
-cerrar esta observación antes de acreditar el nuevo entorno.
+40382607064 y lo rechazó por contener `FROM-CACHE`. La repetición
+[40409669602](https://github.com/Josafock/Econolab-Movil/actions/runs/40409669602)
+cerró esta observación: inicio 22:11:25 UTC, JUnit 22:18:44.516 UTC y verificación
+`passed=true`, `cached=false`, cinco casos y cero fallos/omisiones. La fecha y
+el commit 54128a6 constan en `ci-completo-40409669602.json`.
 
 El resultado acredita ese commit de QA con el límite de caché descrito, no una publicación en Play, un análisis
 de SonarCloud ni un ensayo de Firebase. Los avisos de dependencias continúan
 visibles y el acuerdo operativo de niveles de servicio sigue pendiente.
+
+## Pérdida de ADB durante la captura y repetición parcial
+
+El [run 40391909453, intento 1](https://github.com/Josafock/Econolab-Movil/actions/runs/40391909453/attempts/1)
+ejecutó y verificó cinco casos TLS nuevos sin caché. Durante Appium, después de
+comprobar que el consentimiento inicial estaba desmarcado, `GET /screenshot`
+perdió su conexión con UiAutomator2. El driver y ADB informaron `device offline`.
+No se completaron los recorridos ni se ejecutó Maestro. El check final rechazó
+el intento por `native: failure`; el resumen está en
+`ci-rechazado-40391909453-intento1.json`.
+
+La repetición del intento 2 se canceló al preparar una ejecución del commit
+df045f1, que también corrige la recopilación de evidencia en repeticiones
+parciales. El reporte selecciona el artifact de mayor intento por categoría,
+limitado al mismo run y a intentos no posteriores al actual. Conserva el nombre
+de origen y bloquea la aprobación si falta un artifact obligatorio. Dos nuevos
+casos prueban la selección numérica, el rechazo de evidencia de otra ejecución
+y la ausencia de datos.
+
+El run rápido 40396061406 detectó otro error de recopilación: la versión fijada
+de `download-artifact` v8 extrae un único artifact directamente en el destino.
+El selector esperaba su subcarpeta y rechazó el resultado por falta de
+`regression`, sin declarar falsamente pruebas aprobadas. El commit 289a4a0
+descarga juntos los tres grupos de evidencia obligatorios para conservar sus
+carpetas. Si falta un grupo se conserva el rechazo. Un caso adicional ejecuta
+el proceso real del reporte con datos de distintos intentos y luego retira un
+artifact obligatorio para comprobar el bloqueo. Las comprobaciones del pipeline
+suman ahora 30 casos. El run rápido 40397290436 y la repetición completa
+40409669602 aprobaron la recuperación y el reporte con los tres artifacts de
+origen identificados; sus resúmenes quedan versionados en esta carpeta.
+
+Las repeticiones parciales requieren que los artifacts intermedios del mismo
+run sigan disponibles. Su retención es de un día. Después de expirar se repite
+el workflow completo; no se sustituye su evidencia con archivos de otro run o
+commit. El informe consolidado se conserva durante 90 días.
+
+## Captura reproducible sin el endpoint de UiAutomator2
+
+El [run 40397290225](https://github.com/Josafock/Econolab-Movil/actions/runs/40397290225)
+repitió el fallo del intento 1 de 40391909453 exactamente en `GET /screenshot`.
+Ambos habían localizado el consentimiento inicial y comprobado `checked=false`.
+El endpoint devolvió `socket hang up`; terminaron la instrumentación y la
+conexión ADB. No hay evidencia de un fallo de la aserción de consentimiento,
+pero tampoco se acredita el recorrido completo. El check final rechazó ambos.
+En 40397290225 las cinco pruebas TLS sí fueron nuevas y verificadas sin caché.
+
+El commit 54128a6 obtiene las imágenes del mismo emulador mediante
+`adb exec-out screencap -p`, documentado por Android Developers. Exige salida
+correcta, tiempo máximo y cabecera PNG válida; una captura fallida sigue
+rechazando el caso. Appium mantiene todos los controles y aserciones, sin
+reintentar recorridos funcionales. Se conserva además el buffer de errores
+Android para diagnóstico, con la redacción de credenciales aplicada al subirlo.
+La repetición completa 40409669602 aprobó cinco casos TLS nuevos, tres casos
+Appium y un flujo Maestro por variante, con cero fallos. Release se ejecutó con
+Metro detenido. Las capturas reales de consentimiento y detalle y los JUnit se
+revisaron junto con `captureTool=adb exec-out screencap -p`. El reporte final
+registró `approved=true`, todos los jobs obligatorios en `success` y ninguna
+entrada en `failures`. Esto cierra la incidencia de captura para ese commit de
+QA; no acredita todos los dispositivos ni una publicación en Play.
 
 ## Servicios externos
 

@@ -47,6 +47,16 @@ corrección se prepara sobre HU08; no integra automáticamente la aplicación en
    `reporte-seguimiento` contiene la carpeta `final` con el informe y plantilla.
    Los logs de runners y el artifact nativo complementan esa evidencia.
 
+## Resultado comprobado
+
+La [validación completa 40409669602](https://github.com/Josafock/Econolab-Movil/actions/runs/40409669602)
+aprobó sobre 54128a6: 181 casos Jest en 18 suites, 30 comprobaciones del
+pipeline, 16 casos HTTP, cuatro escenarios k6, cinco pruebas TLS nuevas sin
+caché, tres casos Appium y Maestro en Debug/Release. El reporte consolidado y
+el [seguimiento](evidencias-a4/SEGUIMIENTO.md) conservan también los fallos
+anteriores. La captura mediante ADB mantiene las aserciones de Appium y evita
+el endpoint de captura que se desconectó en dos ejecuciones anteriores.
+
 ## Entorno y parámetros
 
 Node 24; npm ci; Expo 57; React Native 0.86; Jest 29.7; Ubuntu 24.04;
@@ -112,8 +122,9 @@ no demuestra por sí mismo un defecto funcional. El resultado final requiere
 revisar JUnit, capturas y ambos builds; una compilación correcta no acredita
 la aceptación completa.
 
-Los ocho avisos de dependencias observados localmente (cinco altos y tres
-moderados) siguen registrados; no se cambiaron a versiones incompatibles para
+Los ocho paquetes afectados por tres avisos de dependencias (cinco con severidad
+alta y tres moderada, incluidos consumidores indirectos) siguen registrados;
+no se cambiaron a versiones incompatibles para
 ocultarlos. El bloqueo de auditoría mantiene cero hallazgos críticos como umbral.
 Los avisos restantes requieren análisis y actualización compatible.
 
