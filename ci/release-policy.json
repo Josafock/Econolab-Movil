@@ -1,0 +1,7 @@
+{
+  "versioning": "SemVer",
+  "releaseTag": "vMAJOR.MINOR.PATCH",
+  "androidVersionCode": "EAS remote autoIncrement",
+  "distribution": "Google Play internal",
+  "productionPublication": "manual approval by account owner"
+}

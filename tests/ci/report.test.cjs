@@ -51,3 +51,23 @@ test('lost evidence blocks approval and untrusted branch names cannot inject HTM
   assert.ok(!markdown.includes('<script>'));
   assert.ok(markdown.includes('&lt;script&gt;'));
 });
+
+test('a required native failure blocks merging even when all JavaScript checks pass', () => {
+  const jobs = needs();
+  jobs.plan.outputs['native-required'] = 'true';
+  jobs.native = { result: 'failure' };
+  assert.equal(evaluate(jobs).approved, false);
+  jobs.native.result = 'cancelled';
+  assert.equal(evaluate(jobs).approved, false);
+  jobs.native.result = 'success';
+  assert.equal(evaluate(jobs).approved, true);
+});
+
+test('the single regression may provide feature evidence without a duplicated matrix', () => {
+  const jobs = needs();
+  delete jobs.features;
+  jobs.quality.outputs = { features: 'success' };
+  assert.equal(evaluate(jobs).approved, true);
+  jobs.quality.outputs.features = 'failure';
+  assert.equal(evaluate(jobs).approved, false);
+});

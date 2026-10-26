@@ -1,13 +1,25 @@
 name: Android Debug Release pinning y JADX
 
 on:
+  workflow_call:
   push:
     branches: ['fix/HU-08-seguridad-rubrica']
-    paths: ['.github/workflows/native-verification.yml', 'native-tests/**', '.maestro/**', 'plugins/**', 'app.config.js']
+    paths:
+      [
+        '.github/workflows/native-verification.yml',
+        'native-tests/**',
+        '.maestro/**',
+        'plugins/**',
+        'app.config.js',
+      ]
   workflow_dispatch:
 
 permissions:
   contents: read
+
+defaults:
+  run:
+    shell: bash
 
 concurrency:
   group: native-verification-${{ github.ref }}
@@ -141,6 +153,10 @@ jobs:
           grep 'maestro.zip$' maestro-checksums.txt | sha256sum --check
           unzip -q maestro.zip -d /tmp
           echo /tmp/maestro/bin >> "$GITHUB_PATH"
+      - name: Instalar Appium y UiAutomator2 de la planeación
+        run: |
+          npm install --prefix /tmp/econolab-appium appium@3.8.0
+          /tmp/econolab-appium/node_modules/.bin/appium driver install uiautomator2@8.7.1
       - name: Preparar emulador y Metro de Debug
         env:
           NODE_ENV: development
@@ -167,11 +183,15 @@ jobs:
           arch: x86_64
           target: google_apis
           profile: pixel_6
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -memory 2048 -cores 2
           disable-animations: true
           script: |
-            adb shell am force-stop com.google.android.apps.nexuslauncher
+            bash scripts/ci/wait-android.sh
             adb reverse tcp:8081 tcp:8081
             adb install android/app/build/outputs/apk/debug/app-debug.apk
+            /tmp/econolab-appium/node_modules/.bin/appium --address 127.0.0.1 --port 4723 --log reports/native/appium.log > /tmp/econolab-appium.log 2>&1 &
+            python3 scripts/ci/appium-acceptance.py
+            bash scripts/ci/wait-android.sh
             maestro test -e APP_ID=com.econolab.mobile.qa -e EMAIL=native-debug@example.test -e PASSWORD="$SECURITY_QA_UI_PASSWORD" --format junit --output reports/native/maestro-debug.xml --test-output-dir reports/native/debug .maestro/native-smoke.yml
             adb uninstall com.econolab.mobile.qa
             kill "$QA_METRO_PID"
@@ -209,4 +229,4 @@ jobs:
           name: android-security-verification
           path: reports/native/
           if-no-files-found: error
-          retention-days: 30
+          retention-days: 14

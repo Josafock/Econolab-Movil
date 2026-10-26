@@ -7,6 +7,10 @@ on:
 permissions:
   contents: read
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   sast:
     name: Semgrep y dependencias
@@ -38,10 +42,10 @@ jobs:
           name: security-sast-${{ github.run_id }}-${{ github.run_attempt }}
           path: reports/security/
           if-no-files-found: error
-          retention-days: 30
+          retention-days: 1
 
   dast:
-    name: Seguridad HTTP del backend aislado
+    name: Integración rendimiento esfuerzo y seguridad del backend aislado
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     services:
@@ -91,6 +95,13 @@ jobs:
           JWT_VALUE=$(openssl rand -hex 32)
           echo "::add-mask::$JWT_VALUE"
           echo "JWT_SECRET=$JWT_VALUE" >> "$GITHUB_ENV"
+          QA_PASSWORD=$(openssl rand -hex 24)
+          echo "::add-mask::$QA_PASSWORD"
+          echo "SECURITY_QA_UI_PASSWORD=$QA_PASSWORD" >> "$GITHUB_ENV"
+      - name: Instalar k6 para medir API real aislada
+        uses: grafana/setup-k6-action@e8a4df30dd7db7da61a537ed3c92bdb0220da2ef # v1
+        with:
+          k6-version: '2.3.0'
       - name: Generar contraseña exclusiva del PostgreSQL desechable
         run: |
           DB_PASSWORD=$(openssl rand -hex 32)
@@ -100,7 +111,8 @@ jobs:
       - name: Instalar backend
         working-directory: qa-backend
         run: npm ci --no-audit --no-fund
-      - name: Ejecutar pruebas dinámicas de autenticación y ARCO
+      # TIPO integración real NestJS y PostgreSQL; prepara usuarios y catálogo desechables.
+      - name: Integración real y pruebas de rendimiento esfuerzo recuperación y DAST
         working-directory: qa-backend
         env:
           SECURITY_SCAN_HOLD: '1'
@@ -114,6 +126,20 @@ jobs:
             sleep 2
           done
           test -f reports/mobile-security/ready
+          cd "$GITHUB_WORKSPACE"
+          mkdir -p reports/performance
+          # TIPO rendimiento: línea base y carga; comparación con p95 y tasa de error.
+          SCENARIO=baseline k6 run tests/performance/api.k6.js
+          SCENARIO=load k6 run tests/performance/api.k6.js
+          node scripts/ci/compare-performance.cjs
+          # TIPO esfuerzo: 10/25/50 VUs y recuperación; se conserva el código de salida.
+          STRESS_STATUS=0
+          SCENARIO=stress k6 run tests/performance/api.k6.js || STRESS_STATUS=$?
+          RECOVERY_STATUS=0
+          SCENARIO=recovery k6 run tests/performance/api.k6.js || RECOVERY_STATUS=$?
+          test "$STRESS_STATUS" -eq 0
+          test "$RECOVERY_STATUS" -eq 0
+          cd qa-backend
           chmod a+w reports/mobile-security
           docker run --rm --network host -v "$PWD/reports/mobile-security:/zap/wrk:rw" ghcr.io/zaproxy/zaproxy:2.17.0 zap-baseline.py -t http://127.0.0.1:3109/api/privacy -m 1 -I -r zap-baseline.html -J zap-baseline.json
       - name: Conservar evidencia DAST
@@ -121,6 +147,8 @@ jobs:
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: security-dast-${{ github.run_id }}-${{ github.run_attempt }}
-          path: qa-backend/reports/mobile-security/
+          path: |
+            qa-backend/reports/mobile-security/
+            reports/performance/
           if-no-files-found: error
-          retention-days: 30
+          retention-days: 1
