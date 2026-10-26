@@ -21,6 +21,53 @@ test('missing artifacts stay absent and invalid run context cannot select foreig
   assert.throws(() => selectEvidenceArtifacts(['regression-8-1'], '8.*', '1'), /inválido/);
 });
 
+test('the report process reads grouped evidence and rejects a missing mandatory artifact', () => {
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const os = require('node:os');
+  const { spawnSync } = require('node:child_process');
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'econolab-report-'));
+  const evidence = path.join(directory, 'reports/evidence');
+  const write = (file, value) => {
+    const target = path.join(evidence, file);
+    fs.mkdirSync(path.dirname(target), { recursive: true });
+    fs.writeFileSync(target, JSON.stringify(value));
+  };
+  const jobs = needs();
+  write('plan.json', { selected: [] });
+  write('regression-123-1/jest-all.json', { numPassedTests: 1, numTotalTests: 1 });
+  write('regression-123-2/jest-all.json', { numPassedTests: 2, numTotalTests: 2 });
+  write('security-sast-123-1/semgrep.json', { results: [] });
+  write('security-dast-123-1/dast.json', { cases: [{ passed: true }] });
+  const run = () => {
+    const result = spawnSync(process.execPath, [require.resolve('../../scripts/ci/report.cjs')], {
+      cwd: directory,
+      encoding: 'utf8',
+      env: { ...process.env, GITHUB_RUN_ID: '123', GITHUB_RUN_ATTEMPT: '2',
+        GITHUB_EVENT_PATH: '', GITHUB_OUTPUT: '', GITHUB_STEP_SUMMARY: '',
+        CI_NEEDS: JSON.stringify(jobs),
+        CI_REPORT_STEPS: JSON.stringify({ plan_evidence: { conclusion: 'success' }, quality_evidence: { conclusion: 'success' } }),
+      },
+    });
+    assert.equal(result.status, 0, result.stderr);
+    return JSON.parse(fs.readFileSync(path.join(directory, 'reports/final/reporte-ci.json'), 'utf8'));
+  };
+  try {
+    const approved = run();
+    assert.equal(approved.approved, true);
+    assert.equal(approved.tests.passed, 2);
+    assert.equal(approved.integration.length, 1);
+    assert.equal(approved.evidenceArtifacts.regression, 'regression-123-2');
+    fs.renameSync(path.join(evidence, 'security-sast-123-1'), path.join(evidence, 'unrecognized'));
+    const rejected = run();
+    assert.equal(rejected.approved, false);
+    assert.ok(rejected.failures.includes('Falta artifact obligatorio: security-sast.'));
+  } finally {
+    assert.ok(fs.realpathSync(directory).startsWith(fs.realpathSync(os.tmpdir()) + path.sep));
+    fs.rmSync(directory, { recursive: true });
+  }
+});
+
 test('a failing or cancelled stage cannot pass the final merge gate', () => {
   for (const id of ['security', 'plan', 'quality', 'features', 'build']) for (const status of ['failure', 'cancelled', 'skipped']) {
     const jobs = needs(); jobs[id].result = status;

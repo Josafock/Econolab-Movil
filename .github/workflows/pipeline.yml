@@ -146,20 +146,15 @@ jobs:
         run: |
           mkdir -p reports/evidence
           node -e "const fs=require('fs'); if(process.env.CI_PLAN_JSON) fs.writeFileSync('reports/evidence/plan.json',process.env.CI_PLAN_JSON)"
-      - name: Recuperar regresión y diagnóstico
+      - name: Recuperar evidencia de calidad y seguridad
         id: quality_evidence
         if: always()
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
         with:
           # Una repetición parcial conserva los jobs aprobados del mismo run/commit.
-          pattern: regression-${{ github.run_id }}-*
-          path: reports/evidence
-      - name: Recuperar integración rendimiento esfuerzo y seguridad
-        id: security_evidence
-        if: always()
-        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
-        with:
-          pattern: security-*-${{ github.run_id }}-*
+          # v8 extrae un solo artifact sin subcarpeta: se descargan juntos los tres
+          # grupos obligatorios. Si faltan, el reporte rechaza la evidencia.
+          pattern: '{regression,security-sast,security-dast}-${{ github.run_id }}-*'
           path: reports/evidence
       - name: Generar reporte y plantilla de seguimiento
         id: report

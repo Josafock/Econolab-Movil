@@ -303,7 +303,7 @@ function main() {
       }
     }
   const steps = JSON.parse(process.env.CI_REPORT_STEPS || '{}');
-  for (const id of ['plan_evidence', 'quality_evidence', 'security_evidence']) {
+  for (const id of ['plan_evidence', 'quality_evidence']) {
     if (steps[id]?.conclusion !== 'success')
       evidenceErrors.push(`Recuperación de evidencia ${id}: ${steps[id]?.conclusion || 'unknown'}`);
   }
