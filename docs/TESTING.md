@@ -1,11 +1,13 @@
 # HU08 — pruebas y ejecución
 
-Issue #9; tareas #33 #34 #35. Datos ficticios se usan solamente en pruebas unitarias aisladas, nunca como catálogo o autenticación de la app. El script de integración utiliza el cliente HTTP y los esquemas de estudios reales de `src`; no levanta otra API ni sustituye el backend.
+Issue #9; tareas #33 #34 #35. Los datos ficticios se limitan a Jest y al entorno desechable de CI. Los builds QA usan módulos reales del backend y PostgreSQL con usuarios y catálogo propios; esos datos no se incorporan al catálogo operativo. El script `test:integration` utiliza el cliente HTTP y los esquemas reales de `src` contra el backend configurado; es una comprobación distinta del entorno aislado del pipeline.
 
 ## Comprobaciones automáticas
 
 - `npm run lint`: ESLint sin warnings permitidos.
 - `npm run typecheck`: TypeScript estricto.
+- `npm run format:check`: Prettier sobre workflows, política de CI, scripts y fixtures.
+- `node --test tests/ci/*.test.cjs`: reglas de selección, reporte y bloqueo del pipeline.
 - `npm test -- --runInBand`: contratos, filtros, decimales, sesión, SecureStore, concurrencia, validaciones, errores y acceso protegido.
 - `npm run build`: bundles Android e iOS mediante Metro/Hermes. No genera APK/IPA.
 
@@ -33,9 +35,15 @@ Después de la integración del backend autorizada por el propietario, las siete
 
 ## Pruebas de la versión 1.1
 
-La regresión tiene 174 casos en 18 suites, además de 22 pruebas de CI. La integración contra Render incluye ocho comprobaciones de acceso/perfil/estudios y seis adicionales mediante `npm run test:integration:security` para renovación, rotación y privacidad. Esta última crea y revoca únicamente sus sesiones de prueba; no cancela cuentas del servidor real.
+La corrección A4 del 26 de octubre contiene 181 casos de regresión en 18 suites y 30 comprobaciones del pipeline. El [run rápido 40397290436](https://github.com/Josafock/Econolab-Movil/actions/runs/40397290436) aprobó calidad, seguridad, 16 casos HTTP aislados y cuatro escenarios k6; omitió aceptación nativa explícitamente. La evidencia por HU se deriva de una única regresión, sin duplicar casos. Los fixtures de `tests/fixtures/config.json` se consumen desde Jest.
 
-`native-verification.yml` genera Debug y Release QA con los módulos reales del backend en una base desechable. Ejecuta tres casos TLS OkHttp, el recorrido Maestro y JADX. Los resultados aprobados deben obtenerse del run terminado y sus artifacts, no deducirse de la configuración. Release QA no usa la firma del titular ni se distribuye en Play.
+La integración independiente contra Render incluye ocho comprobaciones de acceso/perfil/estudios y seis adicionales mediante `npm run test:integration:security` para renovación, rotación y privacidad. Esta última crea y revoca únicamente sus sesiones de prueba; no cancela cuentas del servidor real. La carga y el esfuerzo de CI se dirigen exclusivamente a la API aislada.
+
+`native-verification.yml` genera Debug y Release QA con los módulos reales del backend en una base desechable. Ejecuta cinco casos TLS OkHttp contra certificados efímeros locales, tres recorridos Appium y un flujo Maestro en cada variante; Release se prueba con Metro detenido. `live-tls.init.gradle` impide reutilizar resultados TLS y `check-native-tls.py` exige los cinco casos y un JUnit nuevo. JADX conserva su diagnóstico parcial separado. Los resultados aprobados deben obtenerse del run terminado y sus artifacts, no deducirse de la configuración. Release QA no usa la firma del titular ni se distribuye en Play.
+
+La aceptación nativa es obligatoria en PR a main/develop, main y liberación. Un push de trabajo ejecuta el alcance rápido. Los reportes incluyen JSON, Markdown, cobertura y plantilla de seguimiento; el artifact nativo conserva JUnit, logs y capturas. Ver [correcciones A4](CI_CORRECCIONES_A4.md) y [seguimiento real](evidencias-a4/SEGUIMIENTO.md) para causas, fallos y repeticiones.
+
+La [validación completa 40409669602](https://github.com/Josafock/Econolab-Movil/actions/runs/40409669602), commit 54128a6, aprobó los cinco casos TLS nuevos sin caché, los tres casos Appium y ambos flujos Maestro. Las capturas se obtienen mediante ADB sobre el mismo emulador; las aserciones permanecen en Appium. El [resumen verificado](evidencias-a4/ci-completo-40409669602.json) conserva resultados y procedencia. No es una publicación de tienda.
 
 `inspect-apk.yml` verifica con apksigner el APK EAS distribuible, compara su SHA-256 y ejecuta JADX sobre ese mismo archivo. No sustituye la ejecución de la interfaz en Android ni la revisión de Play Console.
 

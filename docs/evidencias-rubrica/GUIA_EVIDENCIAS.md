@@ -1,5 +1,10 @@
 # Evidencias para la rúbrica de ECONOLAB móvil
 
+Guía histórica de la revisión del 23/24 de octubre. Los parámetros, conteos y
+evidencias actuales de la corrección A4 del 26 de octubre se documentan en
+[CI_CORRECCIONES_A4.md](../CI_CORRECCIONES_A4.md),
+[TESTING.md](../TESTING.md) y [SEGUIMIENTO.md](../evidencias-a4/SEGUIMIENTO.md).
+
 Revisión base: 23 de octubre de 2026. Este archivo organiza la entrega académica; el Project de GitHub sigue siendo la única planeación oficial. Los nombres E01–E15 identifican evidencias, no nuevas HUs ni Sprints.
 
 Cada captura o registro debe mostrar lo necesario para reconocer la función, versión y resultado. Anota fecha, responsable y dispositivo. Usa cuentas de prueba y evita datos clínicos, contraseñas, tokens, documentos de identidad, medios de pago y secretos de Actions.

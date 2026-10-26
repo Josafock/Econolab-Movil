@@ -1,5 +1,11 @@
 # Resultado técnico de la versión 1.1
 
+Este registro conserva el alcance histórico del 24 de octubre. Para las
+correcciones y ejecuciones del 26 de octubre, consultar
+[CI_CORRECCIONES_A4.md](CI_CORRECCIONES_A4.md) y
+[el seguimiento A4](evidencias-a4/SEGUIMIENTO.md). Los conteos y estados de esta
+revisión no se trasladan a una ejecución posterior.
+
 Verificación: **24 de octubre de 2026**. Esta entrega implementa los pendientes técnicos del diagnóstico anterior; no asigna una calificación ni acredita automáticamente todos los requisitos de publicación y trabajo en equipo.
 
 ## Entrega y planeación

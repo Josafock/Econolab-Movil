@@ -1,0 +1,33 @@
+{
+  "reviewedAt": "2026-10-26",
+  "repository": "Josafock/Econolab-Movil",
+  "url": "https://deepwiki.com/Josafock/Econolab-Movil",
+  "service": "Official DeepWiki MCP read_wiki_structure and read_wiki_contents",
+  "published": true,
+  "pages": [
+    "Overview",
+    "Getting Started",
+    "Repository Layout and Conventions",
+    "Mobile Application",
+    "App Shell and Routing",
+    "Core Layer",
+    "Configuration and API URL Validation",
+    "ApiClient HTTP Transport",
+    "Errors and Validation",
+    "Backend Contracts",
+    "Assets and Visual Identity",
+    "CI/CD System",
+    "GitHub Actions Workflows",
+    "Feature Selection and Planning",
+    "Test Execution and Reporting",
+    "Build, Delivery and Integration",
+    "Developer Tooling",
+    "TypeScript and Linting",
+    "Testing Setup",
+    "Dependencies and Scripts",
+    "Git Workflow and Branch Protection",
+    "Glossary"
+  ],
+  "indexedCommit": null,
+  "scopeComparison": "Published content describes HU matrix and 14-day plan.json from main. A4 branch uses one regression and plan outputs; regeneration is needed after integration."
+}

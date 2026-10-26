@@ -1,0 +1,13 @@
+{
+  "valid": [
+    { "input": "https://qa.example.test/api/", "expected": "https://qa.example.test/api" },
+    { "input": "  https://qa.example.test/api  ", "expected": "https://qa.example.test/api" }
+  ],
+  "invalid": [
+    "",
+    "not a URL",
+    "http://qa.example.test/api",
+    "https://qa.example.test/api?token=test",
+    "https://qa.example.test/api#fragment"
+  ]
+}
