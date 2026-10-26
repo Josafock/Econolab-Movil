@@ -4,17 +4,23 @@ Repositorio: https://github.com/Josafock/Econolab-Movil
 
 Consulta de DeepWiki: https://deepwiki.com/Josafock/Econolab-Movil
 
-La lectura automatizada del servicio devolvió un control de acceso HTTP 429 el
-26 de octubre de 2026. Eso no confirma que el repositorio esté indexado ni que
-su índice corresponda a la versión 1.1.0. La revisión del índice en el servicio
-queda pendiente; no se fabrica una captura ni se atribuye autoría automática.
+El 26 de octubre de 2026 se solicitó la indexación con autorización del titular,
+quien resolvió la verificación humana del servicio. DeepWiki aceptó la solicitud.
+La lectura posterior mediante el MCP oficial devolvió el índice y el contenido
+de 22 páginas: visión general, aplicación móvil, sistema CI/CD, herramientas y
+glosario, con subpáginas de arquitectura, API, pruebas, dependencias y workflows.
 
-La comprobación posterior mediante el MCP oficial y el navegador confirmó
-`Repository Not Indexed`. El formulario solicita un correo obligatorio para
-notificar al terminar. No se transmitió el correo sin autorización del titular.
-`.devin/wiki.json` prepara seis páginas de arquitectura, módulos, ejecución,
-pruebas, workflows y liberación para una futura generación sobre el commit que
-incluya esa configuración. No es un índice ya publicado.
+El índice publicado describe el pipeline anterior por matrices de HU y conserva
+`plan.json` durante 14 días. Esos detalles coinciden con el código de `main` y
+no con la corrección A4, que deriva evidencia de una regresión única y transmite
+el plan como output. No debe emplearse ese índice para acreditar que las
+correcciones de esta rama ya están documentadas en DeepWiki. El MCP no expuso
+un SHA de indexación; no se atribuye uno sin evidencia del servicio.
+
+`.devin/wiki.json` prepara seis páginas para una futura regeneración que incluya
+la corrección A4. Esa configuración aún no formaba parte de `main` al generar
+el índice. Después de la integración se debe actualizar DeepWiki y contrastar
+sus referencias de código con el commit realmente integrado.
 
 La documentación versionada que debe compararse con el índice cubre:
 

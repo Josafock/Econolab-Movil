@@ -20,6 +20,13 @@ integración o aceptación en el tablero. No se modifican issues ni Project.
 
 ## Flujo de verificación
 
+La regla de protección de `main` exige ahora `pipeline / CI obligatorio PR` y
+`pipeline / native / android`, vinculados a la app GitHub Actions, con rama
+actualizada y aplicación a administradores. Una rama que aún conserve el CI
+anterior debe incorporar estos workflows para obtener ambos resultados. La
+corrección se prepara sobre HU08; no integra automáticamente la aplicación en
+`main` ni modifica las historias del tablero.
+
 1. `plan`: identifica HUs, tareas y archivos; transmite el plan como output de
    texto JSON sin crear otro artifact.
 2. `quality`: instala con lockfile, verifica versionamiento, Prettier, ESLint y

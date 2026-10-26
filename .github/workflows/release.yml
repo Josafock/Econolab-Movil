@@ -65,7 +65,7 @@ jobs:
           test -n "$GOOGLE_PLAY_SERVICE_ACCOUNT" || { echo '::error::Falta GOOGLE_PLAY_SERVICE_ACCOUNT; no se envió a Play.'; exit 1; }
           printf '%s' "$GOOGLE_PLAY_SERVICE_ACCOUNT" > google-play.json
           chmod 600 google-play.json
-          node -e "const fs=require('fs');const b=JSON.parse(fs.readFileSync('reports/release/aab.json','utf8'));const item=Array.isArray(b)?b[0]:b;if(!/^[0-9a-f-]{36}$/.test(item.id))throw Error('Build sin ID válido');fs.appendFileSync(process.env.GITHUB_ENV,'EAS_VALIDATED_BUILD='+item.id+'\n');"
+          EAS_VALIDATED_BUILD=$(node -e "const fs=require('fs');const b=JSON.parse(fs.readFileSync('reports/release/aab.json','utf8'));const item=Array.isArray(b)?b[0]:b;if(!/^[0-9a-f-]{36}$/.test(item.id))throw Error('Build sin ID válido');process.stdout.write(item.id);")
           npx eas-cli@25.3.0 submit --platform android --profile internal --id "$EAS_VALIDATED_BUILD" --non-interactive --wait
       - name: Retirar la credencial temporal de Play
         if: always()
