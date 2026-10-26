@@ -6,9 +6,11 @@ set -euo pipefail
 bash scripts/ci/wait-android.sh
 adb reverse tcp:8081 tcp:8081
 adb install android/app/build/outputs/apk/debug/app-debug.apk
+adb logcat -b crash -v threadtime > reports/native/android-crash.log 2>&1 &
+CRASH_LOG_PID=$!
 /tmp/econolab-appium/node_modules/.bin/appium --address 127.0.0.1 --port 4723 --log reports/native/appium.log > /tmp/econolab-appium.log 2>&1 &
 APPIUM_PID=$!
-trap 'kill "$APPIUM_PID" 2>/dev/null || true' EXIT
+trap 'kill "$APPIUM_PID" "$CRASH_LOG_PID" 2>/dev/null || true' EXIT
 python3 scripts/ci/appium-acceptance.py
 bash scripts/ci/wait-android.sh
 maestro test -e APP_ID=com.econolab.mobile.qa -e EMAIL=native-debug@example.test -e PASSWORD="$SECURITY_QA_UI_PASSWORD" --format junit --output reports/native/maestro-debug.xml --test-output-dir reports/native/debug .maestro/native-smoke.yml

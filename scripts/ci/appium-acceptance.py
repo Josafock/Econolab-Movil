@@ -2,10 +2,10 @@
 
 Uses Appium's W3C HTTP API directly; no credentials or business data are exported.
 """
-import base64
 import json
 import os
 from pathlib import Path
+import subprocess
 import time
 import urllib.error
 import urllib.request
@@ -70,7 +70,18 @@ def type_text(label, value):
 
 
 def screenshot(name):
-    OUT.joinpath(name + ".png").write_bytes(base64.b64decode(command("GET", "/screenshot")))
+    # UiAutomator2 disconnected at GET /screenshot in two real runs.
+    # Capture the same device through Android's native screencap transport;
+    # UI assertions and session control remain on Appium, with no functional retry.
+    result = subprocess.run(
+        ["adb", "-s", os.environ.get("ANDROID_SERIAL", "emulator-5554"),
+         "exec-out", "screencap", "-p"],
+        check=True, capture_output=True, timeout=30,
+    )
+    raw = result.stdout
+    if len(raw) < 24 or raw[:8] != b"\x89PNG\r\n\x1a\n" or raw[12:16] != b"IHDR":
+        raise RuntimeError("Android did not produce a valid PNG screenshot")
+    OUT.joinpath(name + ".png").write_bytes(raw)
 
 
 def source_contains(text, timeout=40):
@@ -184,7 +195,7 @@ if __name__ == "__main__":
                           "seconds": 0, "error": type(failure).__name__})
         print("Acceptance did not pass; inspect the redacted report and driver logs.")
     finally:
-        OUT.joinpath("results.json").write_text(json.dumps({"tool": "Appium 3 UiAutomator2", "scope": "Android QA with real isolated API", "cases": CASES}, ensure_ascii=False, indent=2), encoding="utf-8")
+        OUT.joinpath("results.json").write_text(json.dumps({"tool": "Appium 3 UiAutomator2", "captureTool": "adb exec-out screencap -p", "scope": "Android QA with real isolated API", "cases": CASES}, ensure_ascii=False, indent=2), encoding="utf-8")
         suite = ET.Element("testsuite", name="Appium acceptance", tests=str(len(CASES)), failures=str(sum(not c["passed"] for c in CASES)))
         for case in CASES:
             element = ET.SubElement(suite, "testcase", name=case["name"], time=str(round(case["seconds"], 3)))
