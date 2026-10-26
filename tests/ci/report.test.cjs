@@ -1,8 +1,25 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
-const { evaluate, buildReport } = require('../../scripts/ci/report.cjs');
+const { evaluate, buildReport, selectEvidenceArtifacts } = require('../../scripts/ci/report.cjs');
 const needs = () => ({ security: { result: 'success' }, plan: { result: 'success', outputs: { 'has-features': 'true' } }, quality: { result: 'success' }, features: { result: 'success' }, build: { result: 'success' } });
 const context = { runUrl: 'https://github.com/example/repo/actions/runs/1', branch: 'feature/HU-01', createdAt: '2026-10-15', headSha: 'abc', testedSha: 'def' };
+
+test('partial reruns select each latest artifact numerically within the same run', () => {
+  assert.deepEqual(selectEvidenceArtifacts([
+    'regression-123-2', 'regression-123-10', 'regression-123-1',
+    'security-sast-123-1', 'security-dast-123-2', 'security-dast-123-1',
+    'regression-999-10', 'regression-123-11',
+  ], '123', '10'), {
+    regression: 'regression-123-10',
+    'security-sast': 'security-sast-123-1',
+    'security-dast': 'security-dast-123-2',
+  });
+});
+
+test('missing artifacts stay absent and invalid run context cannot select foreign evidence', () => {
+  assert.deepEqual(selectEvidenceArtifacts(['plan.json', 'regression-9-1', 'security-sast-8-2'], '8', '1'), {});
+  assert.throws(() => selectEvidenceArtifacts(['regression-8-1'], '8.*', '1'), /inválido/);
+});
 
 test('a failing or cancelled stage cannot pass the final merge gate', () => {
   for (const id of ['security', 'plan', 'quality', 'features', 'build']) for (const status of ['failure', 'cancelled', 'skipped']) {

@@ -151,14 +151,15 @@ jobs:
         if: always()
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
         with:
-          pattern: regression-${{ github.run_id }}-${{ github.run_attempt }}
+          # Una repetición parcial conserva los jobs aprobados del mismo run/commit.
+          pattern: regression-${{ github.run_id }}-*
           path: reports/evidence
       - name: Recuperar integración rendimiento esfuerzo y seguridad
         id: security_evidence
         if: always()
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
         with:
-          pattern: security-*-${{ github.run_id }}-${{ github.run_attempt }}
+          pattern: security-*-${{ github.run_id }}-*
           path: reports/evidence
       - name: Generar reporte y plantilla de seguimiento
         id: report

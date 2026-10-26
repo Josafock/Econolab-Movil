@@ -127,6 +127,7 @@ function buildReport({
     `- Commit probado: ${md(context.testedSha)} (en PR puede ser el merge provisional con main).`,
     `- Evento: ${md(context.event)}; intento: ${md(context.attempt)}`,
     `- Ejecución y logs: ${context.runUrl}`,
+    `- Artifacts de origen: ${md(JSON.stringify(context.evidenceArtifacts || {}))}. En repetición parcial pueden proceder de un intento anterior del mismo run y commit.`,
     '',
     '## Etapas',
     '',
@@ -185,7 +186,7 @@ function buildReport({
     ...(pending.length
       ? pending.map((item) => `- ${md(item)}`)
       : ['Sin suites ausentes detectadas en el alcance seleccionado.']),
-    '- La integración con backend real tiene un workflow posterior independiente; este reporte no la acredita.',
+    '- La integración medida usa un backend y PostgreSQL reales en QA aislado. El workflow posterior contra el backend operativo tiene evidencia independiente; este reporte no acredita producción.',
     '- Las entregas son bundles y recursos; no acreditan instalación física, aceptación de usuario ni publicación en tiendas.',
     '',
     '## Errores y diagnóstico',
@@ -256,13 +257,35 @@ function buildReport({
   return { report, markdown: lines.join('\n'), template };
 }
 
+function selectEvidenceArtifacts(names, runId, attempt) {
+  if (!/^\d+$/.test(String(runId)) || !/^\d+$/.test(String(attempt)))
+    throw new Error('Contexto de ejecución inválido para seleccionar evidencia.');
+  const selected = {};
+  const pattern = new RegExp(`^(regression|security-sast|security-dast)-${runId}-(\\d+)$`);
+  for (const name of names) {
+    const match = pattern.exec(name);
+    if (!match || Number(match[2]) > Number(attempt)) continue;
+    const previous = selected[match[1]];
+    if (!previous || Number(match[2]) > Number(previous.split('-').at(-1)))
+      selected[match[1]] = name;
+  }
+  return selected;
+}
+
 function main() {
   const evidence = path.resolve('reports/evidence');
   const data = [];
   const evidenceErrors = [];
   const diagnostics = [];
+  const artifacts = selectEvidenceArtifacts(
+    fs.existsSync(evidence) ? fs.readdirSync(evidence) : [],
+    process.env.GITHUB_RUN_ID,
+    process.env.GITHUB_RUN_ATTEMPT,
+  );
+  const selectedFolders = new Set(Object.values(artifacts));
   if (fs.existsSync(evidence))
     for (const file of fs.readdirSync(evidence, { recursive: true })) {
+      if (file !== 'plan.json' && !selectedFolders.has(file.split(path.sep)[0])) continue;
       const absolute = path.join(evidence, file);
       if (!fs.statSync(absolute).isFile()) continue;
       if (file.endsWith('.json')) {
@@ -285,6 +308,14 @@ function main() {
       evidenceErrors.push(`Recuperación de evidencia ${id}: ${steps[id]?.conclusion || 'unknown'}`);
   }
   const needs = JSON.parse(process.env.CI_NEEDS || '{}');
+  for (const [job, required] of [
+    ['quality', ['regression']],
+    ['security', ['security-sast', 'security-dast']],
+  ]) {
+    if (needs[job]?.result === 'success')
+      for (const name of required)
+        if (!artifacts[name]) evidenceErrors.push(`Falta artifact obligatorio: ${name}.`);
+  }
   const event = process.env.GITHUB_EVENT_PATH
     ? JSON.parse(fs.readFileSync(process.env.GITHUB_EVENT_PATH, 'utf8'))
     : {};
@@ -299,6 +330,7 @@ function main() {
     headSha: pr?.head?.sha || process.env.GITHUB_SHA,
     testedSha: process.env.GITHUB_SHA,
     attempt: process.env.GITHUB_RUN_ATTEMPT,
+    evidenceArtifacts: artifacts,
     runUrl: `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`,
   };
   const plan = data.find((item) => item.name === 'plan.json')?.value;
@@ -347,5 +379,5 @@ function main() {
   );
 }
 
-module.exports = { evaluate, buildReport };
+module.exports = { evaluate, buildReport, selectEvidenceArtifacts };
 if (require.main === module) main();
