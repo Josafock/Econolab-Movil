@@ -59,7 +59,7 @@ def click(label, timeout=40):
 
 
 def scroll_to(label):
-    value = 'new UiScrollable(new UiSelector().scrollable(true)).setMaxSearchSwipes(12).scrollIntoView(new UiSelector().description(' + json.dumps(label) + '))'
+    value = 'new UiScrollable(new UiSelector().scrollable(true)).setMaxSearchSwipes(12).scrollIntoView(new UiSelector().description(' + json.dumps(label, ensure_ascii=False) + '))'
     command("POST", "/element", {"using": "-android uiautomator", "value": value})
 
 

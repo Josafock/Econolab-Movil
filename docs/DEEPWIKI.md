@@ -9,6 +9,13 @@ La lectura automatizada del servicio devolvió un control de acceso HTTP 429 el
 su índice corresponda a la versión 1.1.0. La revisión del índice en el servicio
 queda pendiente; no se fabrica una captura ni se atribuye autoría automática.
 
+La comprobación posterior mediante el MCP oficial y el navegador confirmó
+`Repository Not Indexed`. El formulario solicita un correo obligatorio para
+notificar al terminar. No se transmitió el correo sin autorización del titular.
+`.devin/wiki.json` prepara seis páginas de arquitectura, módulos, ejecución,
+pruebas, workflows y liberación para una futura generación sobre el commit que
+incluya esa configuración. No es un índice ya publicado.
+
 La documentación versionada que debe compararse con el índice cubre:
 
 | Tema | Fuente comprobable |
