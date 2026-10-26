@@ -2,16 +2,6 @@ name: Android Debug Release pinning y JADX
 
 on:
   workflow_call:
-  push:
-    branches: ['fix/HU-08-seguridad-rubrica']
-    paths:
-      [
-        '.github/workflows/native-verification.yml',
-        'native-tests/**',
-        '.maestro/**',
-        'plugins/**',
-        'app.config.js',
-      ]
   workflow_dispatch:
 
 permissions:

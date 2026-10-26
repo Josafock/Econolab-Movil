@@ -40,6 +40,8 @@ corrección se prepara sobre HU08; no integra automáticamente la aplicación en
 5. `native`: obligatorio para PR, main y liberación; compila APK Debug/Release,
    prueba pinning y ejecuta Appium y Maestro en Android API 35. Un push aislado
    ejecuta la validación rápida; la ejecución manual permite solicitar nativo.
+   Se retiró el antiguo disparador adicional por push de HU08: la llamada se
+   centraliza en este pipeline y conserva la ejecución manual independiente.
 6. `report`: se intenta incluso ante fallo y conserva diagnóstico, JSON Jest,
    cobertura, resultados de integración y las métricas k6. El artifact final
    `reporte-seguimiento` contiene la carpeta `final` con el informe y plantilla.

@@ -6,8 +6,8 @@
 - Observado: Maestro no pudo lanzar la app; ADB informó `device offline`.
 - Tratamiento: esperar arranque, conexión y Package Manager estables; conservar
   diagnóstico y no reintentar aserciones funcionales para convertirlas en éxito.
-- Resultado de repetición: se registra desde el run nativo terminado; no se
-  acredita por disponer del script.
+- Resultado de repetición: el run 40382607064 terminó aprobado, con cinco casos
+  TLS, tres recorridos Appium y un flujo Maestro por variante Debug/Release.
 
 ## Dependencia de Render en una prueba TLS
 
@@ -41,7 +41,22 @@
 - Revisión adicional: la acción del emulador procesa cada línea como una
   invocación `sh -c`. La secuencia se trasladó a `native-acceptance.sh` con
   `set -euo pipefail` para conservar una sesión, bucles y códigos de error.
-- Repetición: se documenta desde los JUnit Debug/Release del nuevo run terminado.
+- Repetición: [run 40382607064](https://github.com/Josafock/Econolab-Movil/actions/runs/40382607064),
+  commit 14c0dcc7f514c6885c8edc8bc67bb8afee19bdf1, terminó aprobado. Sus dos
+  JUnit Maestro registran un flujo por variante y cero fallos. Las capturas y
+  el flujo terminado conservan la comprobación de rechazo del usuario cancelado.
+
+## Cierre de la validación completa
+
+El run 40382607064 concluyó con todos los jobs y el check final aprobados:
+181 pruebas Jest en 18 suites, 27 comprobaciones del pipeline, 16 casos HTTP,
+Semgrep sin hallazgos, cuatro escenarios k6, tres exportaciones y aceptación
+nativa. Sus cinco artifacts incluyen el reporte consolidado y la evidencia
+Android. El resultado detallado está en `ci-completo-40382607064.json`.
+
+Este cierre acredita ese commit de QA, no una publicación en Play, un análisis
+de SonarCloud ni un ensayo de Firebase. Los avisos de dependencias continúan
+visibles y el acuerdo operativo de niveles de servicio sigue pendiente.
 
 ## Servicios externos
 
