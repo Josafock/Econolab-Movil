@@ -54,6 +54,12 @@ PostgreSQL 17.6; Semgrep 1.182.1; ZAP 2.17.0; k6 2.3.0; Appium 3.8.0;
 UiAutomator2 8.7.1; Maestro 2.11.0; Android API 35 y arquitectura x86_64 para QA.
 Las versiones efectivas y sus resultados se comprueban en los logs.
 
+Las pruebas TLS dependen de certificados y servidores nuevos en cada ejecución.
+Su tarea Gradle utiliza `live-tls.init.gradle`: no reutiliza ni almacena
+resultados de prueba, aunque conserva cachés del compilador. El verificador
+`check-native-tls.py` bloquea resultados omitidos o de caché, casos obligatorios
+ausentes y un JUnit anterior al inicio del build actual.
+
 La base exige `NODE_ENV=test`, host loopback y nombre terminado en `_test`.
 JWT, contraseña de PostgreSQL y contraseña de usuario QA se generan en cada
 ejecución y se ocultan antes de subir evidencias. Los usuarios terminan en

@@ -46,7 +46,7 @@
   JUnit Maestro registran un flujo por variante y cero fallos. Las capturas y
   el flujo terminado conservan la comprobación de rechazo del usuario cancelado.
 
-## Cierre de la validación completa
+## Resultado completo previo y revisión de caché
 
 El run 40382607064 concluyó con todos los jobs y el check final aprobados:
 181 pruebas Jest en 18 suites, 27 comprobaciones del pipeline, 16 casos HTTP,
@@ -54,7 +54,19 @@ Semgrep sin hallazgos, cuatro escenarios k6, tres exportaciones y aceptación
 nativa. Sus cinco artifacts incluyen el reporte consolidado y la evidencia
 Android. El resultado detallado está en `ci-completo-40382607064.json`.
 
-Este cierre acredita ese commit de QA, no una publicación en Play, un análisis
+El log de Gradle mostró `testReleaseUnitTest FROM-CACHE`. Su JUnit TLS conserva
+la fecha 18:42:24 del run 40377741692. Los recorridos Appium y Maestro sí se
+ejecutaron en 40382607064, pero ese resultado no acredita nuevas conexiones TLS
+contra el certificado efímero generado en 40382607064.
+
+Se añadió `live-tls.init.gradle` para impedir la reutilización y escritura en
+caché del resultado de la tarea TLS, conservando las cachés de compilación.
+`check-native-tls.py` exige cinco casos obligatorios, cero fallos/omisiones y un
+JUnit posterior al inicio del build actual. Se probó contra el artifact de
+40382607064 y lo rechazó por contener `FROM-CACHE`. La repetición fresca debe
+cerrar esta observación antes de acreditar el nuevo entorno.
+
+El resultado acredita ese commit de QA con el límite de caché descrito, no una publicación en Play, un análisis
 de SonarCloud ni un ensayo de Firebase. Los avisos de dependencias continúan
 visibles y el acuerdo operativo de niveles de servicio sigue pendiente.
 

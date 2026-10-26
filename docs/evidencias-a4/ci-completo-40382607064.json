@@ -168,7 +168,11 @@
   "native": {
     "tls": {
       "passed": 5,
-      "failed": 0
+      "failed": 0,
+      "cached": true,
+      "freshInThisRun": false,
+      "executedAt": "2026-10-26T18:42:24.420Z",
+      "sourceExecution": 40377741692
     },
     "appium": [
       {
@@ -213,5 +217,6 @@
       "recoveredJavaFiles": 9138,
       "interpretation": "R8 changes names and reduces code/resources. JADX still recovers parts of the APK. This is not encryption of JavaScript nor proof of impossible decompilation. Preserve mapping privately for crash diagnosis."
     }
-  }
+  },
+  "freshnessReview": "GitHub approved this run; Gradle reused TLS results from 40377741692. Appium and Maestro executed in this run. Live TLS must be revalidated without test-result caching."
 }

@@ -140,7 +140,10 @@ jobs:
           NODE_ENV: production
         run: |
           chmod +x gradlew
-          ./gradlew :app:assembleDebug :app:assembleRelease :app:testReleaseUnitTest -PreactNativeArchitectures=x86_64 --build-cache --no-daemon --max-workers=2 -Dorg.gradle.jvmargs=-Xmx4g 2>&1 | tee ../reports/native/gradle.log
+          date -u +%Y-%m-%dT%H:%M:%SZ > ../reports/native/tls-started-at.txt
+          ./gradlew :app:assembleDebug :app:assembleRelease :app:testReleaseUnitTest --init-script ../native-tests/live-tls.init.gradle -PreactNativeArchitectures=x86_64 --build-cache --no-daemon --max-workers=2 -Dorg.gradle.jvmargs=-Xmx4g 2>&1 | tee ../reports/native/gradle.log
+      - name: Exigir JUnit TLS nuevo y sin resultados de caché
+        run: python3 scripts/ci/check-native-tls.py
       - name: Guardar caché de Android incluso ante un fallo posterior
         if: always() && steps.gradle_cache.outputs.cache-primary-key != '' && steps.gradle_cache.outputs.cache-hit != 'true'
         uses: actions/cache/save@caa296126883cff596d87d8935842f9db880ef25 # v5
