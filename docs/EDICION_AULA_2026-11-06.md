@@ -1,5 +1,7 @@
 # Econolab Aula — edición administrativa escolar
 
+**Estado al 6 de noviembre de 2026:** los binarios terminaron en Expo: [APK código 9](https://expo.dev/artifacts/eas/Y_0gH4QqkJQSf70iojVvAy429PVVDL_3oqmrgRN4NAw.apk) y [AAB código 10](https://expo.dev/artifacts/eas/ATcEKIacfyDd3olehUEZNnNNQ4L6QL7pQ3kCDqK_kUU.aab). El backend está listo y aprobado por CI en el PR7; su integración y despliegue están pendientes de autorización explícita. Esta edición requiere ese despliegue para funcionar. Consulta [la evidencia y los límites de verificación](evidencias-aula/RESULTADO_2026-11-06.json).
+
 Cambio de alcance iniciado el 6 de noviembre de 2026 a petición de David tras la respuesta de Google Play que exige organización para la edición médica. No es un cambio cosmético de categorías.
 
 ## Comportamiento actual

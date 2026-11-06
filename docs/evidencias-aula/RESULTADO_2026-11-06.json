@@ -1,0 +1,79 @@
+{
+  "date": "2026-11-06",
+  "edition": "Econolab Aula",
+  "mobile": {
+    "branch": "feature/HU-08-demo-administrativa",
+    "pr": "https://github.com/Josafock/Econolab-Movil/pull/61",
+    "sourceCommit": "5ada69470f2179105f15a461c156413341bef9e5",
+    "mainModified": false,
+    "preexistingLocalAppJsonPreserved": true,
+    "appJsonSha256": "ceb6a1a76b2502da88de81eb84347f29caf1b39e665b4d521cf34c97bc880b67"
+  },
+  "backend": {
+    "branch": "feature/school-administration",
+    "pr": "https://github.com/DavidHdz117/Backend_Econolab_Escuela/pull/7",
+    "head": "6f4295ad0d865ba399c816e1519ee474a81e8a8c",
+    "ci": "PASS",
+    "sonarCloud": "PASS",
+    "deployment": "Awaiting explicit user authorization after auto-review rejected main merge",
+    "deployedByAssistant": false
+  },
+  "tests": {
+    "mobileJest": 189,
+    "mobileSuites": 21,
+    "ciConfiguration": 22,
+    "backendUnit": 8,
+    "backendHttpPostgresJwt": 19,
+    "concurrentWrites": 10,
+    "cascadeDeletion": true
+  },
+  "builds": [
+    {
+      "type": "apk",
+      "buildId": "6706708c-66b9-438c-b5da-ac7fbc4ddbcc",
+      "status": "FINISHED",
+      "version": "1.1.0",
+      "versionCode": 9,
+      "downloadUrl": "https://expo.dev/artifacts/eas/Y_0gH4QqkJQSf70iojVvAy429PVVDL_3oqmrgRN4NAw.apk",
+      "sha256": "f243977e74625a74b8a0d4f67a1cf8540cae8a5f79506cdf0fffc28306c883c0",
+      "bytes": 100071678,
+      "zipIntegrity": true,
+      "manifestPresent": true,
+      "sourceCommit": "5ada69470f2179105f15a461c156413341bef9e5"
+    },
+    {
+      "type": "aab",
+      "buildId": "b12b98a7-6700-4c4a-bf4b-5246ceaa947e",
+      "status": "FINISHED",
+      "version": "1.1.0",
+      "versionCode": 10,
+      "downloadUrl": "https://expo.dev/artifacts/eas/ATcEKIacfyDd3olehUEZNnNNQ4L6QL7pQ3kCDqK_kUU.aab",
+      "sha256": "86f1e42c361b7827124c57e1d6351870bea1270e62e357d9935631f92cc80818",
+      "bytes": 71479802,
+      "zipIntegrity": true,
+      "manifestPresent": true,
+      "sourceCommit": "5ada69470f2179105f15a461c156413341bef9e5"
+    }
+  ],
+  "webQa": {
+    "scope": "Web export with simulated API and fictitious data, not an Android execution",
+    "viewports": [
+      {
+        "width": 393,
+        "height": 852
+      },
+      {
+        "width": 360,
+        "height": 640
+      }
+    ],
+    "screenshots": 12,
+    "flow": "login, consent, create catalog item, create activity, cut 37.50, profile, logout"
+  },
+  "limits": [
+    "Hashes, ZIP CRC and manifest entry presence checked locally. No independent apksigner or jarsigner cryptographic verification performed in this session.",
+    "Native files compiled in EAS using the existing Android signing credentials. Device execution of this edition is pending.",
+    "Backend deployment is required before using this edition. No Google Play approval is claimed.",
+    "The previous academic delivery remains separate; the new generic catalog changes that scope."
+  ]
+}

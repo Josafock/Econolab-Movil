@@ -1,0 +1,35 @@
+{
+  "scope": "Source maps de las exportaciones Hermes de la edición Aula",
+  "report": [
+    {
+      "platform": "android",
+      "projectSources": 48,
+      "retiredModules": 0,
+      "clinicalFields": 0,
+      "schoolSources": [
+        "src/features/school/transport.ts",
+        "src/features/school/SchoolProvider.tsx",
+        "src/features/school/SchoolViewModel.ts",
+        "src/features/school/HttpSchoolRepository.ts",
+        "src/features/school/models.ts",
+        "src/features/school/ManageWorkspace.ts",
+        "src/features/school/Screens.tsx"
+      ]
+    },
+    {
+      "platform": "ios",
+      "projectSources": 48,
+      "retiredModules": 0,
+      "clinicalFields": 0,
+      "schoolSources": [
+        "src/features/school/transport.ts",
+        "src/features/school/SchoolProvider.tsx",
+        "src/features/school/SchoolViewModel.ts",
+        "src/features/school/HttpSchoolRepository.ts",
+        "src/features/school/models.ts",
+        "src/features/school/ManageWorkspace.ts",
+        "src/features/school/Screens.tsx"
+      ]
+    }
+  ]
+}
