@@ -94,7 +94,7 @@ export default function ProfileCard({ disabled = false }: { disabled?: boolean }
   return <Card>
     {loading ? <Loading /> : null}
     {!loading && user ? <>
-      <View style={styles.top}><View style={styles.avatar}><Text style={styles.initial}>{user.nombre.trim().charAt(0).toUpperCase()}</Text></View><View style={styles.badge}><ShieldCheck size={14} color={colors.primary} /><Text style={styles.role}>{user.rol === 'admin' ? 'Administrador' : 'Recepcionista'}</Text></View></View>
+      <View style={styles.top}><View style={styles.avatar}><Text style={styles.initial}>{user.nombre.trim().charAt(0).toUpperCase()}</Text></View><View style={styles.badge}><ShieldCheck size={14} color={colors.primary} /><Text style={styles.role}>{user.rol === 'admin' ? 'Administrador' : 'Colaborador'}</Text></View></View>
       {editing ? <>
         <Field label="Nombre" icon={UserRound} value={nombre} onChangeText={value => edit('nombre', value, setNombre)} error={fields.nombre} maxLength={50} editable={!busy && !disabled} autoComplete="name" />
         <Field label="Correo electrónico" icon={Mail} value={email} onChangeText={value => edit('email', value, setEmail)} error={fields.email} maxLength={50} editable={!busy && !disabled} autoCapitalize="none" autoCorrect={false} keyboardType="email-address" autoComplete="email" />

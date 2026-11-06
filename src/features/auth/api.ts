@@ -28,9 +28,9 @@ export async function loginRequest(email: string, password: string, signal?: Abo
   }
 }
 
-/** Existing authenticated endpoint; the backend does not expose a /me route. */
+/** Session validation reads only the account profile. */
 export async function validateSession(signal?: AbortSignal, expireOnUnauthorized = true): Promise<void> {
-  await api.request('/studies?page=1&limit=1', { signal, expireOnUnauthorized, timeoutMs: 60000 });
+  await api.request('/users/me', { signal, expireOnUnauthorized, timeoutMs: 60000 });
 }
 
 export async function logoutRequest(session?: Session): Promise<void> {

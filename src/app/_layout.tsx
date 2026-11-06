@@ -10,9 +10,12 @@ import BottomNavigation from '@/ui/BottomNavigation';
 import PrivacyConsentGate from '@/features/privacy/PrivacyConsentGate';
 import { api } from '@/core/api';
 import { ensurePinnedTransport } from '@/core/pinning';
+import { schoolPathAllowed } from '@/features/school/transport';
+import { SchoolProvider } from '@/features/school/SchoolProvider';
 
 // Composition root: every app request awaits native pinning initialization.
 api.setTransportPreparation(ensurePinnedTransport);
+api.setPathPolicy(schoolPathAllowed);
 
 export function ErrorBoundary({ retry }: ErrorBoundaryProps) {
   return <SafeAreaProvider><SafeAreaView style={{ flex: 1 }}><Screen>
@@ -38,15 +41,17 @@ function AuthenticatedNavigation() {
       </SafeAreaView>
     );
   }
-  return (
+  const navigation = (
     <View style={{ flex: 1, backgroundColor: colors.background }}><Stack initialRouteName={status === 'authenticated' ? 'index' : 'login'} screenOptions={{ headerTitle: () => <Brand compact />, headerTitleAlign: 'center', headerTintColor: colors.text, headerStyle: { backgroundColor: colors.card }, headerShadowVisible: false, contentStyle: { backgroundColor: colors.background } }}>
       <Stack.Protected guard={status === 'anonymous'}>
         <Stack.Screen name="login" options={{ title: 'Iniciar sesión', headerShown: false }} />
       </Stack.Protected>
       <Stack.Protected guard={status === 'authenticated'}>
         <Stack.Screen name="index" options={{ title: 'Inicio' }} />
-        <Stack.Screen name="studies/index" options={{ title: 'Estudios' }} />
-        <Stack.Screen name="studies/[id]" options={{ title: 'Detalle del estudio' }} />
+        <Stack.Screen name="catalog" options={{ title: 'Catálogo' }} />
+        <Stack.Screen name="activities" options={{ title: 'Actividades' }} />
+        <Stack.Screen name="studies/index" options={{ headerShown: false }} />
+        <Stack.Screen name="studies/[id]" options={{ headerShown: false }} />
         <Stack.Screen name="profile" options={{ title: 'Mi perfil' }} />
         <Stack.Screen name="privacy" options={{ title: 'Privacidad y mis datos' }} />
         <Stack.Protected guard={(profile ?? session?.usuario)?.rol === 'admin'}>
@@ -57,6 +62,7 @@ function AuthenticatedNavigation() {
       <Stack.Screen name="+not-found" options={{ title: 'Pantalla no encontrada' }} />
     </Stack><ConnectionBanner />{status === 'authenticated' ? <BottomNavigation /> : null}</View>
   );
+  return status === 'authenticated' ? <SchoolProvider key={session!.usuario.id}>{navigation}</SchoolProvider> : navigation;
 }
 
 export default function RootLayout() {

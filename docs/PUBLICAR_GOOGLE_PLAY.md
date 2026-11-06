@@ -1,3 +1,5 @@
+> Actualización 2026-11-06: la edición actual es **Econolab Aula**, de práctica administrativa. Consulta [el cambio de alcance y la publicación](EDICION_AULA_2026-11-06.md). La documentación del dominio anterior se conserva como historial.
+
 # Publicar ECONOLAB en Google Play
 
 Guía actualizada el **24 de octubre de 2026**. Los nombres de algunos menús pueden variar según el idioma de Play Console.

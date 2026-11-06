@@ -6,7 +6,7 @@ import { useAuth } from '@/features/auth/AuthProvider';
 
 jest.mock('expo-router', () => ({ router: { navigate: jest.fn() }, usePathname: () => '/' }));
 jest.mock('@/features/auth/AuthProvider', () => ({ useAuth: jest.fn() }));
-jest.mock('lucide-react-native', () => Object.fromEntries(['ArrowUpRight', 'FlaskConical', 'LogOut', 'ShieldCheck', 'UserRound', 'Wallet', 'House'].map(name => [name, () => null])));
+jest.mock('lucide-react-native', () => Object.fromEntries(['ArrowUpRight', 'FlaskConical', 'LogOut', 'ShieldCheck', 'UserRound', 'Wallet', 'House', 'BookOpen', 'ClipboardList'].map(name => [name, () => null])));
 jest.mock('react-native-safe-area-context', () => jest.requireActual('react-native-safe-area-context/jest/mock').default);
 
 const auth = jest.mocked(useAuth);

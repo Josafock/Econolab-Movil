@@ -52,7 +52,7 @@ describe('authenticated profile read and edit', () => {
   it('distinguishes wrong current password from an expired session', async () => {
     request.mockRejectedValueOnce(new AppError('unauthorized', 'Private server fixture', 401)).mockResolvedValueOnce({});
     await expect(updateProfile('13', profile, 'fixture8!')).rejects.toMatchObject({ kind: 'validation', message: 'La contraseña actual no es correcta.' });
-    expect(request).toHaveBeenNthCalledWith(2, '/studies?page=1&limit=1', { signal: undefined });
+    expect(request).toHaveBeenNthCalledWith(2, '/users/me', { signal: undefined });
   });
   it('propagates revocation instead of claiming a wrong password', async () => {
     const revoked = new AppError('unauthorized', 'Expired', 401);
@@ -100,7 +100,7 @@ describe('profile password validation and existing API', () => {
     await expect(updatePassword(validChange.current_password, validChange.password)).rejects.toMatchObject({
       kind: 'validation', message: 'La contraseña actual no es correcta.',
     });
-    expect(request).toHaveBeenNthCalledWith(2, '/studies?page=1&limit=1', { signal: undefined });
+    expect(request).toHaveBeenNthCalledWith(2, '/users/me', { signal: undefined });
   });
 
   it('propagates a revoked-session response from the validation request', async () => {

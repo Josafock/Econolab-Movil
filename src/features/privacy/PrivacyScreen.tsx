@@ -66,7 +66,7 @@ export default function PrivacyScreen({ onAccepted }: { onAccepted?: () => void 
         <Button title="Conservar mi cuenta" variant="secondary" disabled={state.busy} onPress={() => { setDeleting(false); setPassword(''); setConfirmation(''); }} />
       </>}
     </Card>
-    <ConfirmDialog visible={confirming} title="Cancelar tu cuenta de acceso" message="Se eliminarán tu cuenta y sus sesiones. Esta acción es definitiva y no borra los expedientes clínicos del laboratorio." confirmLabel="Cancelar mi cuenta" onCancel={() => setConfirming(false)} onConfirm={() => { setConfirming(false); const secret = password; setPassword(''); void vm.cancel(secret, confirmation); }} />
+    <ConfirmDialog visible={confirming} title="Cancelar tu cuenta de acceso" message="Se eliminarán tu cuenta, sus sesiones y tu espacio de práctica. Esta acción es definitiva." confirmLabel="Cancelar mi cuenta" onCancel={() => setConfirming(false)} onConfirm={() => { setConfirming(false); const secret = password; setPassword(''); void vm.cancel(secret, confirmation); }} />
   </Screen>;
 }
 

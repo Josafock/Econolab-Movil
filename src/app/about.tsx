@@ -1,1 +1,1 @@
-export { default } from '@/features/about/AboutScreen';
+export { HelpScreen as default } from '@/features/school/Screens';

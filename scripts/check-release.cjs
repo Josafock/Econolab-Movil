@@ -24,6 +24,7 @@ function releaseIssues({ app, eas, version, resources = {}, store = false }) {
     if (!/^[a-f\d]{8}(-[a-f\d]{4}){3}-[a-f\d]{12}$/i.test(app.extra?.eas?.projectId ?? '')) issues.push('Vincula tu proyecto de Expo con npx eas-cli@latest init.');
     if (!httpsUrl(resources.privacyUrl)) issues.push('Configura EXPO_PUBLIC_PRIVACY_URL con la política real y pública.');
     if (!/^[^\s@?&#%]+@[^\s@?&#%]+\.[^\s@?&#%]+$/.test(resources.supportEmail ?? '')) issues.push('Configura EXPO_PUBLIC_SUPPORT_EMAIL con un correo que atiendas.');
+    if (app.extra?.schoolEdition && !resources.privacyUrl?.endsWith('/school/privacy')) issues.push('La edición Aula necesita su aviso específico en /school/privacy.');
   }
   return issues;
 }
@@ -32,7 +33,9 @@ function main() {
   const root = path.resolve(__dirname, '..');
   const build = process.argv.includes('--build');
   if (!build && fs.existsSync(path.join(root, '.env'))) process.loadEnvFile(path.join(root, '.env'));
-  const app = JSON.parse(fs.readFileSync(path.join(root, 'app.json'))).expo;
+  const base = JSON.parse(fs.readFileSync(path.join(root, 'app.json'))).expo;
+  const configFile = path.join(root, 'app.config.js');
+  const app = fs.existsSync(configFile) ? require(configFile)({ config: base }) : base;
   const eas = JSON.parse(fs.readFileSync(path.join(root, 'eas.json')));
   const { version } = JSON.parse(fs.readFileSync(path.join(root, 'package.json')));
   const store = process.argv.includes('--store') || (build && process.env.EAS_BUILD_PROFILE === 'production');

@@ -1,1 +1,1 @@
-export { default } from '@/features/cash-cuts/CashCutsScreen';
+export { CutsScreen as default } from '@/features/school/Screens';

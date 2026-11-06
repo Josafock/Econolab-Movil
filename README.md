@@ -1,3 +1,5 @@
+> Actualización 2026-11-06: la edición actual es **Econolab Aula**, de práctica administrativa. Consulta [el cambio de alcance y la publicación](docs/EDICION_AULA_2026-11-06.md). La documentación del dominio anterior se conserva como historial.
+
 # ECONOLAB móvil
 
 Aplicación React Native con Expo SDK 57 y TypeScript. Reutiliza la API NestJS existente de ECONOLAB para iniciar sesión, consultar estudios, gestionar el perfil y cambiar la contraseña. No incluye otro backend ni otra base de datos.

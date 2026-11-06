@@ -1,1 +1,1 @@
-export { default } from '@/features/dashboard/DashboardScreen';
+export { HomeScreen as default } from '@/features/school/Screens';

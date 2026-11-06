@@ -17,13 +17,13 @@ const preferencesSchema = z.object({
 export class HttpPrivacyRepository implements PrivacyRepository {
   constructor(private readonly client: Pick<ApiClient, 'request'> = api) {}
   async notice(signal?: AbortSignal) {
-    return parseResponse(noticeSchema, await this.client.request('/privacy/notice', { authenticated: false, signal }));
+    return parseResponse(noticeSchema, await this.client.request('/school/privacy/notice', { authenticated: false, signal }));
   }
   async preferences(signal?: AbortSignal) {
-    return parseResponse(preferencesSchema, await this.client.request('/privacy/preferences', { signal }));
+    return parseResponse(preferencesSchema, await this.client.request('/school/privacy/preferences', { signal }));
   }
   async update(values: PrivacyChanges, signal?: AbortSignal) {
-    return parseResponse(preferencesSchema, await this.client.request('/privacy/preferences', { method: 'PATCH', body: values, signal }));
+    return parseResponse(preferencesSchema, await this.client.request('/school/privacy/preferences', { method: 'PATCH', body: values, signal }));
   }
   async deleteAccount(currentPassword: string, confirmation: string, signal?: AbortSignal) {
     try {

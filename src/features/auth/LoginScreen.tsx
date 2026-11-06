@@ -47,11 +47,11 @@ export default function LoginScreen() {
 
   return (
     <Screen topInset>
-      <View style={styles.intro}><Text style={styles.overline}>ECONOLAB MÓVIL</Text></View>
+      <View style={styles.intro}><Text style={styles.overline}>ECONOLAB AULA</Text></View>
       <Brand />
       {auth.notice ? <Feedback message={auth.notice} /> : null}
       <Card>
-        <Heading title="Bienvenido" subtitle="Todo tu catálogo, en un solo lugar. Entra con tu cuenta de Econolab." />
+        <Heading title="Bienvenido" subtitle="Practica la organización de servicios genéricos. Entra con tu cuenta de práctica autorizada." />
         <Field
           label="Correo electrónico"
           icon={Mail}
@@ -92,7 +92,7 @@ export default function LoginScreen() {
         <View style={styles.security}><ShieldCheck size={16} color={colors.muted} /><Text style={styles.securityText}>Tu cuenta, siempre contigo</Text></View>
       </Card>
       <Text style={styles.note}>
-        Usa la misma cuenta que en la aplicación web. Si todavía no tienes acceso, contacta al administrador.
+        Utiliza una cuenta de práctica autorizada. Si todavía no tienes acceso, contacta al administrador.
       </Text>
       <Button title="Ayuda y uso de datos" variant="secondary" onPress={() => router.push('/about')} />
       {Platform.OS === 'web' ? (

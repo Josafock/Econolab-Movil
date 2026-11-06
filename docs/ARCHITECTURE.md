@@ -1,3 +1,5 @@
+> Actualización 2026-11-06: la edición actual es **Econolab Aula**, de práctica administrativa. Consulta [el cambio de alcance y la publicación](EDICION_AULA_2026-11-06.md). La documentación del dominio anterior se conserva como historial.
+
 # Arquitectura y contratos comprobados
 
 Expo SDK 57, React Native 0.86 y Expo Router. `src/app` contiene rutas; `src/features` agrupa funcionalidades; `src/core` separa transporte/configuración/validación; `src/ui` comparte componentes. Se reutiliza el backend NestJS existente. La versión 1.1 añade módulos de sesión y privacidad, con dos tablas nuevas creadas de forma idempotente; no crea otro backend ni activa sincronización destructiva de esquemas.

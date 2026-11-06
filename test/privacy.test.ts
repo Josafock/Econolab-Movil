@@ -61,5 +61,5 @@ it('the repository rejects an invalid response instead of displaying unvalidated
   const request = jest.fn().mockResolvedValue({ ready: true, supportEmail: 'invalid' });
   const repo = new HttpPrivacyRepository({ request });
   await expect(repo.notice()).rejects.toMatchObject({ kind: 'unexpected' });
-  expect(request).toHaveBeenCalledWith('/privacy/notice', { authenticated: false, signal: undefined });
+  expect(request).toHaveBeenCalledWith('/school/privacy/notice', { authenticated: false, signal: undefined });
 });

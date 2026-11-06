@@ -32,7 +32,7 @@ export async function updateProfile(expectedId: string, values: { nombre: string
   } catch (error) {
     if (error instanceof AppError && error.status === 409) throw new AppError('validation', 'Ese correo ya está registrado. Utiliza otro.', 409);
     if (error instanceof AppError && error.status === 401) {
-      await api.request('/studies?page=1&limit=1', { signal });
+      await api.request('/users/me', { signal });
       throw new AppError('validation', 'La contraseña actual no es correcta.');
     }
     throw error;
@@ -48,7 +48,7 @@ export async function updatePassword(currentPassword: string, password: string, 
     if (error instanceof AppError && error.status === 401) {
       // This endpoint also returns 401 for a wrong current password. Verify the
       // session with an existing read endpoint before treating it as expired.
-      await api.request('/studies?page=1&limit=1', { signal });
+      await api.request('/users/me', { signal });
       throw new AppError('validation', 'La contraseña actual no es correcta.');
     }
     throw error;

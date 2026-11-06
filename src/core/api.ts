@@ -18,6 +18,8 @@ export class ApiClient {
   private onRefresh: ((expectedToken: string) => Promise<string | null>) | undefined;
   private refreshing: { token: string; promise: Promise<string | null> } | undefined;
   private readonly renewedTokens = new Map<string, string>();
+  private pathPolicy?: (path: string) => boolean;
+  setPathPolicy(policy: (path: string) => boolean) { this.pathPolicy = policy; }
   constructor(private readonly baseUrl: () => string = getApiUrl, private readonly timeoutMs = 15000, private prepare?: () => Promise<void>) {}
   setToken(token: string | null) { this.token = token; if (!token) this.renewedTokens.clear(); }
   setUnauthorizedHandler(handler: (() => void) | undefined) { this.onUnauthorized = handler; }
@@ -47,6 +49,7 @@ export class ApiClient {
   }
 
   async request(path: string, options: RequestOptions = {}): Promise<unknown> {
+    if (this.pathPolicy && !this.pathPolicy(path)) throw new AppError('configuration', 'Este módulo no está disponible en Econolab Aula.');
     if (!path.startsWith('/') || path.startsWith('//') || path.includes('://')) throw new AppError('configuration', 'La ruta del servicio no es válida.');
     let base: string;
     try { base = this.baseUrl(); } catch { throw new AppError('configuration', 'La conexión con ECONOLAB aún no está configurada.'); }

@@ -36,7 +36,7 @@ it('does not expose a backend reason for an unavailable account', async () => {
 it('checks an existing protected endpoint without inventing a current-user API', async () => {
   jest.mocked(api.request).mockResolvedValueOnce({ data: [] });
   await validateSession();
-  expect(api.request).toHaveBeenCalledWith('/studies?page=1&limit=1', { signal: undefined, expireOnUnauthorized: true, timeoutMs: 60000 });
+  expect(api.request).toHaveBeenCalledWith('/users/me', { signal: undefined, expireOnUnauthorized: true, timeoutMs: 60000 });
 });
 
 it('sends logout with no body and handles revocation errors in the provider', async () => {
