@@ -6,16 +6,12 @@ module.exports = ({ config }) => {
   if (qa && !/^[A-Za-z0-9+/]{43}=$/.test(qaPin ?? '')) throw new Error('Falta el pin SHA-256 del entorno QA.');
   return ({
   ...config,
-  name: 'Econolab Aula',
+  name: 'ECONOLAB',
   description: 'Práctica escolar de organización de servicios genéricos y resúmenes por fecha.',
-  icon: './assets/branding/aula-icon.png',
-  ios: { ...config.ios, icon: './assets/branding/aula-icon.png' },
-  web: { ...config.web, favicon: './assets/branding/aula-icon.png' },
   extra: { ...config.extra, schoolEdition: true },
   ...(qa ? { name: 'ECONOLAB QA', extra: { ...config.extra, schoolEdition: true, nativeQa: true, qaPin } } : {}),
   android: {
     ...config.android,
-    adaptiveIcon: { backgroundColor: '#ffffff', foregroundImage: './assets/branding/aula-adaptive.png', monochromeImage: './assets/branding/aula-monochrome.png' },
     ...(qa ? { package: 'com.econolab.mobile.qa' } : {}),
     allowBackup: false,
     blockedPermissions: [...new Set([
@@ -25,7 +21,7 @@ module.exports = ({ config }) => {
     ])],
   },
   plugins: [
-    ...(config.plugins ?? []).map(plugin => Array.isArray(plugin) && plugin[0] === 'expo-splash-screen' ? [plugin[0], { ...plugin[1], image: './assets/branding/aula-icon.png' }] : plugin),
+    ...(config.plugins ?? []),
     ['expo-build-properties', {
       android: {
         enableMinifyInReleaseBuilds: true,

@@ -24,7 +24,7 @@ function releaseIssues({ app, eas, version, resources = {}, store = false }) {
     if (!/^[a-f\d]{8}(-[a-f\d]{4}){3}-[a-f\d]{12}$/i.test(app.extra?.eas?.projectId ?? '')) issues.push('Vincula tu proyecto de Expo con npx eas-cli@latest init.');
     if (!httpsUrl(resources.privacyUrl)) issues.push('Configura EXPO_PUBLIC_PRIVACY_URL con la política real y pública.');
     if (!/^[^\s@?&#%]+@[^\s@?&#%]+\.[^\s@?&#%]+$/.test(resources.supportEmail ?? '')) issues.push('Configura EXPO_PUBLIC_SUPPORT_EMAIL con un correo que atiendas.');
-    if (app.extra?.schoolEdition && !resources.privacyUrl?.endsWith('/school/privacy')) issues.push('La edición Aula necesita su aviso específico en /school/privacy.');
+    if (app.extra?.schoolEdition && !resources.privacyUrl?.endsWith('/school/privacy')) issues.push('La edición administrativa necesita su aviso específico en /school/privacy.');
   }
   return issues;
 }

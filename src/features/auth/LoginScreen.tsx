@@ -47,7 +47,7 @@ export default function LoginScreen() {
 
   return (
     <Screen topInset>
-      <View style={styles.intro}><Text style={styles.overline}>ECONOLAB AULA</Text></View>
+      <View style={styles.intro}><Text style={styles.overline}>ECONOLAB</Text></View>
       <Brand />
       {auth.notice ? <Feedback message={auth.notice} /> : null}
       <Card>

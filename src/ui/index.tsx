@@ -106,15 +106,14 @@ export function Screen({ children, scroll = true, topInset = false, bottomInset 
 
 export function Brand({ compact = false }: { compact?: boolean }) {
   return (
-    <View accessible accessibilityLabel="Econolab Aula. Gestión escolar" style={{ alignItems: 'center', gap: compact ? 6 : 10, flexDirection: compact ? 'row' : 'column' }}>
+    <View accessible accessibilityLabel="Econolab" style={[styles.brand, compact && styles.compactBrand]}>
       <Image
-        source={require('../../assets/branding/aula-icon.png')}
-        style={{ width: compact ? 30 : 68, height: compact ? 30 : 68 }}
+        source={require('../../assets/econolab-brand.png')}
+        style={compact ? styles.compactLogo : styles.logo}
         resizeMode="contain"
         accessible={false}
       />
-      <Text style={{ color: colors.primaryDark, fontWeight: '800', fontSize: compact ? 18 : 28 }}>Econolab Aula</Text>
-      {!compact ? <Text style={styles.brandCaption}>Práctica administrativa escolar</Text> : null}
+      {!compact ? <Text style={styles.brandCaption}>Gestión de servicios</Text> : null}
     </View>
   );
 }

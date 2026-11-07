@@ -22,7 +22,7 @@ export function HomeScreen() {
   const { profile, session, logout } = useAuth();
   const user = profile ?? session?.usuario;
   return <Screen>
-    <Heading eyebrow="ECONOLAB AULA" title={'Hola, ' + (user?.nombre.split(' ')[0] ?? 'bienvenido')} subtitle="Organiza, registra y aprende." />
+    <Heading eyebrow="ECONOLAB" title={'Hola, ' + (user?.nombre.split(' ')[0] ?? 'bienvenido')} subtitle="Organiza, registra y aprende." />
     <Notice /><Status />
     {workspace ? <Card><Text style={styles.title}>Tu espacio de práctica</Text>
       <Text style={styles.metric}>{workspace.catalog.filter(item => item.active).length} servicios disponibles</Text>
@@ -123,7 +123,7 @@ export function HelpScreen() {
   const resources = getPublicResources();
   const [failure, setFailure] = useState('');
   async function open(url: string) { try { await Linking.openURL(url); } catch { setFailure('No pudimos abrir el enlace. Vuelve a intentarlo.'); } }
-  return <Screen><Heading eyebrow="ECONOLAB AULA" title="Aprende a organizar" subtitle="Proyecto escolar de práctica administrativa." />
+  return <Screen><Heading eyebrow="ECONOLAB" title="Aprende a organizar" subtitle="Proyecto escolar de práctica administrativa." />
     <Card><Text style={styles.title}>Qué puedes hacer</Text><Text style={styles.body}>Crear servicios genéricos, buscar y pausar elementos del catálogo, registrar cantidades y fechas, cancelar actividades y consultar resúmenes. Cada cuenta dispone de un espacio independiente.</Text></Card>
     <Card><Text style={styles.title}>Datos de demostración</Text><Text style={styles.body}>El catálogo comienza con impresión, encuadernado y asesoría de informática. Usa nombres y registros ficticios en tus ejercicios. Los importes sirven para aprender y no procesan pagos.</Text></Card>
     <Card><Text style={styles.title}>Tu cuenta</Text><Text style={styles.body}>Para entrar necesitas una cuenta de práctica autorizada. En Mi perfil puedes modificar nombre, correo y contraseña. En Privacidad y mis datos puedes consultar el aviso y solicitar la eliminación de la cuenta.</Text></Card>
