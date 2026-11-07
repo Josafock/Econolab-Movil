@@ -1,3 +1,5 @@
+> **Historial de la identidad temporal, sustituido.** Por indicación de David se restauraron el nombre Econolab y el logo original. No sigas las instrucciones de cambio de nombre/icono ni uses los binarios 9 y 10 de este documento. Consulta [la guía vigente](CORREGIR_GOOGLE_PLAY.md).
+
 # Econolab Aula — edición administrativa escolar
 
 **Estado al 6 de noviembre de 2026:** los binarios terminaron en Expo: [APK código 9](https://expo.dev/artifacts/eas/Y_0gH4QqkJQSf70iojVvAy429PVVDL_3oqmrgRN4NAw.apk) y [AAB código 10](https://expo.dev/artifacts/eas/ATcEKIacfyDd3olehUEZNnNNQ4L6QL7pQ3kCDqK_kUU.aab). El backend del PR7 fue integrado y desplegado con autorización explícita. Render responde a las páginas nuevas y a las lecturas autenticadas de perfil, catálogo y cortes; sus pines TLS coinciden con el APK. Consulta [la evidencia y los límites de verificación](evidencias-aula/RESULTADO_2026-11-06.json).

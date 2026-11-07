@@ -1,4 +1,4 @@
-> Actualización 2026-11-06: la edición actual es **Econolab Aula**, de práctica administrativa. Consulta [el cambio de alcance y la publicación](docs/EDICION_AULA_2026-11-06.md). La documentación del dominio anterior se conserva como historial.
+> Actualización 2026-11-06: se conserva **ECONOLAB y el logo original**, con funciones de práctica administrativa. Consulta [los pasos actuales para corregir Google Play](docs/CORREGIR_GOOGLE_PLAY.md). El contenido anterior se conserva como historial.
 
 # ECONOLAB móvil
 

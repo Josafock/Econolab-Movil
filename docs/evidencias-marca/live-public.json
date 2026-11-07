@@ -1,0 +1,28 @@
+{
+  "executedAt": "2026-11-07T01:16:20.349Z",
+  "scope": "Páginas públicas y protección de rutas, sin credenciales ni operaciones de escritura",
+  "checks": [
+    {
+      "route": "/school/privacy",
+      "status": 200,
+      "html": true,
+      "loginRequired": false
+    },
+    {
+      "route": "/school/privacy/account-deletion",
+      "status": 200,
+      "html": true,
+      "loginRequired": false
+    },
+    {
+      "route": "/school/workspace",
+      "status": 401,
+      "unauthenticatedBlocked": true
+    },
+    {
+      "route": "/school/cuts",
+      "status": 401,
+      "unauthenticatedBlocked": true
+    }
+  ]
+}

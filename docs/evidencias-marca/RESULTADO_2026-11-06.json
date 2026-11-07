@@ -1,0 +1,59 @@
+{
+  "date": "2026-11-06",
+  "identity": {
+    "name": "ECONOLAB",
+    "originalLogo": true,
+    "package": "com.econolab.mobile",
+    "assetVerification": "brand-integrity.json"
+  },
+  "sourceCommit": "3feccd740ea26854b59a43a7e3ff7431d6dc2fe6",
+  "mobilePr": "https://github.com/Josafock/Econolab-Movil/pull/61",
+  "mobileMainMerged": false,
+  "preexistingAppJsonSha256": "ceb6a1a76b2502da88de81eb84347f29caf1b39e665b4d521cf34c97bc880b67",
+  "backend": {
+    "pr": "https://github.com/DavidHdz117/Backend_Econolab_Escuela/pull/8",
+    "mergeCommit": "f1ad794ce9ddf6697ea8a28aec78c70f04224648",
+    "ci": "PASS",
+    "sonarCloud": "PASS",
+    "publicBrandVerified": true
+  },
+  "checks": {
+    "lint": "PASS",
+    "typecheck": "PASS",
+    "mobileTests": 189,
+    "ciConfigurationTests": 22,
+    "hermesPlatforms": [
+      "android",
+      "ios"
+    ],
+    "retiredModulesInExports": 0,
+    "originalAssetsUnchanged": 6,
+    "webViewports": 2,
+    "webFlow": "login-consent-catalog-create-activity-cut-profile-logout",
+    "livePublicPages": 2,
+    "liveProtectedRoutes": 2
+  },
+  "limits": [
+    "Web screenshots use a simulated API, not a native Android run.",
+    "Native phone installation and real flow verification remain for the user.",
+    "Google Play classification and approval are not certified by these technical checks."
+  ],
+  "builds": [
+    {
+      "id": "fd7eae08-7063-4298-9406-2d13dd0710ff",
+      "status": "IN_PROGRESS",
+      "appBuildVersion": "12",
+      "gitCommitHash": "3feccd740ea26854b59a43a7e3ff7431d6dc2fe6",
+      "download": null,
+      "completedAt": null
+    },
+    {
+      "id": "fe8f72bf-7cd9-4d45-91de-f8e724528ce4",
+      "status": "IN_PROGRESS",
+      "appBuildVersion": "11",
+      "gitCommitHash": "3feccd740ea26854b59a43a7e3ff7431d6dc2fe6",
+      "download": null,
+      "completedAt": null
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "name": "ECONOLAB",
+  "package": "com.econolab.mobile",
+  "baseline": "c9eb9b4",
+  "hashes": [
+    {
+      "file": "assets/econolab-brand.png",
+      "sha256": "0c9d6c2da202a33becdc28e1206960035c1e1d52930cdd78280be0e7b2b6546d",
+      "identicalToOriginal": true
+    },
+    {
+      "file": "assets/branding/icon.png",
+      "sha256": "862379c2606b9226b99327b5bf14d339b819d4735063891bd3abcf1a57f786e2",
+      "identicalToOriginal": true
+    },
+    {
+      "file": "assets/branding/adaptive-foreground.png",
+      "sha256": "0676ffcf440094b70019281ab5562a6c59f4411faf95421000483c49e3e2463c",
+      "identicalToOriginal": true
+    },
+    {
+      "file": "assets/branding/adaptive-monochrome.png",
+      "sha256": "9675cd744bb3d8c98d0e573d87cb492ffa63c6524f1a7278925bd7318c35624f",
+      "identicalToOriginal": true
+    },
+    {
+      "file": "assets/branding/splash.png",
+      "sha256": "77ff57c1d33fd88d3621bd9f309f3e7f26a177a72f9d3c5e91ae2b588e50c3bf",
+      "identicalToOriginal": true
+    },
+    {
+      "file": "assets/branding/favicon.png",
+      "sha256": "a753adcbe7856bb3d476ed37a83b74d5fda86c272acbc2d0031bfd19c9814b63",
+      "identicalToOriginal": true
+    }
+  ]
+}
