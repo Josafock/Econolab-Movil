@@ -4,10 +4,10 @@ Actualización: 6 de noviembre de 2026. Se conserva el nombre **ECONOLAB**, el l
 
 ## Archivos actuales
 
-- [APK código 11: instalar y probar en Android](https://expo.dev/accounts/dravix117/projects/econolab-mobile/builds/fe8f72bf-7cd9-4d45-91de-f8e724528ce4).
-- [AAB código 12: enviar a Google Play](https://expo.dev/accounts/dravix117/projects/econolab-mobile/builds/fd7eae08-7063-4298-9406-2d13dd0710ff).
+- [Descargar APK código 11: instalar y probar en Android](https://expo.dev/artifacts/eas/mUq5VL_Ev8fm8UDRNOdXv58BLrK2GqVoHKYNAIlPGZg.apk).
+- [Descargar AAB código 12: enviar a Google Play](https://expo.dev/artifacts/eas/tWbKKlKCWYwf4vXbCKUVc4kwtpvjv7KIGbgXmueKgMw.aab).
 
-Espera a que Expo indique **Finished** antes de descargarlos. No uses los códigos 9 y 10: corresponden a la identidad temporal Aula y quedan como evidencia histórica. No hace falta crear otra aplicación en Play Console ni cambiar el identificador.
+Ambos finalizaron correctamente en Expo y se descargaron con comprobación SHA-256 e integridad ZIP. Consulta [la evidencia](evidencias-marca/RESULTADO_2026-11-06.json). No uses los códigos 9 y 10: corresponden a la identidad temporal Aula y quedan como evidencia histórica. No hace falta crear otra aplicación en Play Console ni cambiar el identificador.
 
 ## Antes de enviar
 
