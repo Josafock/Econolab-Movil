@@ -15,8 +15,15 @@
     "head": "6f4295ad0d865ba399c816e1519ee474a81e8a8c",
     "ci": "PASS",
     "sonarCloud": "PASS",
-    "deployment": "Awaiting explicit user authorization after auto-review rejected main merge",
-    "deployedByAssistant": false
+    "deployment": "LIVE: public pages, protected routes and authenticated reads verified",
+    "deployedByAssistant": true,
+    "approvedByUser": true,
+    "mergeCommit": "a72e78a128c5ecd3b755ec26a86c92918cc11815",
+    "mergedAt": "2026-11-07T00:35:57Z",
+    "liveReadChecks": 6,
+    "publicPageChecks": 2,
+    "unauthenticatedProtectedRouteChecks": 2,
+    "tlsPinMatches": 3
   },
   "tests": {
     "mobileJest": 189,
@@ -73,7 +80,11 @@
   "limits": [
     "Hashes, ZIP CRC and manifest entry presence checked locally. No independent apksigner or jarsigner cryptographic verification performed in this session.",
     "Native files compiled in EAS using the existing Android signing credentials. Device execution of this edition is pending.",
-    "Backend deployment is required before using this edition. No Google Play approval is claimed.",
-    "The previous academic delivery remains separate; the new generic catalog changes that scope."
-  ]
+    "The previous academic delivery remains separate; the new generic catalog changes that scope.",
+    "Backend deployment and authenticated reads are verified. Google Play review and testing on the physical Android device remain pending."
+  ],
+  "productionWriteProbe": {
+    "executed": false,
+    "reason": "Automatic approval rejected additional writes on the shared server. A safer read-only verification was completed; CRUD writes remain verified in the isolated PostgreSQL fixture and CI."
+  }
 }

@@ -1,6 +1,6 @@
 # Econolab Aula — edición administrativa escolar
 
-**Estado al 6 de noviembre de 2026:** los binarios terminaron en Expo: [APK código 9](https://expo.dev/artifacts/eas/Y_0gH4QqkJQSf70iojVvAy429PVVDL_3oqmrgRN4NAw.apk) y [AAB código 10](https://expo.dev/artifacts/eas/ATcEKIacfyDd3olehUEZNnNNQ4L6QL7pQ3kCDqK_kUU.aab). El backend está listo y aprobado por CI en el PR7; su integración y despliegue están pendientes de autorización explícita. Esta edición requiere ese despliegue para funcionar. Consulta [la evidencia y los límites de verificación](evidencias-aula/RESULTADO_2026-11-06.json).
+**Estado al 6 de noviembre de 2026:** los binarios terminaron en Expo: [APK código 9](https://expo.dev/artifacts/eas/Y_0gH4QqkJQSf70iojVvAy429PVVDL_3oqmrgRN4NAw.apk) y [AAB código 10](https://expo.dev/artifacts/eas/ATcEKIacfyDd3olehUEZNnNNQ4L6QL7pQ3kCDqK_kUU.aab). El backend del PR7 fue integrado y desplegado con autorización explícita. Render responde a las páginas nuevas y a las lecturas autenticadas de perfil, catálogo y cortes; sus pines TLS coinciden con el APK. Consulta [la evidencia y los límites de verificación](evidencias-aula/RESULTADO_2026-11-06.json).
 
 Cambio de alcance iniciado el 6 de noviembre de 2026 a petición de David tras la respuesta de Google Play que exige organización para la edición médica. No es un cambio cosmético de categorías.
 
@@ -45,7 +45,7 @@ En Windows, si Hermes no puede escribir en el TEMP del sandbox, configura TEMP y
 El app.json local que ya estaba modificado por David conserva sus datos de Expo. app.config.js aplica la identidad Aula sin cambiar esos valores ni el nombre de paquete com.econolab.mobile. EAS incrementa versionCode de manera remota.
 
 ## Backend y privacidad
-Se necesita desplegar SchoolModule en el backend antes de distribuir el binario. Si las rutas nuevas responden 404, la app muestra un error y no recurre al catálogo anterior.
+SchoolModule ya está desplegado en el backend. Se verificaron dos páginas públicas, dos rutas protegidas sin sesión y seis llamadas autenticadas/de acceso, además del cierre de la sesión de pruebas. Si las rutas nuevas responden 404, la app muestra un error y no recurre al catálogo anterior.
 
 Aviso: https://backend-econolab-escuela-1.onrender.com/api/school/privacy
 Eliminación externa: https://backend-econolab-escuela-1.onrender.com/api/school/privacy/account-deletion
@@ -91,3 +91,6 @@ Enviar ese mensaje después de cargar el binario y actualizar realmente la ficha
 
 ## Límites de la verificación
 Las pruebas y la exclusión de módulos verifican el cambio técnico; no certifican una decisión de Google Play. La aprobación de una cuenta personal y la aceptación del cambio académico dependen de sus respectivos revisores.
+
+## Verificación del despliegue
+El PR7 del backend fue integrado como a72e78a128c5ecd3b755ec26a86c92918cc11815. Las lecturas en Render y los tres pines TLS pasaron. La prueba adicional de escritura en producción fue rechazada por revisión automática y no se ejecutó; se utilizó una comprobación de lectura. Las escrituras, el aislamiento y las cancelaciones se verificaron previamente en PostgreSQL aislado y CI. No se modificaron servicios existentes ni se borraron cuentas durante la comprobación del despliegue.
