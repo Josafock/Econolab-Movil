@@ -1,0 +1,45 @@
+{
+  "executedAt": "2026-11-07T00:40:00.223Z",
+  "environment": "https://backend-econolab-escuela-1.onrender.com/api",
+  "privacyVersion": "aula-2026-11-06.1",
+  "scope": "Lecturas del perfil, preferencias y espacio propio de la cuenta local de pruebas. Sólo login y logout para la sesión de verificación; sin crear actividades ni modificar servicios.",
+  "checks": [
+    {
+      "method": "GET",
+      "route": "/school/privacy/notice",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "route": "/auth/login",
+      "status": 201
+    },
+    {
+      "method": "GET",
+      "route": "/users/me",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "route": "/school/privacy/preferences",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "route": "/school/workspace",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "route": "/school/cuts",
+      "status": 200
+    }
+  ],
+  "profileIdentityMatched": true,
+  "genericCatalogVerified": true,
+  "cutsChecked": true,
+  "businessRecordWrites": false,
+  "consentChanged": false,
+  "accountDeleted": false,
+  "sessionLogoutVerified": true
+}

@@ -1,0 +1,16 @@
+{
+  "executedAt": "2026-10-24T22:34:07.710Z",
+  "buildId": "54dec622-41d5-4224-8c32-afc2428a13b4",
+  "sourceCommit": "954e050c633a567e646d8dfaca6a9f4463141946",
+  "downloadUrl": "https://expo.dev/artifacts/eas/wg3M-w2wvV8g5IL6L45URJ2ak9pp9vk6Q-IkCHDnJ4w.aab",
+  "versionReportedByEas": "1.1.0",
+  "versionCodeReportedByEas": "5",
+  "bytes": 71872507,
+  "sha256": "179cce91d51c7222e08e7cd422f54c2e478c047764e5a1b77adeccbf8fac43fe",
+  "expectedPackage": "com.econolab.mobile",
+  "signatureVerified": true,
+  "certificateSha256": "ce941921641076f0db2185f4951d89848b7a59beb407dd0e7c44d8c861be15ad",
+  "bundletoolVersion": "1.18.3",
+  "pageAlignment16kb": true,
+  "scope": "Firma, SHA-256, manifiesto y estructura de bundle verificados; no acredita ejecución en hardware de 16 KB, revisión ni publicación en Google Play."
+}

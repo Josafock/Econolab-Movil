@@ -3,7 +3,7 @@ const path = require('node:path');
 
 function evaluate(needs = {}) {
   const failures = [];
-  for (const id of ['plan', 'quality', 'build']) {
+  for (const id of ['security', 'plan', 'quality', 'build']) {
     if (needs[id]?.result !== 'success') failures.push(`${id}: ${needs[id]?.result || 'unknown'}`);
   }
   const noFeatures = needs.plan?.outputs?.['has-features'] === 'false';

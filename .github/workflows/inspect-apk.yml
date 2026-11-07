@@ -1,0 +1,71 @@
+name: Inspeccionar APK firmado de distribución
+
+on:
+  push:
+    branches: ['fix/HU-08-seguridad-rubrica']
+    paths: ['.github/workflows/inspect-apk.yml', 'scripts/security/inspect-distribution.cjs', 'docs/evidencias-rubrica/APK_ACTUAL.json', 'docs/evidencias-rubrica/AAB_ACTUAL.json']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Descargar el APK identificado y verificar firma
+        run: |
+          mkdir -p reports/distribution
+          APK_URL=$(node -e "const u=new URL(require('./docs/evidencias-rubrica/APK_ACTUAL.json').downloadUrl);if(u.protocol!=='https:'||u.hostname!=='expo.dev'||!u.pathname.startsWith('/artifacts/eas/'))throw Error('URL de APK no autorizada');process.stdout.write(u.href)")
+          curl --proto '=https' --proto-redir '=https' -fL "$APK_URL" -o /tmp/econolab.apk
+          EXPECTED=$(node -p "require('./docs/evidencias-rubrica/APK_ACTUAL.json').sha256")
+          echo "$EXPECTED  /tmp/econolab.apk" | sha256sum --check
+          APKSIGNER=$(find "$ANDROID_HOME/build-tools" -name apksigner -type f | sort -V | tail -1)
+          test -n "$APKSIGNER"
+          "$APKSIGNER" verify --verbose --print-certs /tmp/econolab.apk > reports/distribution/apksigner.txt
+          cat reports/distribution/apksigner.txt
+      - name: Analizar el APK final con JADX
+        run: |
+          curl -fL https://github.com/skylot/jadx/releases/download/v1.5.6/jadx-1.5.6.zip -o /tmp/jadx.zip
+          unzip -q /tmp/jadx.zip -d /tmp/jadx
+          node scripts/security/inspect-distribution.cjs /tmp/econolab.apk /tmp/jadx/bin/jadx
+      - name: Verificar AAB de publicación cuando esté disponible
+        if: hashFiles('docs/evidencias-rubrica/AAB_ACTUAL.json') != ''
+        run: |
+          AAB_URL=$(node -e "const u=new URL(require('./docs/evidencias-rubrica/AAB_ACTUAL.json').downloadUrl);if(u.protocol!=='https:'||u.hostname!=='expo.dev'||!u.pathname.startsWith('/artifacts/eas/'))throw Error('URL de AAB no autorizada');process.stdout.write(u.href)")
+          curl --proto '=https' --proto-redir '=https' -fL "$AAB_URL" -o /tmp/econolab.aab
+          EXPECTED=$(node -p "require('./docs/evidencias-rubrica/AAB_ACTUAL.json').sha256")
+          echo "$EXPECTED  /tmp/econolab.aab" | sha256sum --check
+          jarsigner -J-Duser.language=en -J-Duser.country=US -verify -verbose -certs /tmp/econolab.aab > reports/distribution/jarsigner-aab.txt
+          keytool -J-Duser.language=en -J-Duser.country=US -printcert -jarfile /tmp/econolab.aab > reports/distribution/aab-certificate.txt
+          curl --proto '=https' --proto-redir '=https' -fL https://github.com/google/bundletool/releases/download/1.18.3/bundletool-all-1.18.3.jar -o /tmp/bundletool.jar
+          echo 'a099cfa1543f55593bc2ed16a70a7c67fe54b1747bb7301f37fdfd6d91028e29  /tmp/bundletool.jar' | sha256sum --check
+          java -jar /tmp/bundletool.jar validate --bundle=/tmp/econolab.aab > reports/distribution/bundletool-validation.txt
+          java -jar /tmp/bundletool.jar dump manifest --bundle=/tmp/econolab.aab --module=base > reports/distribution/aab-manifest.xml
+          java -jar /tmp/bundletool.jar dump config --bundle=/tmp/econolab.aab > reports/distribution/aab-config.json
+          node <<'NODE'
+          const fs = require('fs');
+          const expected = require('./docs/evidencias-rubrica/APK_ACTUAL.json');
+          const aab = require('./docs/evidencias-rubrica/AAB_ACTUAL.json');
+          const verification = fs.readFileSync('reports/distribution/jarsigner-aab.txt', 'utf8');
+          const certificate = fs.readFileSync('reports/distribution/aab-certificate.txt', 'utf8');
+          const digest = certificate.match(/SHA256:\s*([A-Fa-f0-9:]+)/)?.[1].replaceAll(':', '').toLowerCase();
+          if (!verification.includes('jar verified.') || !expected.certificatesSha256.includes(digest)) throw new Error('La firma del AAB no coincide con la clave de distribución comprobada.');
+          const manifest = fs.readFileSync('reports/distribution/aab-manifest.xml', 'utf8');
+          if (!manifest.includes('package="com.econolab.mobile"') || !manifest.includes(`android:versionCode="${aab.versionCodeReportedByEas}"`) || !manifest.includes('android:targetSdkVersion="36"') || !manifest.includes('android:allowBackup="false"')) throw new Error('El manifiesto final del AAB no coincide con la entrega preparada.');
+          const pageAlignment16kb = fs.readFileSync('reports/distribution/aab-config.json', 'utf8').includes('PAGE_ALIGNMENT_16K');
+          if (!pageAlignment16kb) throw new Error('El AAB no declara alineación de páginas de 16 KB.');
+          fs.writeFileSync('reports/distribution/aab-verification.json', JSON.stringify({ executedAt: new Date().toISOString(), ...aab, signatureVerified: true, certificateSha256: digest, bundletoolVersion: '1.18.3', pageAlignment16kb, scope: 'Firma, SHA-256, manifiesto y estructura de bundle verificados; no acredita ejecución en hardware de 16 KB, revisión ni publicación en Google Play.' }, null, 2));
+          NODE
+      - name: Conservar evidencia de distribución
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: production-apk-inspection
+          path: reports/distribution/
+          if-no-files-found: error
+          retention-days: 30

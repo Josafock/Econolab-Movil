@@ -1,0 +1,393 @@
+{
+  "apkSha256": "a4c0e527e71d4775fea313d7bc3af5f0f754dd0028167911ff5ffb43a05e1779",
+  "elf64Count": 48,
+  "allElf64Aligned": true,
+  "allUncompressedZipEntriesAligned": true,
+  "libraries": [
+    {
+      "path": "lib/arm64-v8a/libandroidx.graphics.path.so",
+      "elfMinLoadAlignment": 16384,
+      "elf16kb": true,
+      "uncompressed": true,
+      "zipDataOffset": 4472832,
+      "zip16kb": true
+    },
+    {
+      "path": "lib/arm64-v8a/libanimation-decoder-gif.so",
+      "elfMinLoadAlignment": 16384,
+      "elf16kb": true,
+      "uncompressed": true,
+      "zipDataOffset": 4489216,
+      "zip16kb": true
+    },
+    {
+      "path": "lib/arm64-v8a/libappmodules.so",
+      "elfMinLoadAlignment": 16384,
+      "elf16kb": true,
+      "uncompressed": true,
+      "zipDataOffset": 4767744,
+      "zip16kb": true
+    },
+    {
+      "path": "lib/arm64-v8a/libavif_android.so",
+      "elfMinLoadAlignment": 16384,
+      "elf16kb": true,
+      "uncompressed": true,
+      "zipDataOffset": 6488064,
+      "zip16kb": true
+    },
+    {
+      "path": "lib/arm64-v8a/libc++_shared.so",
+      "elfMinLoadAlignment": 16384,
+      "elf16kb": true,
+      "uncompressed": true,
+      "zipDataOffset": 7389184,
+      "zip16kb": true
+    },
+    {
+      "path": "lib/arm64-v8a/libexpo-modules-core.so",
+      "elfMinLoadAlignment": 16384,
+      "elf16kb": true,
+      "uncompressed": true,
+      "zipDataOffset": 8683520,
+      "zip16kb": true
+    },
+    {
+      "path": "lib/arm64-v8a/libfbjni.so",
+      "elfMinLoadAlignment": 16384,
+      "elf16kb": true,
+      "uncompressed": true,
+      "zipDataOffset": 10190848,
+      "zip16kb": true
+    },
+    {
+      "path": "lib/arm64-v8a/libgesturehandler.so",
+      "elfMinLoadAlignment": 16384,
+      "elf16kb": true,
+      "uncompressed": true,
+      "zipDataOffset": 10371072,
+      "zip16kb": true
+    },
+    {
+      "path": "lib/arm64-v8a/libgifimage.so",
+      "elfMinLoadAlignment": 16384,
+      "elf16kb": true,
+      "uncompressed": true,
+      "zipDataOffset": 10420224,
+      "zip16kb": true
+    },
+    {
+      "path": "lib/arm64-v8a/libhermestooling.so",
+      "elfMinLoadAlignment": 16384,
+      "elf16kb": true,
+      "uncompressed": true,
+      "zipDataOffset": 10747904,
+      "zip16kb": true
+    },
+    {
+      "path": "lib/arm64-v8a/libhermesvm.so",
+      "elfMinLoadAlignment": 16384,
+      "elf16kb": true,
+      "uncompressed": true,
+      "zipDataOffset": 10895360,
+      "zip16kb": true
+    },
+    {
+      "path": "lib/arm64-v8a/libimagepipeline.so",
+      "elfMinLoadAlignment": 16384,
+      "elf16kb": true,
+      "uncompressed": true,
+      "zipDataOffset": 13385728,
+      "zip16kb": true
+    },
+    {
+      "path": "lib/arm64-v8a/libjsi.so",
+      "elfMinLoadAlignment": 16384,
+      "elf16kb": true,
+      "uncompressed": true,
+      "zipDataOffset": 13402112,
+      "zip16kb": true
+    },
+    {
+      "path": "lib/arm64-v8a/libnative-filters.so",
+      "elfMinLoadAlignment": 16384,
+      "elf16kb": true,
+      "uncompressed": true,
+      "zipDataOffset": 13828096,
+      "zip16kb": true
+    },
+    {
+      "path": "lib/arm64-v8a/libnative-imagetranscoder.so",
+      "elfMinLoadAlignment": 16384,
+      "elf16kb": true,
+      "uncompressed": true,
+      "zipDataOffset": 13860864,
+      "zip16kb": true
+    },
+    {
+      "path": "lib/arm64-v8a/libreact_codegen_rnscreens.so",
+      "elfMinLoadAlignment": 16384,
+      "elf16kb": true,
+      "uncompressed": true,
+      "zipDataOffset": 14450688,
+      "zip16kb": true
+    },
+    {
+      "path": "lib/arm64-v8a/libreact_codegen_rnsvg.so",
+      "elfMinLoadAlignment": 16384,
+      "elf16kb": true,
+      "uncompressed": true,
+      "zipDataOffset": 15663104,
+      "zip16kb": true
+    },
+    {
+      "path": "lib/arm64-v8a/libreact_codegen_safeareacontext.so",
+      "elfMinLoadAlignment": 16384,
+      "elf16kb": true,
+      "uncompressed": true,
+      "zipDataOffset": 16465920,
+      "zip16kb": true
+    },
+    {
+      "path": "lib/arm64-v8a/libreactnative.so",
+      "elfMinLoadAlignment": 16384,
+      "elf16kb": true,
+      "uncompressed": true,
+      "zipDataOffset": 16629760,
+      "zip16kb": true
+    },
+    {
+      "path": "lib/arm64-v8a/libreanimated.so",
+      "elfMinLoadAlignment": 16384,
+      "elf16kb": true,
+      "uncompressed": true,
+      "zipDataOffset": 23625728,
+      "zip16kb": true
+    },
+    {
+      "path": "lib/arm64-v8a/librnscreens.so",
+      "elfMinLoadAlignment": 16384,
+      "elf16kb": true,
+      "uncompressed": true,
+      "zipDataOffset": 25133056,
+      "zip16kb": true
+    },
+    {
+      "path": "lib/arm64-v8a/libstatic-webp.so",
+      "elfMinLoadAlignment": 16384,
+      "elf16kb": true,
+      "uncompressed": true,
+      "zipDataOffset": 25247744,
+      "zip16kb": true
+    },
+    {
+      "path": "lib/arm64-v8a/libworklets.so",
+      "elfMinLoadAlignment": 16384,
+      "elf16kb": true,
+      "uncompressed": true,
+      "zipDataOffset": 25755648,
+      "zip16kb": true
+    },
+    {
+      "path": "lib/arm64-v8a/libzstd-kmp.so",
+      "elfMinLoadAlignment": 16384,
+      "elf16kb": true,
+      "uncompressed": true,
+      "zipDataOffset": 26869760,
+      "zip16kb": true
+    },
+    {
+      "path": "lib/x86_64/libandroidx.graphics.path.so",
+      "elfMinLoadAlignment": 16384,
+      "elf16kb": true,
+      "uncompressed": true,
+      "zipDataOffset": 68190208,
+      "zip16kb": true
+    },
+    {
+      "path": "lib/x86_64/libanimation-decoder-gif.so",
+      "elfMinLoadAlignment": 16384,
+      "elf16kb": true,
+      "uncompressed": true,
+      "zipDataOffset": 68206592,
+      "zip16kb": true
+    },
+    {
+      "path": "lib/x86_64/libappmodules.so",
+      "elfMinLoadAlignment": 16384,
+      "elf16kb": true,
+      "uncompressed": true,
+      "zipDataOffset": 68468736,
+      "zip16kb": true
+    },
+    {
+      "path": "lib/x86_64/libavif_android.so",
+      "elfMinLoadAlignment": 16384,
+      "elf16kb": true,
+      "uncompressed": true,
+      "zipDataOffset": 70254592,
+      "zip16kb": true
+    },
+    {
+      "path": "lib/x86_64/libc++_shared.so",
+      "elfMinLoadAlignment": 16384,
+      "elf16kb": true,
+      "uncompressed": true,
+      "zipDataOffset": 72155136,
+      "zip16kb": true
+    },
+    {
+      "path": "lib/x86_64/libexpo-modules-core.so",
+      "elfMinLoadAlignment": 16384,
+      "elf16kb": true,
+      "uncompressed": true,
+      "zipDataOffset": 73416704,
+      "zip16kb": true
+    },
+    {
+      "path": "lib/x86_64/libfbjni.so",
+      "elfMinLoadAlignment": 16384,
+      "elf16kb": true,
+      "uncompressed": true,
+      "zipDataOffset": 74874880,
+      "zip16kb": true
+    },
+    {
+      "path": "lib/x86_64/libgesturehandler.so",
+      "elfMinLoadAlignment": 16384,
+      "elf16kb": true,
+      "uncompressed": true,
+      "zipDataOffset": 75055104,
+      "zip16kb": true
+    },
+    {
+      "path": "lib/x86_64/libgifimage.so",
+      "elfMinLoadAlignment": 16384,
+      "elf16kb": true,
+      "uncompressed": true,
+      "zipDataOffset": 75104256,
+      "zip16kb": true
+    },
+    {
+      "path": "lib/x86_64/libhermestooling.so",
+      "elfMinLoadAlignment": 16384,
+      "elf16kb": true,
+      "uncompressed": true,
+      "zipDataOffset": 75415552,
+      "zip16kb": true
+    },
+    {
+      "path": "lib/x86_64/libhermesvm.so",
+      "elfMinLoadAlignment": 16384,
+      "elf16kb": true,
+      "uncompressed": true,
+      "zipDataOffset": 75563008,
+      "zip16kb": true
+    },
+    {
+      "path": "lib/x86_64/libimagepipeline.so",
+      "elfMinLoadAlignment": 16384,
+      "elf16kb": true,
+      "uncompressed": true,
+      "zipDataOffset": 78168064,
+      "zip16kb": true
+    },
+    {
+      "path": "lib/x86_64/libjsi.so",
+      "elfMinLoadAlignment": 16384,
+      "elf16kb": true,
+      "uncompressed": true,
+      "zipDataOffset": 78184448,
+      "zip16kb": true
+    },
+    {
+      "path": "lib/x86_64/libnative-filters.so",
+      "elfMinLoadAlignment": 16384,
+      "elf16kb": true,
+      "uncompressed": true,
+      "zipDataOffset": 78610432,
+      "zip16kb": true
+    },
+    {
+      "path": "lib/x86_64/libnative-imagetranscoder.so",
+      "elfMinLoadAlignment": 16384,
+      "elf16kb": true,
+      "uncompressed": true,
+      "zipDataOffset": 78643200,
+      "zip16kb": true
+    },
+    {
+      "path": "lib/x86_64/libreact_codegen_rnscreens.so",
+      "elfMinLoadAlignment": 16384,
+      "elf16kb": true,
+      "uncompressed": true,
+      "zipDataOffset": 79364096,
+      "zip16kb": true
+    },
+    {
+      "path": "lib/x86_64/libreact_codegen_rnsvg.so",
+      "elfMinLoadAlignment": 16384,
+      "elf16kb": true,
+      "uncompressed": true,
+      "zipDataOffset": 80592896,
+      "zip16kb": true
+    },
+    {
+      "path": "lib/x86_64/libreact_codegen_safeareacontext.so",
+      "elfMinLoadAlignment": 16384,
+      "elf16kb": true,
+      "uncompressed": true,
+      "zipDataOffset": 81477632,
+      "zip16kb": true
+    },
+    {
+      "path": "lib/x86_64/libreactnative.so",
+      "elfMinLoadAlignment": 16384,
+      "elf16kb": true,
+      "uncompressed": true,
+      "zipDataOffset": 81641472,
+      "zip16kb": true
+    },
+    {
+      "path": "lib/x86_64/libreanimated.so",
+      "elfMinLoadAlignment": 16384,
+      "elf16kb": true,
+      "uncompressed": true,
+      "zipDataOffset": 88752128,
+      "zip16kb": true
+    },
+    {
+      "path": "lib/x86_64/librnscreens.so",
+      "elfMinLoadAlignment": 16384,
+      "elf16kb": true,
+      "uncompressed": true,
+      "zipDataOffset": 90292224,
+      "zip16kb": true
+    },
+    {
+      "path": "lib/x86_64/libstatic-webp.so",
+      "elfMinLoadAlignment": 16384,
+      "elf16kb": true,
+      "uncompressed": true,
+      "zipDataOffset": 90390528,
+      "zip16kb": true
+    },
+    {
+      "path": "lib/x86_64/libworklets.so",
+      "elfMinLoadAlignment": 16384,
+      "elf16kb": true,
+      "uncompressed": true,
+      "zipDataOffset": 90963968,
+      "zip16kb": true
+    },
+    {
+      "path": "lib/x86_64/libzstd-kmp.so",
+      "elfMinLoadAlignment": 16384,
+      "elf16kb": true,
+      "uncompressed": true,
+      "zipDataOffset": 92028928,
+      "zip16kb": true
+    }
+  ],
+  "scope": "Inspección ELF y ZIP del APK; no sustituye ejecutar en un dispositivo de 16 KB ni validar el AAB en Play Console."
+}

@@ -1,0 +1,50 @@
+rules:
+  - id: econolab-no-dynamic-eval
+    languages: [javascript, typescript]
+    severity: ERROR
+    message: No ejecutar texto como código en la aplicación.
+    pattern-either:
+      - pattern: eval(...)
+      - pattern: new Function(...)
+  - id: econolab-no-insecure-tls
+    languages: [javascript, typescript]
+    severity: ERROR
+    message: No desactivar la validación TLS ni aceptar conexiones HTTPS sin validar.
+    pattern-either:
+      - pattern: "{..., rejectUnauthorized: false, ...}"
+      - pattern: process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
+      - pattern: disableSslPinning(...)
+  - id: econolab-no-plaintext-session
+    languages: [javascript, typescript]
+    severity: ERROR
+    message: Guardar credenciales de sesión exclusivamente mediante SecureStore nativo.
+    patterns:
+      - pattern-either:
+          - pattern: localStorage.setItem($KEY, ...)
+          - pattern: sessionStorage.setItem($KEY, ...)
+          - pattern: AsyncStorage.setItem($KEY, ...)
+      - metavariable-regex:
+          metavariable: $KEY
+          regex: (?i).*(session|token|password|credential).*
+  - id: econolab-no-credential-log
+    languages: [javascript, typescript]
+    severity: ERROR
+    message: No imprimir contraseñas ni tokens en logs.
+    pattern-either:
+      - pattern: console.log(..., $OBJ.password, ...)
+      - pattern: console.log(..., $OBJ.token, ...)
+      - pattern: console.log(..., $OBJ.refreshToken, ...)
+      - pattern: console.error(..., $OBJ.password, ...)
+      - pattern: console.error(..., $OBJ.token, ...)
+  - id: econolab-no-shell-exec
+    languages: [javascript, typescript]
+    severity: ERROR
+    message: Evitar comandos construidos como cadenas; usar execFile o spawn con argumentos.
+    pattern-either:
+      - pattern: exec(...)
+      - pattern: execSync(...)
+  - id: econolab-no-pinning-expiration
+    languages: [javascript, typescript]
+    severity: ERROR
+    message: No desactivar automáticamente el pinning al alcanzar una fecha.
+    pattern: "{..., expirationDate: $DATE, ...}"

@@ -1,0 +1,14 @@
+{
+  "synthetic": true,
+  "today": "2026-10-25",
+  "backend": "real NestJS modules and PostgreSQL; no mocked HTTP responses",
+  "expected": {
+    "totalCount": 3,
+    "serviceCount": 2,
+    "cancelledCount": 1,
+    "subtotalAmount": "140.00",
+    "discountAmount": "4.50",
+    "totalAmount": "135.50",
+    "cancelledAmount": "45.00"
+  }
+}

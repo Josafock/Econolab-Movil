@@ -1,0 +1,43 @@
+{
+  "file": "econolab-apk-rubrica.apk",
+  "size_bytes": 112064125,
+  "sha256": "c04225e29718945cf2782c70e49ee6e71eb717c1a0f5a872fbb3a37f1f173e9a",
+  "package": "com.econolab.mobile",
+  "version_name": "1.0.0",
+  "version_code": "1",
+  "min_sdk": "24",
+  "target_sdk": "36",
+  "application_security_attributes": {
+    "allowBackup": "true",
+    "extractNativeLibs": "false"
+  },
+  "permissions": [
+    {
+      "name": "android.permission.INTERNET"
+    },
+    {
+      "name": "android.permission.VIBRATE"
+    },
+    {
+      "name": "android.permission.ACCESS_NETWORK_STATE"
+    },
+    {
+      "name": "android.permission.ACCESS_WIFI_STATE"
+    },
+    {
+      "name": "android.permission.USE_BIOMETRIC"
+    },
+    {
+      "name": "android.permission.USE_FINGERPRINT"
+    },
+    {
+      "name": "com.econolab.mobile.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+    }
+  ],
+  "signature_scheme_presence": {
+    "v1": false,
+    "v2": true,
+    "v3": false
+  },
+  "note": "Inspeccion estatica del manifiesto y presencia de bloques de firma; no equivale a validacion criptografica con apksigner, JADX, MobSF ni pruebas dinamicas."
+}

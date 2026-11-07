@@ -1,0 +1,44 @@
+[
+  {
+    "viewport": {
+      "width": 393,
+      "height": 852
+    },
+    "scope": "Web UI with an intercepted fixture API; not a native Android run",
+    "screenshots": 6,
+    "errors": [],
+    "requests": [
+      "POST /auth/login",
+      "GET /school/privacy/notice",
+      "GET /school/privacy/preferences",
+      "PATCH /school/privacy/preferences",
+      "GET /school/workspace",
+      "POST /school/catalog",
+      "POST /school/activities",
+      "GET /school/cuts",
+      "GET /users/me",
+      "POST /auth/logout"
+    ]
+  },
+  {
+    "viewport": {
+      "width": 360,
+      "height": 640
+    },
+    "scope": "Web UI with an intercepted fixture API; not a native Android run",
+    "screenshots": 6,
+    "errors": [],
+    "requests": [
+      "POST /auth/login",
+      "GET /school/privacy/notice",
+      "GET /school/privacy/preferences",
+      "PATCH /school/privacy/preferences",
+      "GET /school/workspace",
+      "POST /school/catalog",
+      "POST /school/activities",
+      "GET /school/cuts",
+      "GET /users/me",
+      "POST /auth/logout"
+    ]
+  }
+]

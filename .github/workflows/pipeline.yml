@@ -20,6 +20,9 @@ env:
   EXPO_PUBLIC_API_URL: https://example.invalid/api
 
 jobs:
+  security:
+    uses: ./.github/workflows/security.yml
+
   plan:
     name: Seleccionar issues y alcance
     runs-on: ubuntu-24.04
@@ -68,7 +71,9 @@ jobs:
         run: npm ci --no-audit --no-fund
       - name: Probar la selección del pipeline
         id: ci_tests
-        run: node --test tests/ci/*.test.cjs
+        run: |
+          node --test tests/ci/*.test.cjs
+          npm run release:check
       - name: ESLint
         id: lint
         run: |
@@ -103,7 +108,7 @@ jobs:
 
   report:
     name: ${{ github.event_name == 'pull_request' && 'CI obligatorio PR' || 'Reporte CI' }}
-    needs: [plan, quality, features, build]
+    needs: [security, plan, quality, features, build]
     if: always()
     runs-on: ubuntu-24.04
     timeout-minutes: 10
@@ -195,9 +200,9 @@ jobs:
 
   build:
     name: Entrega ${{ matrix.platform }}
-    needs: [plan, quality, features]
+    needs: [security, plan, quality, features]
     if: >-
-      always() && !cancelled() && needs.quality.result == 'success' &&
+      always() && !cancelled() && needs.security.result == 'success' && needs.quality.result == 'success' &&
       (needs.features.result == 'success' || needs.features.result == 'skipped')
     runs-on: ubuntu-24.04
     timeout-minutes: 25
