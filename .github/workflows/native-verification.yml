@@ -101,6 +101,20 @@ jobs:
           done
           cat /tmp/econolab-native-backend.log
           exit 1
+      - name: Instalar Maestro con checksum publicado
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          downloaded=0
+          for attempt in 1 2 3; do
+            if gh release download cli-2.11.0 --repo mobile-dev-inc/Maestro --pattern maestro.zip --dir /tmp --clobber; then downloaded=1; break; fi
+            sleep 5
+          done
+          test "$downloaded" -eq 1
+          cd /tmp
+          echo '5384593cb4e7a106489e75a821d157dd43f4e438df6bc308b72e82c685e1283a  maestro.zip' | sha256sum --check
+          unzip -q maestro.zip -d /tmp
+          echo /tmp/maestro/bin >> "$GITHUB_PATH"
       - name: Iniciar TLS alterno para comprobar renovación bajo la misma CA
         run: |
           node scripts/ci/qa-tls-renewal.cjs > /tmp/econolab-renewal.log 2>&1 &
@@ -154,14 +168,6 @@ jobs:
             node_modules/**/android/.cxx
             node_modules/**/android/build/intermediates/cxx
           key: ${{ steps.gradle_cache.outputs.cache-primary-key }}
-      - name: Instalar Maestro con checksum publicado
-        run: |
-          curl -fL https://github.com/mobile-dev-inc/Maestro/releases/download/cli-2.11.0/maestro.zip -o /tmp/maestro.zip
-          curl -fL https://github.com/mobile-dev-inc/Maestro/releases/download/cli-2.11.0/checksums_sha256.txt -o /tmp/maestro-checksums.txt
-          cd /tmp
-          grep 'maestro.zip$' maestro-checksums.txt | sha256sum --check
-          unzip -q maestro.zip -d /tmp
-          echo /tmp/maestro/bin >> "$GITHUB_PATH"
       - name: Preparar emulador y Metro de Debug
         env:
           NODE_ENV: development
@@ -196,6 +202,8 @@ jobs:
       - name: Verificar TLS nativo sin mezclarlo con caja negra
         if: always() && steps.native_build.outcome == 'success'
         working-directory: android
+        env:
+          NODE_ENV: production
         run: |
           date -u +%Y-%m-%dT%H:%M:%SZ > ../reports/native/tls-started-at.txt
           ./gradlew :app:testReleaseUnitTest --init-script ../native-tests/live-tls.init.gradle -PreactNativeArchitectures=x86_64 --build-cache --no-daemon --max-workers=2 -Dorg.gradle.jvmargs=-Xmx4g 2>&1 | tee ../reports/native/native-tls.log
