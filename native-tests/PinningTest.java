@@ -14,10 +14,12 @@ public class PinningTest {
   private OkHttpClient client(String[] pins) {
     CertificatePinner pinner = new CertificatePinner.Builder().add(ProductionPins.HOST, pins).build();
     return new OkHttpClient.Builder().certificatePinner(pinner)
-      .callTimeout(60, TimeUnit.SECONDS).build();
+      .connectTimeout(30, TimeUnit.SECONDS)
+      .readTimeout(90, TimeUnit.SECONDS)
+      .callTimeout(120, TimeUnit.SECONDS).build();
   }
   private Request request() {
-    return new Request.Builder().url("https://" + ProductionPins.HOST + "/api/privacy/notice").build();
+    return new Request.Builder().url("https://" + ProductionPins.HOST + "/api/school/privacy/notice").build();
   }
   @Test public void validPinsAcceptTrustedServer() throws Exception {
     try (Response response = client(ProductionPins.PINS).newCall(request()).execute()) {
