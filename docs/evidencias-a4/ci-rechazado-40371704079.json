@@ -1,0 +1,24 @@
+{
+  "run": 40371704079,
+  "url": "https://github.com/Josafock/Econolab-Movil/actions/runs/40371704079",
+  "commit": "948403b1da77f4106e0766bd80ce72b4a1ae0851",
+  "approved": false,
+  "failures": [
+    "native: failure"
+  ],
+  "jobs": {
+    "security": "success",
+    "plan": "success",
+    "quality": "success",
+    "build": "success",
+    "native": "failure"
+  },
+  "tests": {
+    "passed": 181,
+    "failed": 0,
+    "pending": 0,
+    "total": 181,
+    "suitesPassed": 18,
+    "suitesFailed": 0
+  }
+}

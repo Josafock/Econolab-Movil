@@ -1,12 +1,14 @@
 # Resultado técnico de la versión 1.1
 
+> Contexto: este informe conserva la evaluación histórica de la app médica 1.1. La edición administrativa es el alcance vigente de main y se documenta en [Edición Aula 2026](EDICION_AULA_2026-11-06.md). Las correcciones A4 de CI y su seguimiento se conservan en [CI_CORRECCIONES_A4.md](CI_CORRECCIONES_A4.md) y [SEGUIMIENTO.md](evidencias-a4/SEGUIMIENTO.md); sus conteos son evidencia histórica, no resultados de la edición administrativa.
+
 Verificación de implementación: **24 de octubre de 2026**. Estado de evidencias revisado el **25 de octubre de 2026**: consultar [la revisión actual de los 15 criterios](REVISION_RUBRICA_2026-10-25.md). No se acredita el 100 % de la rúbrica.
 
 **Actualización del cierre de octubre:** el [APK código 6](evidencias-rubrica/APK_OCTUBRE.json), fuente `e037d41`, añade la corrección del formulario bajo el teclado Android. Su [firma criptográfica está verificada](evidencias-rubrica/APK_OCTUBRE_VERIFICACION.json) y la regresión actual tiene 179 pruebas en 19 suites. Los apartados que identifican el APK 4 y el AAB 5 conservan las evidencias de esas compilaciones; el análisis JADX del APK 4 no se atribuye al APK 6. Consultar [la entrega de octubre](ENTREGA_OCTUBRE_2026.md) para la evidencia vigente de interfaces.
 
 ## Entrega y planeación
 
-- Móvil: rama `fix/HU-08-seguridad-rubrica`, [PR58](https://github.com/Josafock/Econolab-Movil/pull/58). El propietario conserva la decisión de integrarlo según sus HUs y Sprints. No se fusionó `main` del móvil ni se modificó el Project.
+- Móvil: la edición administrativa elegida para la versión actual está documentada en [Edición Aula 2026](EDICION_AULA_2026-11-06.md). La evaluación anterior de la app médica y las correcciones de CI A4 se conservan como antecedentes; esta entrega no modifica el Project.
 - Backend existente: [PR3](https://github.com/DavidHdz117/Backend_Econolab_Escuela/pull/3), [PR4](https://github.com/DavidHdz117/Backend_Econolab_Escuela/pull/4) y [PR5](https://github.com/DavidHdz117/Backend_Econolab_Escuela/pull/5) y [PR6](https://github.com/DavidHdz117/Backend_Econolab_Escuela/pull/6), integrados con autorización. Aviso y contratos comprobados en Render.
 - APK 4 histórico: versión **1.1.0**, paquete **com.econolab.mobile**, fuente `d2d92c55057f42ea65503e29e288c2ad2d73f0a5`. El APK 6 posterior incorpora el ajuste del teclado; no se debe evaluar ese cambio usando el APK 4.
 
@@ -44,7 +46,7 @@ La configuración para Metro permite HTTP a `10.0.2.2` únicamente en **QA Debug
 
 ## Límites y acciones del equipo
 
-1. **Integración del móvil:** revisar PR58 y respetar las dependencias de las HUs existentes. La cuenta conectada tiene push, pero no administración del repositorio. El propietario debe configurar secrets de integración con Render y reglas de revisión si corresponde; la CI aislada no necesita esos secrets.
+1. **Integración del móvil (estado al cierre de la revisión original):** PR58 estaba abierto y pendiente de decisión. La versión administrativa posterior se documenta en [Edición Aula 2026](EDICION_AULA_2026-11-06.md). Los secrets de integración con Render siguen siendo opcionales para la CI aislada.
 2. **Matriz completa y dispositivo propio:** conservar las evidencias automatizadas y completar los casos restantes de [MATRIZ_CAJA_NEGRA.csv](evidencias-rubrica/MATRIZ_CAJA_NEGRA.csv), especialmente Cortes por fecha, pérdida de red, accesibilidad, fuentes grandes y teclado. No marcar un caso nativo aprobado por una prueba Jest o del navegador. El APK QA no sustituye comprobar el APK distribuible en el teléfono del equipo.
 3. **Dependencias:** el audit conserva ocho alertas transitivas, cinco altas y tres moderadas, sin críticas. Incluyen herramientas de Expo CLI y la cadena query-string. El Zod directo de la app está actualizado; no se fuerza Zod 4 sobre herramientas que requieren Zod 3 ni se degrada Expo a otra versión mayor. Deben seguirse las actualizaciones compatibles.
 4. **Aviso y operación:** revisar proveedores, conservación/respaldos y el proceso real de atención de solicitudes con el laboratorio. El aviso implementado cubre la cuenta de acceso, no certifica cumplimiento legal del laboratorio.

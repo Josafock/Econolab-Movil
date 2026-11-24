@@ -1,0 +1,222 @@
+{
+  "run": 40382607064,
+  "url": "https://github.com/Josafock/Econolab-Movil/actions/runs/40382607064",
+  "commit": "14c0dcc7f514c6885c8edc8bc67bb8afee19bdf1",
+  "approved": true,
+  "failures": [],
+  "jobs": {
+    "security": "success",
+    "plan": "success",
+    "quality": "success",
+    "build": "success",
+    "native": "success"
+  },
+  "tests": {
+    "passed": 181,
+    "failed": 0,
+    "pending": 0,
+    "total": 181,
+    "suitesPassed": 18,
+    "suitesFailed": 0
+  },
+  "coverage": {
+    "lines": {
+      "total": 906,
+      "covered": 636,
+      "skipped": 0,
+      "pct": 70.19
+    },
+    "statements": {
+      "total": 1182,
+      "covered": 792,
+      "skipped": 0,
+      "pct": 67
+    },
+    "functions": {
+      "total": 282,
+      "covered": 171,
+      "skipped": 0,
+      "pct": 60.63
+    },
+    "branches": {
+      "total": 917,
+      "covered": 541,
+      "skipped": 0,
+      "pct": 58.99
+    },
+    "branchesTrue": {
+      "total": 0,
+      "covered": 0,
+      "skipped": 0,
+      "pct": 100
+    }
+  },
+  "measurements": [
+    {
+      "scenario": "baseline",
+      "p95Ms": 4.8549938,
+      "requests": 80,
+      "errorRate": 0
+    },
+    {
+      "scenario": "load",
+      "p95Ms": 7.35620315,
+      "requests": 588,
+      "errorRate": 0
+    },
+    {
+      "scenario": "recovery",
+      "p95Ms": 3.465813,
+      "requests": 61,
+      "errorRate": 0
+    },
+    {
+      "scenario": "stress",
+      "p95Ms": 8.121322649999998,
+      "requests": 8902,
+      "errorRate": 0
+    }
+  ],
+  "integration": [
+    {
+      "name": "Acceso anónimo y JWT alterado rechazados",
+      "passed": true
+    },
+    {
+      "name": "Validación de cuerpos y refresh malformado",
+      "passed": true
+    },
+    {
+      "name": "Login móvil usa JWT corto y refresh opaco; web conserva contrato",
+      "passed": true
+    },
+    {
+      "name": "Perfil propio sin hash; aliases GET y PUT con sobreasignación rechazada",
+      "passed": true
+    },
+    {
+      "name": "Refresh rota y solo almacena hashes; token anterior revoca la familia",
+      "passed": true
+    },
+    {
+      "name": "JWT expirado rechazado y sesión renovable con credencial independiente",
+      "passed": true
+    },
+    {
+      "name": "Logout revoca también refresh sin depender de un access token vigente",
+      "passed": true
+    },
+    {
+      "name": "Refresh concurrente no reutiliza una credencial de un solo uso",
+      "passed": true
+    },
+    {
+      "name": "Aviso público accesible sin autenticación y con contacto real",
+      "passed": true
+    },
+    {
+      "name": "Consentimiento ausente y opciones desactivadas por defecto",
+      "passed": true
+    },
+    {
+      "name": "Opt-in con versión y oposición persistida; versión incorrecta rechazada",
+      "passed": true
+    },
+    {
+      "name": "Cancelación exige confirmación y protege al último administrador",
+      "passed": true
+    },
+    {
+      "name": "Cancelación propia elimina cuenta, sesiones, preferencias y logs asociados",
+      "passed": true
+    },
+    {
+      "name": "Cuenta sin rol nunca obtiene sesión privilegiada",
+      "passed": true
+    },
+    {
+      "name": "Registro con contraseña no concede administración automáticamente",
+      "passed": true
+    },
+    {
+      "name": "Registro con Google no promueve cuentas nuevas a administrador",
+      "passed": true
+    }
+  ],
+  "scanners": {
+    "semgrepFindings": 0,
+    "dependencies": {
+      "info": 0,
+      "low": 0,
+      "moderate": 3,
+      "high": 5,
+      "critical": 0,
+      "total": 8
+    },
+    "performanceComparison": {
+      "baselineP95Ms": 4.8549938,
+      "loadP95Ms": 7.35620315,
+      "maximumP95Ms": 800,
+      "multiplier": 1.5151828103261429,
+      "passed": true
+    }
+  },
+  "pipelineTests": {
+    "passed": 27,
+    "failed": 0
+  },
+  "native": {
+    "tls": {
+      "passed": 5,
+      "failed": 0,
+      "cached": true,
+      "freshInThisRun": false,
+      "executedAt": "2026-10-26T18:42:24.420Z",
+      "sourceExecution": 40377741692
+    },
+    "appium": [
+      {
+        "name": "Login y consentimiento explícito",
+        "passed": true,
+        "seconds": 35.74222117299996
+      },
+      {
+        "name": "Búsqueda y detalle del estudio QA",
+        "passed": true,
+        "seconds": 18.31998557199995
+      },
+      {
+        "name": "Perfil y cierre de sesión",
+        "passed": true,
+        "seconds": 14.584281939999983
+      }
+    ],
+    "maestro": {
+      "debug": {
+        "passed": 1,
+        "failed": 0
+      },
+      "release": {
+        "passed": 1,
+        "failed": 0
+      }
+    },
+    "metroShutdownLog": "2026-10-26T19:25:45.2966694Z Metro detenido: Release se prueba con su bundle incluido.",
+    "analysis": {
+      "executedAt": "2026-10-26T19:29:26.795Z",
+      "commit": "14c0dcc7f514c6885c8edc8bc67bb8afee19bdf1",
+      "variant": "QA Release, signing key for testing; not a Play publication",
+      "apkSha256": "1e44afc5f9255757d9537499af988b51532a4e695bdb18e3ca5633b20a997727",
+      "apkSizeBytes": 36770383,
+      "r8TaskExecuted": true,
+      "shrinkResourcesEnabled": true,
+      "mappingClassCount": 10762,
+      "renamedClasses": 9633,
+      "jadxVersion": "1.5.6",
+      "jadxExitCode": 3,
+      "recoveredJavaFiles": 9138,
+      "interpretation": "R8 changes names and reduces code/resources. JADX still recovers parts of the APK. This is not encryption of JavaScript nor proof of impossible decompilation. Preserve mapping privately for crash diagnosis."
+    }
+  },
+  "freshnessReview": "GitHub approved this run; Gradle reused TLS results from 40377741692. Appium and Maestro executed in this run. Live TLS must be revalidated without test-result caching."
+}

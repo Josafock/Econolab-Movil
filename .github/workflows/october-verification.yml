@@ -3,7 +3,13 @@ name: Octubre navegacion Android
 on:
   push:
     branches: ['feature/HU-08-evidencias-octubre']
-    paths: ['.github/workflows/october-verification.yml', 'native-tests/october-server.cjs', '.maestro/october-navigation.yml', 'src/**']
+    paths:
+      [
+        '.github/workflows/october-verification.yml',
+        'native-tests/october-server.cjs',
+        '.maestro/october-navigation.yml',
+        'src/**',
+      ]
   workflow_dispatch:
 
 permissions:

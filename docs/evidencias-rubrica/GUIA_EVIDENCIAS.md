@@ -2,6 +2,8 @@
 
 **Entrega de octubre actualizada el 25/10:** consultar [actividades 5 y 4](../ENTREGA_OCTUBRE_2026.md) y [aportaciones comprobadas](../APORTACIONES_EQUIPO_OCTUBRE.md). `develop` ya existe desde esta fecha; la matriz integral de Debug/Release que aparece abajo corresponde a noviembre y conserva los casos todavía no ejecutados.
 
+Las correcciones A4 del pipeline y el seguimiento de incidencias están documentados en [CI_CORRECCIONES_A4.md](../CI_CORRECCIONES_A4.md) y [SEGUIMIENTO.md](../evidencias-a4/SEGUIMIENTO.md). Esta matriz reúne antecedentes de la edición médica 1.1; para la edición administrativa vigente, consultar [Edición Aula 2026](../EDICION_AULA_2026-11-06.md) y el run nativo asociado a su commit.
+
 Revisión base: 23 de octubre de 2026. Este archivo organiza la entrega académica; el Project de GitHub sigue siendo la única planeación oficial. Los nombres E01–E15 identifican evidencias, no nuevas HUs ni Sprints.
 
 Cada captura o registro debe mostrar lo necesario para reconocer la función, versión y resultado. Anota fecha, responsable y dispositivo. Usa cuentas de prueba y evita datos clínicos, contraseñas, tokens, documentos de identidad, medios de pago y secretos de Actions.

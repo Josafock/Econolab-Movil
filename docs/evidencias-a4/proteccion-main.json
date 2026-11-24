@@ -1,0 +1,18 @@
+{
+  "verifiedAt": "2026-10-26T18:49:54.626049+00:00",
+  "repository": "Josafock/Econolab-Movil",
+  "branch": "main",
+  "strict": true,
+  "checks": [
+    {
+      "context": "pipeline / CI obligatorio PR",
+      "app_id": 15368
+    },
+    {
+      "context": "pipeline / native / android",
+      "app_id": 15368
+    }
+  ],
+  "enforceAdmins": true,
+  "pullRequestRequired": true
+}

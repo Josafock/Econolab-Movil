@@ -1,13 +1,15 @@
 name: Android Debug Release pinning y JADX
 
 on:
-  push:
-    branches: ['fix/HU-08-seguridad-rubrica']
-    paths: ['.github/workflows/native-verification.yml', 'native-tests/**', '.maestro/**', 'plugins/**', 'app.config.js']
+  workflow_call:
   workflow_dispatch:
 
 permissions:
   contents: read
+
+defaults:
+  run:
+    shell: bash
 
 concurrency:
   group: native-verification-${{ github.ref }}
@@ -57,14 +59,23 @@ jobs:
           cache: npm
       - name: Preparar TLS y credenciales desechables
         run: |
+          umask 077
           mkdir -p .native-qa reports/native
-          openssl req -x509 -newkey rsa:2048 -nodes -keyout .native-qa/server.key -out .native-qa/server.pem -days 2 -subj '/CN=10.0.2.2' -addext 'subjectAltName=IP:10.0.2.2,IP:127.0.0.1,DNS:localhost'
+          openssl req -x509 -newkey rsa:2048 -nodes -keyout .native-qa/ca.key -out .native-qa/ca.pem -days 2 -subj '/CN=Econolab isolated QA CA' -addext 'basicConstraints=critical,CA:TRUE' -addext 'keyUsage=critical,keyCertSign,cRLSign'
+          printf '%s\n' 'subjectAltName=IP:10.0.2.2,IP:127.0.0.1,DNS:localhost' 'basicConstraints=critical,CA:FALSE' 'keyUsage=critical,digitalSignature,keyEncipherment' 'extendedKeyUsage=serverAuth' > .native-qa/server.ext
+          for LEAF in server renewal; do
+            openssl req -new -newkey rsa:2048 -nodes -keyout ".native-qa/$LEAF.key" -out ".native-qa/$LEAF.csr" -subj '/CN=10.0.2.2'
+            openssl x509 -req -in ".native-qa/$LEAF.csr" -CA .native-qa/ca.pem -CAkey .native-qa/ca.key -CAcreateserial -out ".native-qa/$LEAF.pem" -days 2 -extfile .native-qa/server.ext
+            cat ".native-qa/$LEAF.pem" .native-qa/ca.pem > ".native-qa/$LEAF-chain.pem"
+          done
           PIN=$(openssl x509 -in .native-qa/server.pem -pubkey -noout | openssl pkey -pubin -outform DER | openssl dgst -sha256 -binary | openssl enc -base64)
+          CA_PIN=$(openssl x509 -in .native-qa/ca.pem -pubkey -noout | openssl pkey -pubin -outform DER | openssl dgst -sha256 -binary | openssl enc -base64)
           PASSWORD=$(openssl rand -hex 24)
           echo "::add-mask::$PASSWORD"
           echo "ECONOLAB_QA_TLS_PIN=$PIN" >> "$GITHUB_ENV"
-          echo "ECONOLAB_QA_CA_FILE=$GITHUB_WORKSPACE/.native-qa/server.pem" >> "$GITHUB_ENV"
-          echo "SECURITY_QA_TLS_CERT=$GITHUB_WORKSPACE/.native-qa/server.pem" >> "$GITHUB_ENV"
+          echo "ECONOLAB_QA_CA_PIN=$CA_PIN" >> "$GITHUB_ENV"
+          echo "ECONOLAB_QA_CA_FILE=$GITHUB_WORKSPACE/.native-qa/ca.pem" >> "$GITHUB_ENV"
+          echo "SECURITY_QA_TLS_CERT=$GITHUB_WORKSPACE/.native-qa/server-chain.pem" >> "$GITHUB_ENV"
           echo "SECURITY_QA_TLS_KEY=$GITHUB_WORKSPACE/.native-qa/server.key" >> "$GITHUB_ENV"
           echo "SECURITY_QA_UI_PASSWORD=$PASSWORD" >> "$GITHUB_ENV"
           JWT_VALUE=$(openssl rand -hex 32)
@@ -97,6 +108,15 @@ jobs:
           unzip -q /tmp/econolab-verified-tools/maestro.zip -d /tmp
           unzip -q /tmp/econolab-verified-tools/jadx.zip -d /tmp/jadx
           echo /tmp/maestro/bin >> "$GITHUB_PATH"
+      - name: Iniciar TLS alterno para comprobar renovación bajo la misma CA
+        run: |
+          node scripts/ci/qa-tls-renewal.cjs > /tmp/econolab-renewal.log 2>&1 &
+          echo "QA_RENEWAL_PID=$!" >> "$GITHUB_ENV"
+          for n in $(seq 1 30); do
+            curl --cacert .native-qa/ca.pem --max-time 3 -fsS https://127.0.0.1:3111/api/privacy/notice > /dev/null && exit 0
+            sleep 1
+          done
+          exit 1
       - name: Generar Android y verificar R8 y permisos
         run: |
           npx expo prebuild --platform android --no-install
@@ -177,7 +197,14 @@ jobs:
         working-directory: android
         env:
           NODE_ENV: production
-        run: ./gradlew :app:testReleaseUnitTest -PreactNativeArchitectures=x86_64 --build-cache --no-daemon --max-workers=2 -Dorg.gradle.jvmargs=-Xmx4g > ../reports/native/native-tls.log 2>&1
+        run: |
+          date -u +%Y-%m-%dT%H:%M:%SZ > ../reports/native/tls-started-at.txt
+          ./gradlew :app:testReleaseUnitTest --init-script ../native-tests/live-tls.init.gradle -PreactNativeArchitectures=x86_64 --build-cache --no-daemon --max-workers=2 -Dorg.gradle.jvmargs=-Xmx4g 2>&1 | tee ../reports/native/native-tls.log
+      - name: Exigir JUnit TLS nuevo y sin resultados de caché
+        if: always() && steps.native_build.outcome == 'success'
+        run: |
+          cp -R android/app/build/test-results reports/native/
+          python3 scripts/ci/check-native-tls.py
       - name: Analizar Release con JADX
         if: always() && steps.native_build.outcome == 'success'
         run: |
@@ -187,6 +214,7 @@ jobs:
         run: |
           if [ -n "$QA_BACKEND_PID" ]; then kill "$QA_BACKEND_PID" || true; fi
           if [ -n "$QA_METRO_PID" ]; then kill "$QA_METRO_PID" || true; fi
+          if [ -n "$QA_RENEWAL_PID" ]; then kill "$QA_RENEWAL_PID" || true; fi
           cp -R android/app/build/test-results reports/native/ 2>/dev/null || true
           cp android/app/build/outputs/mapping/release/mapping.txt reports/native/ 2>/dev/null || true
           cp /tmp/econolab-metro.log reports/native/metro.log 2>/dev/null || true
