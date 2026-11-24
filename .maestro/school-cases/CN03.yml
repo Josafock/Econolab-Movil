@@ -1,0 +1,69 @@
+appId: ${APP_ID}
+name: CN03 Acceso válido y opt-in
+---
+- scrollUntilVisible:
+    element:
+      text: Bienvenido
+    direction: UP
+    timeout: 30000
+- scrollUntilVisible:
+    element:
+      text: Correo electrónico
+      below: Correo electrónico
+    direction: DOWN
+    timeout: 30000
+- tapOn:
+    text: Correo electrónico
+    below: Correo electrónico
+    point: 95%,50%
+- eraseText: 100
+- inputText: ${EMAIL}
+- hideKeyboard
+- scrollUntilVisible:
+    element:
+      text: Contraseña
+      below: Contraseña
+    direction: DOWN
+    timeout: 30000
+- tapOn:
+    text: Contraseña
+    below: Contraseña
+    point: 95%,50%
+- eraseText: 100
+- inputText: ${PASSWORD}
+- hideKeyboard
+- scrollUntilVisible:
+    element:
+      text: Iniciar sesión
+    direction: DOWN
+    timeout: 30000
+- tapOn: Iniciar sesión
+- extendedWaitUntil:
+    visible: Privacidad y mis datos
+    timeout: 60000
+- scrollUntilVisible:
+    element:
+      text: He leído y acepto el aviso de privacidad de mi cuenta
+    direction: DOWN
+    timeout: 30000
+- assertVisible:
+    text: He leído y acepto el aviso de privacidad de mi cuenta
+    checked: false
+- takeScreenshot: CN03-opt-in-inicial
+- tapOn: He leído y acepto el aviso de privacidad de mi cuenta
+- scrollUntilVisible:
+    element:
+      text: Guardar mis decisiones
+    direction: DOWN
+    timeout: 30000
+- tapOn: Guardar mis decisiones
+- extendedWaitUntil:
+    visible: Hola, Equipo
+    timeout: 60000
+- scrollUntilVisible:
+    element:
+      text: Tu espacio de práctica
+    direction: DOWN
+    timeout: 30000
+- assertVisible: 3 servicios disponibles
+- takeScreenshot: CN03-aprobado

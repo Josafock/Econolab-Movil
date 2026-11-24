@@ -1,0 +1,56 @@
+appId: ${APP_ID}
+name: CN02 Acceso inválido
+---
+- scrollUntilVisible:
+    element:
+      text: Iniciar sesión
+    direction: DOWN
+    timeout: 30000
+- tapOn: Iniciar sesión
+- scrollUntilVisible:
+    element:
+      text: Escribe un correo electrónico válido.
+    direction: DOWN
+    timeout: 30000
+- assertVisible: Escribe un correo electrónico válido.
+- scrollUntilVisible:
+    element:
+      text: Bienvenido
+    direction: UP
+    timeout: 30000
+- scrollUntilVisible:
+    element:
+      text: Correo electrónico
+      below: Correo electrónico
+    direction: DOWN
+    timeout: 30000
+- tapOn:
+    text: Correo electrónico
+    below: Correo electrónico
+    point: 95%,50%
+- eraseText: 100
+- inputText: ${EMAIL}
+- hideKeyboard
+- scrollUntilVisible:
+    element:
+      text: Contraseña
+      below: Contraseña
+    direction: DOWN
+    timeout: 30000
+- tapOn:
+    text: Contraseña
+    below: Contraseña
+    point: 95%,50%
+- eraseText: 100
+- inputText: Wrong-Only-QA-123!
+- hideKeyboard
+- scrollUntilVisible:
+    element:
+      text: Iniciar sesión
+    direction: DOWN
+    timeout: 30000
+- tapOn: Iniciar sesión
+- extendedWaitUntil:
+    visible: El correo o la contraseña no son correctos.
+    timeout: 60000
+- takeScreenshot: CN02-aprobado

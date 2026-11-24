@@ -1,0 +1,97 @@
+appId: ${APP_ID}
+name: CN16 Cancelación de cuenta desechable
+---
+- tapOn: Perfil
+- scrollUntilVisible:
+    element:
+      text: Privacidad y mis datos
+    direction: DOWN
+    timeout: 30000
+- tapOn: Privacidad y mis datos
+- extendedWaitUntil:
+    visible: Privacidad y mis datos
+    timeout: 60000
+- scrollUntilVisible:
+    element:
+      text: Quiero cancelar mi cuenta
+    direction: DOWN
+    timeout: 30000
+- tapOn: Quiero cancelar mi cuenta
+- scrollUntilVisible:
+    element:
+      text: Contraseña actual para cancelar
+      below: Contraseña actual para cancelar
+    direction: DOWN
+    timeout: 30000
+- tapOn:
+    text: Contraseña actual para cancelar
+    below: Contraseña actual para cancelar
+    point: 95%,50%
+- eraseText: 100
+- inputText: ${PASSWORD}
+- hideKeyboard
+- scrollUntilVisible:
+    element:
+      text: Escribe ELIMINAR MI CUENTA
+      below: Escribe ELIMINAR MI CUENTA
+    direction: DOWN
+    timeout: 30000
+- tapOn:
+    text: Escribe ELIMINAR MI CUENTA
+    below: Escribe ELIMINAR MI CUENTA
+    point: 95%,50%
+- eraseText: 100
+- inputText: ELIMINAR MI CUENTA
+- hideKeyboard
+- scrollUntilVisible:
+    element:
+      text: Cancelar mi cuenta definitivamente
+    direction: DOWN
+    timeout: 30000
+- tapOn: Cancelar mi cuenta definitivamente
+- extendedWaitUntil:
+    visible: Cancelar tu cuenta de acceso
+    timeout: 60000
+- takeScreenshot: CN16-confirmacion
+- tapOn:
+    text: Cancelar mi cuenta
+    below: Cancelar tu cuenta de acceso
+- extendedWaitUntil:
+    visible: Bienvenido
+    timeout: 60000
+- scrollUntilVisible:
+    element:
+      text: Correo electrónico
+      below: Correo electrónico
+    direction: DOWN
+    timeout: 30000
+- tapOn:
+    text: Correo electrónico
+    below: Correo electrónico
+    point: 95%,50%
+- eraseText: 100
+- inputText: ${EMAIL}
+- hideKeyboard
+- scrollUntilVisible:
+    element:
+      text: Contraseña
+      below: Contraseña
+    direction: DOWN
+    timeout: 30000
+- tapOn:
+    text: Contraseña
+    below: Contraseña
+    point: 95%,50%
+- eraseText: 100
+- inputText: ${PASSWORD}
+- hideKeyboard
+- scrollUntilVisible:
+    element:
+      text: Iniciar sesión
+    direction: DOWN
+    timeout: 30000
+- tapOn: Iniciar sesión
+- extendedWaitUntil:
+    visible: El correo o la contraseña no son correctos.
+    timeout: 60000
+- takeScreenshot: CN16-aprobado

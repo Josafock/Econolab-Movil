@@ -1,0 +1,29 @@
+{
+  "executedAt": "2026-11-24T20:27:00.305Z",
+  "checks": [
+    {
+      "route": "/school/privacy",
+      "status": 200,
+      "elapsedMs": 6929,
+      "publicHtml": true
+    },
+    {
+      "route": "/school/privacy/account-deletion",
+      "status": 200,
+      "elapsedMs": 3300,
+      "publicHtml": true
+    },
+    {
+      "route": "/school/workspace",
+      "status": 401,
+      "elapsedMs": 1766,
+      "publicHtml": false
+    },
+    {
+      "route": "/school/cuts?from=2026-11-06&to=2026-11-06",
+      "status": 401,
+      "elapsedMs": 6356,
+      "publicHtml": false
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+appId: ${APP_ID}
+name: CN12 Oposición y preferencias
+---
+- scrollUntilVisible:
+    element:
+      text: Privacidad y mis datos
+    direction: DOWN
+    timeout: 30000
+- tapOn: Privacidad y mis datos
+- extendedWaitUntil:
+    visible: Privacidad y mis datos
+    timeout: 60000
+- scrollUntilVisible:
+    element:
+      text: Permitir comunicaciones opcionales
+    direction: DOWN
+    timeout: 30000
+- assertVisible:
+    text: Permitir comunicaciones opcionales
+    checked: false
+- tapOn: Permitir comunicaciones opcionales
+- scrollUntilVisible:
+    element:
+      text: Guardar mis decisiones
+    direction: DOWN
+    timeout: 30000
+- tapOn: Guardar mis decisiones
+- extendedWaitUntil:
+    visible: Tus decisiones de privacidad se guardaron.
+    timeout: 60000
+- scrollUntilVisible:
+    element:
+      text: Permitir comunicaciones opcionales
+    direction: UP
+    timeout: 30000
+- assertVisible:
+    text: Permitir comunicaciones opcionales
+    checked: true
+- tapOn: Permitir comunicaciones opcionales
+- scrollUntilVisible:
+    element:
+      text: Guardar mis decisiones
+    direction: DOWN
+    timeout: 30000
+- tapOn: Guardar mis decisiones
+- extendedWaitUntil:
+    visible: Tus decisiones de privacidad se guardaron.
+    timeout: 60000
+- takeScreenshot: CN12-aprobado

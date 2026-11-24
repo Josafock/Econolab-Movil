@@ -1,0 +1,19 @@
+appId: ${APP_ID}
+name: Caja negra administrativa Debug Release
+---
+- runFlow: school-cases/CN01.yml
+- runFlow: school-cases/CN02.yml
+- runFlow: school-cases/CN03.yml
+- runFlow: school-cases/CN04.yml
+- runFlow: school-cases/CN05.yml
+- runFlow: school-cases/CN06.yml
+- runFlow: school-cases/CN07.yml
+- runFlow: school-cases/CN08.yml
+- runFlow: school-cases/CN09.yml
+- runFlow: school-cases/CN10.yml
+- runFlow: school-cases/CN11.yml
+- runFlow: school-cases/CN12.yml
+- runFlow: school-cases/CN13.yml
+- runFlow: school-cases/CN14.yml
+- runFlow: school-cases/CN15.yml
+- runFlow: school-cases/CN16.yml

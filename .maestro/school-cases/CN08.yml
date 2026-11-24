@@ -1,0 +1,87 @@
+appId: ${APP_ID}
+name: CN08 Registro y validación de actividad
+---
+- tapOn: Actividad
+- extendedWaitUntil:
+    visible: Actividades
+    timeout: 60000
+- scrollUntilVisible:
+    element:
+      text: Apoyo QA
+    direction: DOWN
+    timeout: 30000
+- tapOn: Apoyo QA
+- scrollUntilVisible:
+    element:
+      text: Cantidad
+      below: Cantidad
+    direction: DOWN
+    timeout: 30000
+- tapOn:
+    text: Cantidad
+    below: Cantidad
+    point: 95%,50%
+- eraseText: 100
+- inputText: "0"
+- hideKeyboard
+- scrollUntilVisible:
+    element:
+      text: Fecha \(AAAA-MM-DD\)
+      below: Fecha \(AAAA-MM-DD\)
+    direction: DOWN
+    timeout: 30000
+- tapOn:
+    text: Fecha \(AAAA-MM-DD\)
+    below: Fecha \(AAAA-MM-DD\)
+    point: 95%,50%
+- eraseText: 100
+- inputText: 2026-11-24
+- hideKeyboard
+- scrollUntilVisible:
+    element:
+      text: Guardar actividad
+    direction: DOWN
+    timeout: 30000
+- tapOn: Guardar actividad
+- scrollUntilVisible:
+    element:
+      text: Selecciona un servicio, una cantidad entre 1 y 1000 y una fecha válida.
+    direction: DOWN
+    timeout: 30000
+- assertVisible: Selecciona un servicio, una cantidad entre 1 y 1000 y una fecha válida.
+- scrollUntilVisible:
+    element:
+      text: Registrar una actividad
+    direction: UP
+    timeout: 30000
+- scrollUntilVisible:
+    element:
+      text: Cantidad
+      below: Cantidad
+    direction: DOWN
+    timeout: 30000
+- tapOn:
+    text: Cantidad
+    below: Cantidad
+    point: 95%,50%
+- eraseText: 100
+- inputText: "3"
+- hideKeyboard
+- scrollUntilVisible:
+    element:
+      text: Guardar actividad
+    direction: DOWN
+    timeout: 30000
+- tapOn: Guardar actividad
+- scrollUntilVisible:
+    element:
+      text: Actividad registrada.
+    direction: DOWN
+    timeout: 30000
+- scrollUntilVisible:
+    element:
+      text: Cancelar actividad 1
+    direction: DOWN
+    timeout: 30000
+- assertVisible: "[$]37[.]50"
+- takeScreenshot: CN08-aprobado

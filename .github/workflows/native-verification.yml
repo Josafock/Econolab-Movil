@@ -48,7 +48,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           repository: DavidHdz117/Backend_Econolab_Escuela
-          ref: 602f9e2969edba026618437415f1242e662e0d1a
+          ref: 96ab3b67033abbb90f9a39c15c219a2eab8f99b6
           path: qa-backend
           persist-credentials: false
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
@@ -81,10 +81,11 @@ jobs:
       - name: Iniciar backend de pruebas
         working-directory: qa-backend
         run: |
-          node node_modules/ts-node/dist/bin.js --transpile-only -r tsconfig-paths/register test/mobile-security.ts > /tmp/econolab-native-backend.log 2>&1 &
+          cp ../native-tests/school-server.cjs test/school-server.cjs
+          node -r ts-node/register/transpile-only -r tsconfig-paths/register test/school-server.cjs > /tmp/econolab-native-backend.log 2>&1 &
           echo "QA_BACKEND_PID=$!" >> "$GITHUB_ENV"
           for n in $(seq 1 90); do
-            test -f reports/mobile-security/ready && exit 0
+            test -f reports/school-native/ready && exit 0
             sleep 2
           done
           cat /tmp/econolab-native-backend.log
@@ -167,25 +168,11 @@ jobs:
           arch: x86_64
           target: google_apis
           profile: pixel_6
+          ram-size: 2048M
+          heap-size: 512M
+          disable-spellchecker: true
           disable-animations: true
-          script: |
-            adb shell am force-stop com.google.android.apps.nexuslauncher
-            adb reverse tcp:8081 tcp:8081
-            adb install android/app/build/outputs/apk/debug/app-debug.apk
-            maestro test -e APP_ID=com.econolab.mobile.qa -e EMAIL=native-debug@example.test -e PASSWORD="$SECURITY_QA_UI_PASSWORD" --format junit --output reports/native/maestro-debug.xml --test-output-dir reports/native/debug .maestro/native-smoke.yml
-            adb uninstall com.econolab.mobile.qa
-            kill "$QA_METRO_PID"
-            for n in $(seq 1 15); do
-              kill -0 "$QA_METRO_PID" 2>/dev/null || break
-              sleep 1
-            done
-            if curl --max-time 1 -fsS http://127.0.0.1:8081/status > /dev/null 2>&1; then
-              echo '::error::Metro sigue disponible; no se acredita Release independiente.'
-              exit 1
-            fi
-            echo 'Metro detenido: Release se prueba con su bundle incluido.'
-            adb install android/app/build/outputs/apk/release/app-release.apk
-            maestro test -e APP_ID=com.econolab.mobile.qa -e EMAIL=native-release@example.test -e PASSWORD="$SECURITY_QA_UI_PASSWORD" --format junit --output reports/native/maestro-release.xml --test-output-dir reports/native/release .maestro/native-smoke.yml
+          script: bash native-tests/run-school-blackbox.sh
       - name: Analizar Release con JADX
         if: always() && steps.native_build.outcome == 'success'
         run: |
@@ -201,6 +188,7 @@ jobs:
           cp android/app/build/outputs/mapping/release/mapping.txt reports/native/ 2>/dev/null || true
           cp /tmp/econolab-metro.log reports/native/metro.log 2>/dev/null || true
           cp /tmp/econolab-native-backend.log reports/native/backend.log 2>/dev/null || true
+          cp -R qa-backend/reports/school-native reports/native/fixture 2>/dev/null || true
           node scripts/security/redact-qa-reports.cjs
       - name: Conservar evidencias nativas
         if: always()
@@ -209,4 +197,4 @@ jobs:
           name: android-security-verification
           path: reports/native/
           if-no-files-found: error
-          retention-days: 30
+          retention-days: 90

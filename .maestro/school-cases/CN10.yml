@@ -1,0 +1,45 @@
+appId: ${APP_ID}
+name: CN10 Cancelar y excluir del corte
+---
+- tapOn: Actividad
+- scrollUntilVisible:
+    element:
+      text: Cancelar actividad 1
+    direction: DOWN
+    timeout: 30000
+- tapOn: Cancelar actividad 1
+- extendedWaitUntil:
+    visible: Cancelar actividad
+    timeout: 60000
+- tapOn: Sí, cancelar actividad
+- scrollUntilVisible:
+    element:
+      text: Actividad cancelada.
+    direction: UP
+    timeout: 30000
+- scrollUntilVisible:
+    element:
+      text: Cancelada; se excluye del importe del corte.
+    direction: DOWN
+    timeout: 30000
+- assertVisible: Cancelada; se excluye del importe del corte.
+- tapOn: Cortes
+- scrollUntilVisible:
+    element:
+      text: Cortes por fecha
+    direction: UP
+    timeout: 30000
+- scrollUntilVisible:
+    element:
+      text: Consultar resumen
+    direction: DOWN
+    timeout: 30000
+- tapOn: Consultar resumen
+- scrollUntilVisible:
+    element:
+      text: "[$]0[.]00"
+    direction: DOWN
+    timeout: 30000
+- assertVisible: "[$]0[.]00"
+- assertVisible: 0 actividades incluidas.*1 canceladas
+- takeScreenshot: CN10-aprobado

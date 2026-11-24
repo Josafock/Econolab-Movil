@@ -1,0 +1,34 @@
+appId: ${APP_ID}
+name: CN15 Reiniciar sólo ejercicios
+---
+- tapOn: Actividad
+- scrollUntilVisible:
+    element:
+      text: Reiniciar espacio de práctica
+    direction: DOWN
+    timeout: 30000
+- tapOn: Reiniciar espacio de práctica
+- extendedWaitUntil:
+    visible: Reiniciar ejercicios
+    timeout: 60000
+- tapOn: Reiniciar ejercicios
+- scrollUntilVisible:
+    element:
+      text: Espacio de práctica reiniciado.
+    direction: UP
+    timeout: 30000
+- scrollUntilVisible:
+    element:
+      text: Todavía no tienes actividades. Registra la primera para practicar.
+    direction: DOWN
+    timeout: 30000
+- assertVisible: Todavía no tienes actividades. Registra la primera para practicar.
+- tapOn: Inicio
+- scrollUntilVisible:
+    element:
+      text: Tu espacio de práctica
+    direction: DOWN
+    timeout: 30000
+- assertVisible: 3 servicios disponibles
+- assertVisible: 0 actividades registradas
+- takeScreenshot: CN15-aprobado

@@ -1,0 +1,18 @@
+appId: ${APP_ID}
+name: CN01 Instalación y apertura
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible: Bienvenido|Pixel Launcher isn't responding
+    timeout: 60000
+- runFlow:
+    when:
+      visible: Pixel Launcher isn't responding
+    commands:
+      - tapOn: Close app
+- extendedWaitUntil:
+    visible: Bienvenido
+    timeout: 60000
+- assertVisible: Iniciar sesión
+- takeScreenshot: CN01-aprobado

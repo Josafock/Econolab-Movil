@@ -1,0 +1,77 @@
+appId: ${APP_ID}
+name: CN09 Corte por fecha y periodo inválido
+---
+- tapOn: Cortes
+- extendedWaitUntil:
+    visible: Cortes por fecha
+    timeout: 60000
+- scrollUntilVisible:
+    element:
+      text: Desde \(AAAA-MM-DD\)
+      below: Desde \(AAAA-MM-DD\)
+    direction: DOWN
+    timeout: 30000
+- tapOn:
+    text: Desde \(AAAA-MM-DD\)
+    below: Desde \(AAAA-MM-DD\)
+    point: 95%,50%
+- eraseText: 100
+- inputText: 2026-11-25
+- hideKeyboard
+- scrollUntilVisible:
+    element:
+      text: Hasta \(AAAA-MM-DD\)
+      below: Hasta \(AAAA-MM-DD\)
+    direction: DOWN
+    timeout: 30000
+- tapOn:
+    text: Hasta \(AAAA-MM-DD\)
+    below: Hasta \(AAAA-MM-DD\)
+    point: 95%,50%
+- eraseText: 100
+- inputText: 2026-11-24
+- hideKeyboard
+- scrollUntilVisible:
+    element:
+      text: Consultar resumen
+    direction: DOWN
+    timeout: 30000
+- tapOn: Consultar resumen
+- scrollUntilVisible:
+    element:
+      text: Escribe fechas válidas y un periodo de hasta 366 días.
+    direction: DOWN
+    timeout: 30000
+- assertVisible: Escribe fechas válidas y un periodo de hasta 366 días.
+- scrollUntilVisible:
+    element:
+      text: Cortes por fecha
+    direction: UP
+    timeout: 30000
+- scrollUntilVisible:
+    element:
+      text: Desde \(AAAA-MM-DD\)
+      below: Desde \(AAAA-MM-DD\)
+    direction: DOWN
+    timeout: 30000
+- tapOn:
+    text: Desde \(AAAA-MM-DD\)
+    below: Desde \(AAAA-MM-DD\)
+    point: 95%,50%
+- eraseText: 100
+- inputText: 2026-11-24
+- hideKeyboard
+- scrollUntilVisible:
+    element:
+      text: Consultar resumen
+    direction: DOWN
+    timeout: 30000
+- tapOn: Consultar resumen
+- scrollUntilVisible:
+    element:
+      text: "[$]37[.]50"
+    direction: DOWN
+    timeout: 30000
+- assertVisible: "[$]37[.]50"
+- assertVisible: 1 actividades incluidas.*0 canceladas
+- takeScreenshot: CN09-aprobado

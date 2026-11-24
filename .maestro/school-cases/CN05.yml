@@ -1,0 +1,27 @@
+appId: ${APP_ID}
+name: CN05 Alta inválida de servicio
+---
+- scrollUntilVisible:
+    element:
+      text: Catálogo de servicios
+    direction: UP
+    timeout: 30000
+- scrollUntilVisible:
+    element:
+      text: Agregar servicio
+    direction: DOWN
+    timeout: 30000
+- tapOn: Agregar servicio
+- scrollUntilVisible:
+    element:
+      text: Guardar servicio
+    direction: DOWN
+    timeout: 30000
+- tapOn: Guardar servicio
+- scrollUntilVisible:
+    element:
+      text: Escribe un nombre y un importe válido con hasta dos decimales.
+    direction: DOWN
+    timeout: 30000
+- assertVisible: Escribe un nombre y un importe válido con hasta dos decimales.
+- takeScreenshot: CN05-aprobado
