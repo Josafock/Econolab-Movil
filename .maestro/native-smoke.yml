@@ -18,11 +18,20 @@ name: Acceso consentimiento estudios perfil y cierre de sesión
     text: Correo electrónico
     below: Correo electrónico
 - inputText: ${EMAIL}
+- hideKeyboard
+- scrollUntilVisible:
+    element:
+      text: Contraseña
+      below: Contraseña
+    direction: DOWN
 - tapOn:
     text: Contraseña
     below: Contraseña
 - inputText: ${PASSWORD}
 - hideKeyboard
+- scrollUntilVisible:
+    element: Iniciar sesión
+    direction: DOWN
 - tapOn: Iniciar sesión
 - extendedWaitUntil:
     visible: Privacidad y mis datos|Estudios
@@ -171,11 +180,20 @@ name: Acceso consentimiento estudios perfil y cierre de sesión
     text: Correo electrónico
     below: Correo electrónico
 - inputText: ${EMAIL}
+- hideKeyboard
+- scrollUntilVisible:
+    element:
+      text: Contraseña
+      below: Contraseña
+    direction: DOWN
 - tapOn:
     text: Contraseña
     below: Contraseña
 - inputText: ${PASSWORD}
 - hideKeyboard
+- scrollUntilVisible:
+    element: Iniciar sesión
+    direction: DOWN
 - tapOn: Iniciar sesión
 - extendedWaitUntil:
     visible: El correo o la contraseña no son correctos.

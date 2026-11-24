@@ -3,6 +3,15 @@
     "version": ">= 25.3.0",
     "appVersionSource": "remote"
   },
+  "submit": {
+    "internal": {
+      "android": {
+        "serviceAccountKeyPath": "./google-play.json",
+        "track": "internal",
+        "releaseStatus": "completed"
+      }
+    }
+  },
   "build": {
     "preview": {
       "autoIncrement": true,

@@ -1,5 +1,12 @@
 # CI/CD personalizado de Econolab
 
+> Actualización A4 del 26 de octubre de 2026: la configuración vigente de esta
+> rama reduce la duplicación de suites y artifacts, exige aceptación nativa en
+> PR/main y agrega rendimiento, esfuerzo y liberación Android. Consulta
+> [la configuración y evidencia actuales](CI_CORRECCIONES_A4.md) y
+> [versionamiento](VERSIONAMIENTO.md). Las descripciones de matriz y artifacts
+> siguientes se conservan como historial de la primera configuración.
+
 ## Cuándo se ejecuta
 
 | Archivo | Evento | Resultado |

@@ -1,7 +1,14 @@
 package com.econolab.security;
 
-import java.io.IOException;
+import java.io.FileInputStream;
+import java.security.KeyStore;
+import java.security.cert.CertificateFactory;
 import java.util.concurrent.TimeUnit;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLHandshakeException;
+import javax.net.ssl.SSLPeerUnverifiedException;
+import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
 import okhttp3.CertificatePinner;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -9,36 +16,58 @@ import okhttp3.Response;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-/** Real TLS requests, no permissive TrustManager or mocked certificates. */
+/** Real TLS with an explicit ephemeral QA CA. No TrustAll, hostname override or public API dependency. */
 public class PinningTest {
-  private OkHttpClient client(String[] pins) {
-    CertificatePinner pinner = new CertificatePinner.Builder().add(ProductionPins.HOST, pins).build();
-    return new OkHttpClient.Builder().certificatePinner(pinner)
-      .callTimeout(60, TimeUnit.SECONDS).build();
+  private static final String HOST = "127.0.0.1";
+  private OkHttpClient client(String pin) throws Exception {
+    KeyStore roots = KeyStore.getInstance(KeyStore.getDefaultType());
+    roots.load(null);
+    try (FileInputStream input = new FileInputStream(System.getenv("ECONOLAB_QA_CA_FILE"))) {
+      roots.setCertificateEntry("qa-root", CertificateFactory.getInstance("X.509").generateCertificate(input));
+    }
+    TrustManagerFactory factory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+    factory.init(roots);
+    X509TrustManager trust = (X509TrustManager) factory.getTrustManagers()[0];
+    SSLContext tls = SSLContext.getInstance("TLS");
+    tls.init(null, new javax.net.ssl.TrustManager[] { trust }, null);
+    return new OkHttpClient.Builder().sslSocketFactory(tls.getSocketFactory(), trust)
+      .certificatePinner(new CertificatePinner.Builder().add(HOST, "sha256/" + pin).build())
+      .readTimeout(30, TimeUnit.SECONDS).callTimeout(45, TimeUnit.SECONDS).build();
   }
-  private Request request() {
-    return new Request.Builder().url("https://" + ProductionPins.HOST + "/api/privacy/notice").build();
+  private Request request(String host, int port) {
+    return new Request.Builder().url("https://" + host + ":" + port + "/api/privacy/notice").build();
   }
-  @Test public void validPinsAcceptTrustedServer() throws Exception {
-    try (Response response = client(ProductionPins.PINS).newCall(request()).execute()) {
-      // An older deployment may return 404; TLS must still have succeeded.
-      assertTrue(response.code() >= 200 && response.code() < 500);
+  @Test public void validQaPinAcceptsTrustedServer() throws Exception {
+    try (Response response = client(System.getenv("ECONOLAB_QA_TLS_PIN")).newCall(request(HOST, 3110)).execute()) {
+      assertEquals(200, response.code());
     }
   }
-  @Test public void issuerBackupAcceptsRenewalWithinConfiguredCA() throws Exception {
-    String[] backup = new String[] { ProductionPins.PINS[1], ProductionPins.PINS[2] };
-    try (Response response = client(backup).newCall(request()).execute()) {
-      assertTrue(response.code() >= 200 && response.code() < 500);
+  @Test public void issuerBackupAcceptsASecondCertificateFromTheQaCA() throws Exception {
+    // Port 3111 has a different leaf private key, signed by the same explicit QA CA.
+    try (Response response = client(System.getenv("ECONOLAB_QA_CA_PIN")).newCall(request(HOST, 3111)).execute()) {
+      assertEquals(200, response.code());
     }
   }
   @Test public void wrongPinRejectsOtherwiseTrustedServer() throws Exception {
-    String[] invalid = new String[] { "sha256/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=" };
-    try (Response ignored = client(invalid).newCall(request()).execute()) {
+    try (Response ignored = client("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=").newCall(request(HOST, 3110)).execute()) {
       fail("A wrong pin must never allow a connection");
-    } catch (IOException error) {
-      // A timeout does not prove pin enforcement: require the specific verification failure.
-      assertTrue(error instanceof javax.net.ssl.SSLPeerUnverifiedException);
+    } catch (SSLPeerUnverifiedException error) {
       assertTrue(error.getMessage().contains("Certificate pinning failure"));
+    }
+  }
+  @Test public void platformTrustDoesNotAcceptThePrivateQaCA() throws Exception {
+    OkHttpClient systemTrust = new OkHttpClient.Builder().callTimeout(30, TimeUnit.SECONDS).build();
+    try (Response ignored = systemTrust.newCall(request(HOST, 3110)).execute()) {
+      fail("A private QA CA must not be trusted by the public platform store");
+    } catch (SSLHandshakeException expected) {
+      assertNotNull(expected.getCause());
+    }
+  }
+  @Test public void hostnameVerificationRemainsRequired() throws Exception {
+    try (Response ignored = client(System.getenv("ECONOLAB_QA_TLS_PIN")).newCall(request("127.0.0.2", 3110)).execute()) {
+      fail("The certificate has no SAN for 127.0.0.2");
+    } catch (SSLPeerUnverifiedException expected) {
+      assertTrue(expected.getMessage().contains("Hostname"));
     }
   }
 }

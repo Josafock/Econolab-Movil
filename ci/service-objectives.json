@@ -1,0 +1,21 @@
+{
+  "status": "Proposed engineering objectives for isolated QA; not a customer-signed SLA",
+  "performance": {
+    "baselineVus": 1,
+    "baselineSeconds": 20,
+    "loadVus": 5,
+    "loadSeconds": 30,
+    "p95Ms": 800,
+    "errorRate": 0.01
+  },
+  "stress": {
+    "maxVus": 50,
+    "rampSeconds": 15,
+    "holdSeconds": 20,
+    "p95Ms": 1500,
+    "errorRate": 0.02
+  },
+  "recovery": { "vus": 1, "seconds": 15, "p95Ms": 800, "errorRate": 0 },
+  "comparison": { "maximumBaselineMultiplier": 3, "minimumAllowanceMs": 800 },
+  "pipeline": { "requiredPassRate": 1, "unresolvedCriticalFindings": 0, "reportRetentionDays": 90 }
+}

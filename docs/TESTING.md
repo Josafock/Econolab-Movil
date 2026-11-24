@@ -2,10 +2,13 @@
 
 Issue #9; tareas #33 #34 #35. Los datos ficticios se usan en pruebas unitarias y en el entorno Android QA aislado; nunca se incorporan como catálogo o autenticación alternativos de la app de producción. El script habitual de integración utiliza el cliente HTTP y los esquemas de estudios reales de `src`; no levanta otra API ni sustituye el backend.
 
+Esta sección conserva también antecedentes de la edición médica 1.1. Los conteos de pruebas que siguen corresponden a esa versión y a sus ejecuciones registradas, no a la rama administrativa. La aplicación administrativa y sus casos actuales se describen en [Edición Aula 2026](EDICION_AULA_2026-11-06.md). La evidencia A4 de selección de pruebas, reportes y verificación nativa está en [CI_CORRECCIONES_A4.md](CI_CORRECCIONES_A4.md) y [SEGUIMIENTO.md](evidencias-a4/SEGUIMIENTO.md); los resultados de octubre no acreditan recorridos de la edición administrativa.
+
 ## Comprobaciones automáticas
 
 - `npm run lint`: ESLint sin warnings permitidos.
 - `npm run typecheck`: TypeScript estricto.
+- `npm run format:check` y `npm run version:check`: formato de CI y coherencia del versionamiento antes de compilar.
 - `npm test -- --runInBand`: contratos, filtros, decimales, sesión, SecureStore, concurrencia, validaciones, errores y acceso protegido.
 - `npm run build`: bundles Android e iOS mediante Metro/Hermes. No genera APK/IPA.
 
@@ -35,7 +38,7 @@ Después de la integración del backend autorizada por el propietario, las siete
 
 La regresión tiene 179 casos en 19 suites, además de 22 pruebas de CI. La integración contra Render incluye ocho comprobaciones de acceso/perfil/estudios y seis adicionales mediante `npm run test:integration:security` para renovación, rotación y privacidad. Esta última crea y revoca únicamente sus sesiones de prueba; no cancela cuentas del servidor real.
 
-`native-verification.yml` genera Debug y Release QA con los módulos reales del backend en una base desechable. Ejecuta tres casos TLS OkHttp, el recorrido Maestro y JADX. Los resultados aprobados deben obtenerse del run terminado y sus artifacts, no deducirse de la configuración. Release QA no usa la firma del titular ni se distribuye en Play.
+`native-verification.yml` genera Debug y Release QA con módulos de backend y datos desechables. La configuración integrada exige cinco casos TLS OkHttp con JUnit nuevo y sin caché, ejecuta Maestro sobre la edición administrativa en ambos APK y analiza Release con JADX. Release QA no usa la firma del titular ni se distribuye en Play. Los resultados aprobados deben obtenerse del run terminado y sus artifacts, no deducirse de la configuración.
 
 `inspect-apk.yml` verifica con apksigner el APK EAS distribuible, compara su SHA-256 y ejecuta JADX sobre ese mismo archivo. No sustituye la ejecución de la interfaz en Android ni la revisión de Play Console.
 

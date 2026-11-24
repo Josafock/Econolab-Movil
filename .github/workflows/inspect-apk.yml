@@ -3,7 +3,13 @@ name: Inspeccionar APK firmado de distribución
 on:
   push:
     branches: ['fix/HU-08-seguridad-rubrica']
-    paths: ['.github/workflows/inspect-apk.yml', 'scripts/security/inspect-distribution.cjs', 'docs/evidencias-rubrica/APK_ACTUAL.json', 'docs/evidencias-rubrica/AAB_ACTUAL.json']
+    paths:
+      [
+        '.github/workflows/inspect-apk.yml',
+        'scripts/security/inspect-distribution.cjs',
+        'docs/evidencias-rubrica/APK_ACTUAL.json',
+        'docs/evidencias-rubrica/AAB_ACTUAL.json',
+      ]
   workflow_dispatch:
 
 permissions:
