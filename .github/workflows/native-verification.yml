@@ -90,19 +90,12 @@ jobs:
           done
           cat /tmp/econolab-native-backend.log
           exit 1
-      - name: Instalar Maestro con checksum publicado
-        env:
-          GH_TOKEN: ${{ github.token }}
+      - name: Instalar herramientas oficiales con SHA256 verificado
         run: |
-          downloaded=0
-          for attempt in 1 2 3; do
-            if gh release download cli-2.11.0 --repo mobile-dev-inc/Maestro --pattern maestro.zip --dir /tmp --clobber; then downloaded=1; break; fi
-            sleep 5
-          done
-          test "$downloaded" -eq 1
-          cd /tmp
-          echo '5384593cb4e7a106489e75a821d157dd43f4e438df6bc308b72e82c685e1283a  maestro.zip' | sha256sum --check
-          unzip -q maestro.zip -d /tmp
+          node native-tests/download-tool.cjs maestro
+          node native-tests/download-tool.cjs jadx
+          unzip -q /tmp/econolab-verified-tools/maestro.zip -d /tmp
+          unzip -q /tmp/econolab-verified-tools/jadx.zip -d /tmp/jadx
           echo /tmp/maestro/bin >> "$GITHUB_PATH"
       - name: Generar Android y verificar R8 y permisos
         run: |
@@ -188,8 +181,6 @@ jobs:
       - name: Analizar Release con JADX
         if: always() && steps.native_build.outcome == 'success'
         run: |
-          curl -fL https://github.com/skylot/jadx/releases/download/v1.5.6/jadx-1.5.6.zip -o /tmp/jadx.zip
-          unzip -q /tmp/jadx.zip -d /tmp/jadx
           node scripts/security/analyze-release.cjs android/app/build/outputs/apk/release/app-release.apk /tmp/jadx/bin/jadx
       - name: Cerrar entorno de prueba
         if: always()
