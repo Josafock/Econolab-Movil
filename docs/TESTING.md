@@ -38,7 +38,7 @@ Después de la integración del backend autorizada por el propietario, las siete
 
 La regresión tiene 179 casos en 19 suites, además de 22 pruebas de CI. La integración contra Render incluye ocho comprobaciones de acceso/perfil/estudios y seis adicionales mediante `npm run test:integration:security` para renovación, rotación y privacidad. Esta última crea y revoca únicamente sus sesiones de prueba; no cancela cuentas del servidor real.
 
-`native-verification.yml` genera Debug y Release QA con módulos de backend y datos desechables. La configuración integrada exige cinco casos TLS OkHttp con JUnit nuevo y sin caché, ejecuta Maestro sobre la edición administrativa en ambos APK y analiza Release con JADX. Release QA no usa la firma del titular ni se distribuye en Play. Los resultados aprobados deben obtenerse del run terminado y sus artifacts, no deducirse de la configuración.
+`native-verification.yml` genera Debug y Release QA con módulos de backend y datos desechables. La configuración integrada exige cinco casos TLS OkHttp locales con JUnit nuevo y sin caché, además de tres comprobaciones con los pines de producción contra el endpoint público. El TLS corre separado de Maestro; el recorrido administrativo captura el resultado de Debug y continúa con Release antes de devolver un fallo. También analiza Release con JADX. Release QA no usa la firma del titular ni se distribuye en Play. Los resultados aprobados deben obtenerse del run terminado y sus artifacts, no deducirse de la configuración.
 
 `inspect-apk.yml` verifica con apksigner el APK EAS distribuible, compara su SHA-256 y ejecuta JADX sobre ese mismo archivo. No sustituye la ejecución de la interfaz en Android ni la revisión de Play Console.
 

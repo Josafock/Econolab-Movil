@@ -15,9 +15,11 @@ adb shell settings put system font_scale 1.0
 adb logcat -c
 adb reverse tcp:8081 tcp:8081
 adb install android/app/build/outputs/apk/debug/app-debug.apk
+debug_result=0
 maestro test -e APP_ID=com.econolab.mobile.qa -e EMAIL=native-debug@example.test \
   -e PASSWORD="$SECURITY_QA_UI_PASSWORD" --format junit --output reports/native/maestro-debug.xml \
-  --test-output-dir reports/native/debug .maestro/school-blackbox.yml
+  --test-output-dir reports/native/debug .maestro/school-blackbox.yml || debug_result=$?
+cleanup
 adb uninstall com.econolab.mobile.qa
 kill "$QA_METRO_PID"
 for n in $(seq 1 15); do
@@ -30,6 +32,9 @@ if curl --max-time 1 -fsS http://127.0.0.1:8081/status >/dev/null 2>&1; then
 fi
 printf '%s\n' 'Metro stopped before installing and executing Release.' > reports/native/release-independence.txt
 adb install android/app/build/outputs/apk/release/app-release.apk
+release_result=0
 maestro test -e APP_ID=com.econolab.mobile.qa -e EMAIL=native-release@example.test \
   -e PASSWORD="$SECURITY_QA_UI_PASSWORD" --format junit --output reports/native/maestro-release.xml \
-  --test-output-dir reports/native/release .maestro/school-blackbox.yml
+  --test-output-dir reports/native/release .maestro/school-blackbox.yml || release_result=$?
+printf '{"debugExitCode":%d,"releaseExitCode":%d}\n' "$debug_result" "$release_result" > reports/native/variant-exit-codes.json
+if [ "$debug_result" -ne 0 ] || [ "$release_result" -ne 0 ]; then exit 1; fi

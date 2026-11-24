@@ -16,7 +16,10 @@ REQUIRED = {
 
 
 def verify(root):
-    log = (root / "gradle.log").read_text(encoding="utf-8")
+    log_path = root / "native-tls.log"
+    if not log_path.exists():
+        log_path = root / "gradle.log"
+    log = log_path.read_text(encoding="utf-8")
     markers = [line for line in log.splitlines() if line.startswith("> Task :app:testReleaseUnitTest")]
     if not markers or any(word in line for line in markers for word in
                           ["FROM-CACHE", "UP-TO-DATE", "NO-SOURCE", "SKIPPED", "FAILED"]):

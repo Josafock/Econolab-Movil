@@ -1,6 +1,7 @@
 package com.econolab.security;
 
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.security.KeyStore;
 import java.security.cert.CertificateFactory;
 import java.util.concurrent.TimeUnit;
@@ -16,10 +17,11 @@ import okhttp3.Response;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-/** Real TLS with an explicit ephemeral QA CA. No TrustAll, hostname override or public API dependency. */
+/** Real TLS checks for an ephemeral QA CA and the configured production pins. */
 public class PinningTest {
-  private static final String HOST = "127.0.0.1";
-  private OkHttpClient client(String pin) throws Exception {
+  private static final String QA_HOST = "127.0.0.1";
+
+  private OkHttpClient qaClient(String pin) throws Exception {
     KeyStore roots = KeyStore.getInstance(KeyStore.getDefaultType());
     roots.load(null);
     try (FileInputStream input = new FileInputStream(System.getenv("ECONOLAB_QA_CA_FILE"))) {
@@ -31,43 +33,83 @@ public class PinningTest {
     SSLContext tls = SSLContext.getInstance("TLS");
     tls.init(null, new javax.net.ssl.TrustManager[] { trust }, null);
     return new OkHttpClient.Builder().sslSocketFactory(tls.getSocketFactory(), trust)
-      .certificatePinner(new CertificatePinner.Builder().add(HOST, "sha256/" + pin).build())
+      .certificatePinner(new CertificatePinner.Builder().add(QA_HOST, "sha256/" + pin).build())
       .readTimeout(30, TimeUnit.SECONDS).callTimeout(45, TimeUnit.SECONDS).build();
   }
-  private Request request(String host, int port) {
+
+  private Request qaRequest(String host, int port) {
     return new Request.Builder().url("https://" + host + ":" + port + "/api/privacy/notice").build();
   }
+
+  private OkHttpClient productionClient(String[] pins) {
+    CertificatePinner pinner = new CertificatePinner.Builder().add(ProductionPins.HOST, pins).build();
+    return new OkHttpClient.Builder().certificatePinner(pinner)
+      .connectTimeout(30, TimeUnit.SECONDS)
+      .readTimeout(90, TimeUnit.SECONDS)
+      .callTimeout(120, TimeUnit.SECONDS).build();
+  }
+
+  private Request productionRequest() {
+    return new Request.Builder().url("https://" + ProductionPins.HOST + "/api/school/privacy/notice").build();
+  }
+
   @Test public void validQaPinAcceptsTrustedServer() throws Exception {
-    try (Response response = client(System.getenv("ECONOLAB_QA_TLS_PIN")).newCall(request(HOST, 3110)).execute()) {
+    try (Response response = qaClient(System.getenv("ECONOLAB_QA_TLS_PIN")).newCall(qaRequest(QA_HOST, 3110)).execute()) {
       assertEquals(200, response.code());
     }
   }
+
   @Test public void issuerBackupAcceptsASecondCertificateFromTheQaCA() throws Exception {
-    // Port 3111 has a different leaf private key, signed by the same explicit QA CA.
-    try (Response response = client(System.getenv("ECONOLAB_QA_CA_PIN")).newCall(request(HOST, 3111)).execute()) {
+    try (Response response = qaClient(System.getenv("ECONOLAB_QA_CA_PIN")).newCall(qaRequest(QA_HOST, 3111)).execute()) {
       assertEquals(200, response.code());
     }
   }
-  @Test public void wrongPinRejectsOtherwiseTrustedServer() throws Exception {
-    try (Response ignored = client("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=").newCall(request(HOST, 3110)).execute()) {
-      fail("A wrong pin must never allow a connection");
+
+  @Test public void wrongQaPinRejectsOtherwiseTrustedServer() throws Exception {
+    try (Response ignored = qaClient("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=").newCall(qaRequest(QA_HOST, 3110)).execute()) {
+      fail("A wrong QA pin must never allow a connection");
     } catch (SSLPeerUnverifiedException error) {
       assertTrue(error.getMessage().contains("Certificate pinning failure"));
     }
   }
+
   @Test public void platformTrustDoesNotAcceptThePrivateQaCA() throws Exception {
     OkHttpClient systemTrust = new OkHttpClient.Builder().callTimeout(30, TimeUnit.SECONDS).build();
-    try (Response ignored = systemTrust.newCall(request(HOST, 3110)).execute()) {
+    try (Response ignored = systemTrust.newCall(qaRequest(QA_HOST, 3110)).execute()) {
       fail("A private QA CA must not be trusted by the public platform store");
     } catch (SSLHandshakeException expected) {
       assertNotNull(expected.getCause());
     }
   }
+
   @Test public void hostnameVerificationRemainsRequired() throws Exception {
-    try (Response ignored = client(System.getenv("ECONOLAB_QA_TLS_PIN")).newCall(request("127.0.0.2", 3110)).execute()) {
+    try (Response ignored = qaClient(System.getenv("ECONOLAB_QA_TLS_PIN")).newCall(qaRequest("127.0.0.2", 3110)).execute()) {
       fail("The certificate has no SAN for 127.0.0.2");
     } catch (SSLPeerUnverifiedException expected) {
       assertTrue(expected.getMessage().contains("Hostname"));
+    }
+  }
+
+  @Test public void validProductionPinsAcceptRemoteSchoolServer() throws Exception {
+    try (Response response = productionClient(ProductionPins.PINS).newCall(productionRequest()).execute()) {
+      assertTrue(response.code() >= 200 && response.code() < 500);
+    }
+  }
+
+  @Test public void productionIssuerBackupAcceptsConfiguredRenewal() throws Exception {
+    String[] backup = new String[] { ProductionPins.PINS[1], ProductionPins.PINS[2] };
+    try (Response response = productionClient(backup).newCall(productionRequest()).execute()) {
+      assertTrue(response.code() >= 200 && response.code() < 500);
+    }
+  }
+
+  @Test public void wrongProductionPinRejectsRemoteSchoolServer() throws Exception {
+    String[] invalid = new String[] { "sha256/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=" };
+    try (Response ignored = productionClient(invalid).newCall(productionRequest()).execute()) {
+      fail("A wrong production pin must never allow a connection");
+    } catch (IOException error) {
+      assertTrue(error instanceof SSLPeerUnverifiedException);
+      assertTrue(error.getMessage().contains("Certificate pinning failure"));
     }
   }
 }
