@@ -129,6 +129,19 @@ def tap(selector):
     command('POST', '/element/' + element + '/click', {})
     if node.get('class') == 'android.widget.EditText':
         FIELD = element
+    # Let React commit the action, then wait on visible progress indicators.
+    # This waits for the original action; it never submits or retries it again.
+    time.sleep(.4)
+    deadline = time.monotonic() + 65
+    while True:
+        tree = ET.fromstring(command('GET', '/source'))
+        busy = [item for item in tree.iter() if item.get('package') == APP and
+                item.get('class') == 'android.widget.ProgressBar' and item.get('displayed', 'true') != 'false']
+        if not busy:
+            break
+        if time.monotonic() >= deadline:
+            raise AssertionError('The app remains busy after the UI action')
+        time.sleep(.5)
 
 
 def execute(commands):

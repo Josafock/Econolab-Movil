@@ -2,6 +2,8 @@ import { z } from 'zod';
 
 import { api } from '@/core/api';
 import { AppError } from '@/core/errors';
+import { parseResponse } from '@/core/validation';
+import { userSchema, type User } from './user';
 import { createSession, type Session } from './session';
 
 export const credentialsSchema = z.object({
@@ -29,8 +31,10 @@ export async function loginRequest(email: string, password: string, signal?: Abo
 }
 
 /** Session validation reads only the account profile. */
-export async function validateSession(signal?: AbortSignal, expireOnUnauthorized = true): Promise<void> {
-  await api.request('/users/me', { signal, expireOnUnauthorized, timeoutMs: 60000 });
+export async function validateSession(signal?: AbortSignal, expireOnUnauthorized = true): Promise<User> {
+  const profile = parseResponse(userSchema, await api.request('/users/me', { signal, expireOnUnauthorized, timeoutMs: 60000 }));
+  if (profile.rol === 'unassigned') throw new AppError('forbidden', 'Esta cuenta ya no tiene acceso. Contacta al administrador.', 403);
+  return profile;
 }
 
 export async function logoutRequest(session?: Session): Promise<void> {

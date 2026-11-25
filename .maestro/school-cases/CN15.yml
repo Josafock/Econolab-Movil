@@ -14,8 +14,13 @@ name: CN15 Reiniciar sólo ejercicios
 - tapOn: Reiniciar ejercicios
 - scrollUntilVisible:
     element:
-      text: Espacio de práctica reiniciado.
+      text: Actividades
     direction: UP
+    timeout: 30000
+- scrollUntilVisible:
+    element:
+      text: Espacio de práctica reiniciado.
+    direction: DOWN
     timeout: 30000
 - scrollUntilVisible:
     element:

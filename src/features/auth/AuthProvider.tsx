@@ -106,14 +106,16 @@ export function AuthProvider({ children }: PropsWithChildren) {
         const renewed = await refresh(candidate.token);
         if (!renewed) { await clearSession(expirationNotice); return; }
       }
-      await validateSession(controller.signal, false);
+      const profile = await validateSession(controller.signal, false);
       if (!isCurrent(id)) return;
       const active = currentSession.current;
       if (!active || isSessionExpired(active)) {
         await clearSession(expirationNotice);
         return;
       }
-      setState({ session: active, status: 'authenticated' });
+      if (profile.id !== active.usuario.id) throw new AppError('unexpected', 'El perfil recibido no corresponde a tu cuenta.');
+      // Recover the current server identity without changing the signed login snapshot.
+      setState({ session: active, status: 'authenticated', profile });
     } catch (error) {
       if (!isCurrent(id) || isCancelled(error)) return;
       api.setToken(null);

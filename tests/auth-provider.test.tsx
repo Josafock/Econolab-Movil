@@ -5,7 +5,7 @@ import { api } from '@/core/api';
 import { AppError } from '@/core/errors';
 import { AuthProvider, useAuth } from '@/features/auth/AuthProvider';
 import { loginRequest, logoutRequest, refreshRequest, validateSession } from '@/features/auth/api';
-import { readSession, removeSession, saveSession, type Session } from '@/features/auth/session';
+import { readSession, removeSession, saveSession, type Session, type User } from '@/features/auth/session';
 
 jest.mock('@/core/api', () => ({ api: { setToken: jest.fn(), setUnauthorizedHandler: jest.fn(), setRefreshHandler: jest.fn() } }));
 jest.mock('@/features/auth/api', () => ({ loginRequest: jest.fn(), logoutRequest: jest.fn(), refreshRequest: jest.fn(), validateSession: jest.fn() }));
@@ -40,7 +40,7 @@ it('rejects a profile response from another account or an earlier login', async 
     expect(result.current.applyProfile({ ...session.usuario, id: '14' }, session.token)).toBe(false);
     expect(result.current.applyProfile(session.usuario, 'old-session-fixture')).toBe(false);
   });
-  expect(result.current.profile).toBeUndefined();
+  expect(result.current.profile).toEqual(session.usuario);
 });
 
 it('cannot restore profile data after logout', async () => {
@@ -57,21 +57,54 @@ beforeEach(() => {
   jest.mocked(readSession).mockResolvedValue(null);
   jest.mocked(saveSession).mockResolvedValue(undefined);
   jest.mocked(removeSession).mockResolvedValue(undefined);
-  jest.mocked(validateSession).mockResolvedValue(undefined);
+  jest.mocked(validateSession).mockResolvedValue(session.usuario);
   jest.mocked(logoutRequest).mockResolvedValue(undefined);
   jest.mocked(loginRequest).mockResolvedValue(session);
 });
 
 it('restores access only after the server verifies the saved session', async () => {
   jest.mocked(readSession).mockResolvedValueOnce(session);
-  let verify: (() => void) | undefined;
-  jest.mocked(validateSession).mockImplementationOnce(() => new Promise<void>((resolve) => { verify = resolve; }));
+  let verify: ((value: User) => void) | undefined;
+  jest.mocked(validateSession).mockImplementationOnce(() => new Promise<User>((resolve) => { verify = resolve; }));
   const { result } = renderHook(useAuth, { wrapper });
   await waitFor(() => expect(validateSession).toHaveBeenCalledTimes(1));
   expect(result.current.status).toBe('loading');
   expect(result.current.session).toBeNull();
-  await act(async () => { verify?.(); });
+  await act(async () => { verify?.(session.usuario); });
   await waitFor(() => expect(result.current.status).toBe('authenticated'));
+});
+
+it('restores the edited server profile while retaining the original signed session', async () => {
+  const updated = { ...session.usuario, nombre: 'Perfil QA', email: 'nuevo@example.test' };
+  jest.mocked(readSession).mockResolvedValueOnce(session);
+  jest.mocked(validateSession).mockResolvedValueOnce(updated);
+  const { result } = renderHook(useAuth, { wrapper });
+  await waitFor(() => expect(result.current.status).toBe('authenticated'));
+  expect(result.current.profile).toEqual(updated);
+  expect(result.current.session).toEqual(session);
+  expect(saveSession).not.toHaveBeenCalled();
+});
+
+it('blocks a restored profile belonging to a different account', async () => {
+  jest.mocked(readSession).mockResolvedValueOnce(session);
+  jest.mocked(validateSession).mockResolvedValueOnce({ ...session.usuario, id: '14' });
+  const { result } = renderHook(useAuth, { wrapper });
+  await waitFor(() => expect(result.current.status).toBe('error'));
+  expect(result.current.session).toBeNull();
+  expect(result.current.profile).toBeUndefined();
+  expect(api.setToken).toHaveBeenLastCalledWith(null);
+});
+
+it('discards a restored profile returned after logout', async () => {
+  jest.mocked(readSession).mockResolvedValueOnce(session);
+  let complete!: (value: User) => void;
+  jest.mocked(validateSession).mockImplementationOnce(() => new Promise<User>(resolve => { complete = resolve; }));
+  const { result } = renderHook(useAuth, { wrapper });
+  await waitFor(() => expect(validateSession).toHaveBeenCalledTimes(1));
+  await act(async () => { await result.current.logout(); });
+  await act(async () => { complete({ ...session.usuario, nombre: 'Respuesta tardía' }); });
+  expect(result.current.status).toBe('anonymous');
+  expect(result.current.profile).toBeUndefined();
 });
 
 it('blocks saved-session access offline and supports a real retry', async () => {

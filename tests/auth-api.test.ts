@@ -34,9 +34,20 @@ it('does not expose a backend reason for an unavailable account', async () => {
 });
 
 it('checks an existing protected endpoint without inventing a current-user API', async () => {
-  jest.mocked(api.request).mockResolvedValueOnce({ data: [] });
-  await validateSession();
+  const profile = { id: 13, nombre: 'Perfil actualizado', email: 'equipo@example.test', rol: 'recepcionista' };
+  jest.mocked(api.request).mockResolvedValueOnce(profile);
+  await expect(validateSession()).resolves.toEqual({ ...profile, id: '13' });
   expect(api.request).toHaveBeenCalledWith('/users/me', { signal: undefined, expireOnUnauthorized: true, timeoutMs: 60000 });
+});
+
+it('rejects an invalid account response while restoring the session', async () => {
+  jest.mocked(api.request).mockResolvedValueOnce({ data: [] });
+  await expect(validateSession()).rejects.toMatchObject({ kind: 'unexpected' });
+});
+
+it('rejects a current account without an assigned role', async () => {
+  jest.mocked(api.request).mockResolvedValueOnce({ id: 13, nombre: 'Perfil', email: 'equipo@example.test', rol: 'unassigned' });
+  await expect(validateSession()).rejects.toMatchObject({ kind: 'forbidden', status: 403 });
 });
 
 it('sends logout with no body and handles revocation errors in the provider', async () => {

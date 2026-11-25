@@ -14,8 +14,13 @@ name: CN10 Cancelar y excluir del corte
 - tapOn: Sí, cancelar actividad
 - scrollUntilVisible:
     element:
-      text: Actividad cancelada.
+      text: Actividades
     direction: UP
+    timeout: 30000
+- scrollUntilVisible:
+    element:
+      text: Actividad cancelada.
+    direction: DOWN
     timeout: 30000
 - scrollUntilVisible:
     element:
