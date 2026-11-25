@@ -20,6 +20,7 @@ const result = spawnSync(jadx, ['--no-res', '--no-debug-info', '-j', '2', '-d', 
 });
 fs.writeFileSync(path.join(reportDir, 'jadx.log'), `${result.stdout ?? ''}\n${result.stderr ?? ''}`);
 const javaFiles = fs.existsSync(path.join(output, 'sources')) ? fs.readdirSync(path.join(output, 'sources'), { recursive: true }).filter(file => file.endsWith('.java')).length : 0;
+const jadxErrors = /finished with errors, count:\s*(\d+)/i.exec(`${result.stdout ?? ''}\n${result.stderr ?? ''}`);
 const report = {
   executedAt: new Date().toISOString(), commit: process.env.GITHUB_SHA ?? null,
   variant: 'QA Release, signing key for testing; not a Play publication',
@@ -27,6 +28,8 @@ const report = {
   apkSizeBytes: fs.statSync(apk).size,
   r8TaskExecuted: r8, shrinkResourcesEnabled: shrinking, mappingClassCount: classes.length,
   renamedClasses: renamed, jadxVersion: '1.5.6', jadxExitCode: result.status, recoveredJavaFiles: javaFiles,
+  jadxErrorCount: jadxErrors ? Number(jadxErrors[1]) : (result.status === 0 ? 0 : null),
+  decompilationComplete: result.status === 0,
   interpretation: 'R8 changes names and reduces code/resources. JADX still recovers parts of the APK. This is not encryption of JavaScript nor proof of impossible decompilation. Preserve mapping privately for crash diagnosis.',
 };
 fs.writeFileSync(path.join(reportDir, 'release-analysis.json'), JSON.stringify(report, null, 2));

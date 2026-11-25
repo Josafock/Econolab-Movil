@@ -1,6 +1,12 @@
 appId: ${APP_ID}
 name: CN15 Reiniciar sólo ejercicios
 ---
+- stopApp
+- launchApp:
+    clearState: false
+- extendedWaitUntil:
+    visible: Hola, Perfil
+    timeout: 60000
 - tapOn: Actividad
 - scrollUntilVisible:
     element:
