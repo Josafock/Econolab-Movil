@@ -20,6 +20,11 @@ name: CN05 Alta inválida de servicio
 - tapOn: Guardar servicio
 - scrollUntilVisible:
     element:
+      text: Nuevo servicio de práctica
+    direction: UP
+    timeout: 30000
+- scrollUntilVisible:
+    element:
       text: Escribe un nombre y un importe válido con hasta dos decimales.
     direction: DOWN
     timeout: 30000

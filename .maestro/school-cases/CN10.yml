@@ -31,6 +31,32 @@ name: CN10 Cancelar y excluir del corte
     timeout: 30000
 - scrollUntilVisible:
     element:
+      text: Desde \(AAAA-MM-DD\)
+      below: Desde \(AAAA-MM-DD\)
+    direction: DOWN
+    timeout: 30000
+- tapOn:
+    text: Desde \(AAAA-MM-DD\)
+    below: Desde \(AAAA-MM-DD\)
+    point: 95%,50%
+- eraseText: 100
+- inputText: 2026-11-24
+- hideKeyboard
+- scrollUntilVisible:
+    element:
+      text: Hasta \(AAAA-MM-DD\)
+      below: Hasta \(AAAA-MM-DD\)
+    direction: DOWN
+    timeout: 30000
+- tapOn:
+    text: Hasta \(AAAA-MM-DD\)
+    below: Hasta \(AAAA-MM-DD\)
+    point: 95%,50%
+- eraseText: 100
+- inputText: 2026-11-24
+- hideKeyboard
+- scrollUntilVisible:
+    element:
       text: Consultar resumen
     direction: DOWN
     timeout: 30000

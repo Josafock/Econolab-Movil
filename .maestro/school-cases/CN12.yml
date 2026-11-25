@@ -28,6 +28,25 @@ name: CN12 Oposición y preferencias
 - extendedWaitUntil:
     visible: Tus decisiones de privacidad se guardaron.
     timeout: 60000
+- stopApp
+- launchApp:
+    clearState: false
+- extendedWaitUntil:
+    visible: Hola, Perfil
+    timeout: 60000
+- tapOn: Perfil
+- extendedWaitUntil:
+    visible: Mi perfil
+    timeout: 60000
+- scrollUntilVisible:
+    element:
+      text: Privacidad y mis datos
+    direction: DOWN
+    timeout: 30000
+- tapOn: Privacidad y mis datos
+- extendedWaitUntil:
+    visible: Privacidad y mis datos
+    timeout: 60000
 - scrollUntilVisible:
     element:
       text: Permitir comunicaciones opcionales
@@ -46,4 +65,31 @@ name: CN12 Oposición y preferencias
 - extendedWaitUntil:
     visible: Tus decisiones de privacidad se guardaron.
     timeout: 60000
+- stopApp
+- launchApp:
+    clearState: false
+- extendedWaitUntil:
+    visible: Hola, Perfil
+    timeout: 60000
+- tapOn: Perfil
+- extendedWaitUntil:
+    visible: Mi perfil
+    timeout: 60000
+- scrollUntilVisible:
+    element:
+      text: Privacidad y mis datos
+    direction: DOWN
+    timeout: 30000
+- tapOn: Privacidad y mis datos
+- extendedWaitUntil:
+    visible: Privacidad y mis datos
+    timeout: 60000
+- scrollUntilVisible:
+    element:
+      text: Permitir comunicaciones opcionales
+    direction: DOWN
+    timeout: 30000
+- assertVisible:
+    text: Permitir comunicaciones opcionales
+    checked: false
 - takeScreenshot: CN12-aprobado

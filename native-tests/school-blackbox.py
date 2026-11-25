@@ -113,17 +113,22 @@ def screenshot(name):
 def tap(selector):
     global FIELD
     node = wait_visible(selector)
+    label = node.get('content-desc')
     if node.get('class') == 'android.widget.EditText':
-        label = node.get('content-desc')
         if not label or '"' in label:
             raise RuntimeError('Cannot identify the native input safely')
-        value = command('POST', '/element', {'using': 'xpath', 'value':
-            '//android.widget.EditText[@content-desc="' + label + '"]'})
-        FIELD = next(value[key] for key in value if key.startswith('element-'))
-        command('POST', '/element/' + FIELD + '/click', {})
+        selector = {'using': 'xpath', 'value':
+                    '//android.widget.EditText[@content-desc="' + label + '"]'}
+    elif label:
+        selector = {'using': 'accessibility id', 'value': label}
     else:
-        left, top, right, bottom = bounds(node)
-        adb('shell', 'input', 'tap', str((left + right) // 2), str((top + bottom) // 2))
+        selector = {'using': '-android uiautomator', 'value':
+                    'new UiSelector().text(' + json.dumps(node.get('text', ''), ensure_ascii=False) + ')'}
+    value = command('POST', '/element', selector)
+    element = next(value[key] for key in value if key.startswith('element-'))
+    command('POST', '/element/' + element + '/click', {})
+    if node.get('class') == 'android.widget.EditText':
+        FIELD = element
 
 
 def execute(commands):
@@ -204,6 +209,11 @@ def main():
                                 'seconds': time.monotonic() - start, 'error': type(error).__name__, 'detail': str(error)})
                 try:
                     screenshot(case['id'] + '-fallo')
+                    hierarchy = command('GET', '/source')
+                    for key in ['SECURITY_QA_UI_PASSWORD', 'PASSWORD', 'JWT_SECRET', 'DATABASE_PASS']:
+                        if os.environ.get(key):
+                            hierarchy = hierarchy.replace(os.environ[key], '[REDACTED]')
+                    (OUT / (case['id'] + '-fallo.xml')).write_text(hierarchy, encoding='utf-8')
                 except Exception:
                     pass
                 raise

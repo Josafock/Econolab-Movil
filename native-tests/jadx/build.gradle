@@ -1,5 +1,9 @@
 plugins { id 'application' }
-repositories { mavenCentral() }
+repositories {
+    // Google Cloud's documented Maven Central mirror avoids Central's HTTP 429.
+    maven { url 'https://maven-central.storage-download.googleapis.com/maven2/' }
+    mavenCentral()
+}
 dependencies { implementation 'io.github.skylot:jadx-cli:1.5.6' }
 application {
     mainClass = 'jadx.cli.JadxCLI'
