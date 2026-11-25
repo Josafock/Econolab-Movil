@@ -1,4 +1,5 @@
 const fs = require('node:fs');
+const { Buffer } = require('node:buffer');
 const os = require('node:os');
 const path = require('node:path');
 const { createHash } = require('node:crypto');

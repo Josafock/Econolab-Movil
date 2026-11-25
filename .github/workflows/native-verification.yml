@@ -101,13 +101,10 @@ jobs:
           done
           cat /tmp/econolab-native-backend.log
           exit 1
-      - name: Instalar herramientas oficiales con SHA256 verificado
+      - name: Instalar Appium y UiAutomator2 de la planeación
         run: |
-          node native-tests/download-tool.cjs maestro
-          node native-tests/download-tool.cjs jadx
-          unzip -q /tmp/econolab-verified-tools/maestro.zip -d /tmp
-          unzip -q /tmp/econolab-verified-tools/jadx.zip -d /tmp/jadx
-          echo /tmp/maestro/bin >> "$GITHUB_PATH"
+          npm install --prefix /tmp/econolab-appium appium@3.8.0 --no-audit --no-fund
+          /tmp/econolab-appium/node_modules/.bin/appium driver install uiautomator2@8.7.1
       - name: Iniciar TLS alterno para comprobar renovación bajo la misma CA
         run: |
           node scripts/ci/qa-tls-renewal.cjs > /tmp/econolab-renewal.log 2>&1 &
@@ -208,7 +205,11 @@ jobs:
       - name: Analizar Release con JADX
         if: always() && steps.native_build.outcome == 'success'
         run: |
-          node scripts/security/analyze-release.cjs android/app/build/outputs/apk/release/app-release.apk /tmp/jadx/bin/jadx
+          export JAVA_HOME="${JAVA_HOME_21_X64:-$JAVA_HOME}"
+          android/gradlew -p native-tests/jadx installDist --no-daemon --max-workers=2 > reports/native/jadx-install.log 2>&1
+          native-tests/jadx/build/install/jadx/bin/jadx --version > reports/native/jadx-version.txt
+          find native-tests/jadx/build/install/jadx/lib -name '*.jar' -exec sha256sum {} + > reports/native/jadx-libraries-sha256.txt
+          node scripts/security/analyze-release.cjs android/app/build/outputs/apk/release/app-release.apk native-tests/jadx/build/install/jadx/bin/jadx
       - name: Cerrar entorno de prueba
         if: always()
         run: |

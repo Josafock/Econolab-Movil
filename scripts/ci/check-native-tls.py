@@ -9,7 +9,7 @@ import xml.etree.ElementTree as ET
 REQUIRED = {
     "validQaPinAcceptsTrustedServer",
     "issuerBackupAcceptsASecondCertificateFromTheQaCA",
-    "wrongPinRejectsOtherwiseTrustedServer",
+    "wrongQaPinRejectsOtherwiseTrustedServer",
     "platformTrustDoesNotAcceptThePrivateQaCA",
     "hostnameVerificationRemainsRequired",
 }

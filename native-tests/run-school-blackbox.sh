@@ -8,17 +8,19 @@ cleanup() {
   adb logcat -d -b crash > reports/native/android-crashes.log 2>/dev/null || true
 }
 trap cleanup EXIT
-adb wait-for-device
+bash scripts/ci/wait-android.sh
 adb shell input keyevent 82
 adb shell am force-stop com.google.android.apps.nexuslauncher
 adb shell settings put system font_scale 1.0
 adb logcat -c
 adb reverse tcp:8081 tcp:8081
+node native-tests/export-blackbox-plan.cjs
+/tmp/econolab-appium/node_modules/.bin/appium --address 127.0.0.1 --port 4723 --log-level warn --log-no-colors --log reports/native/appium.log > /tmp/econolab-appium.log 2>&1 &
+school_appium_pid=$!
+trap 'cleanup; kill "$school_appium_pid" 2>/dev/null || true' EXIT
 adb install android/app/build/outputs/apk/debug/app-debug.apk
 debug_result=0
-maestro test -e APP_ID=com.econolab.mobile.qa -e EMAIL=native-debug@example.test \
-  -e PASSWORD="$SECURITY_QA_UI_PASSWORD" --format junit --output reports/native/maestro-debug.xml \
-  --test-output-dir reports/native/debug .maestro/school-blackbox.yml || debug_result=$?
+VARIANT=debug EMAIL=native-debug@example.test PASSWORD="$SECURITY_QA_UI_PASSWORD" python3 native-tests/school-blackbox.py || debug_result=$?
 cleanup
 adb uninstall com.econolab.mobile.qa
 kill "$QA_METRO_PID"
@@ -33,8 +35,6 @@ fi
 printf '%s\n' 'Metro stopped before installing and executing Release.' > reports/native/release-independence.txt
 adb install android/app/build/outputs/apk/release/app-release.apk
 release_result=0
-maestro test -e APP_ID=com.econolab.mobile.qa -e EMAIL=native-release@example.test \
-  -e PASSWORD="$SECURITY_QA_UI_PASSWORD" --format junit --output reports/native/maestro-release.xml \
-  --test-output-dir reports/native/release .maestro/school-blackbox.yml || release_result=$?
+VARIANT=release EMAIL=native-release@example.test PASSWORD="$SECURITY_QA_UI_PASSWORD" python3 native-tests/school-blackbox.py || release_result=$?
 printf '{"debugExitCode":%d,"releaseExitCode":%d}\n' "$debug_result" "$release_result" > reports/native/variant-exit-codes.json
 if [ "$debug_result" -ne 0 ] || [ "$release_result" -ne 0 ]; then exit 1; fi
