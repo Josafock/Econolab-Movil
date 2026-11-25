@@ -50,7 +50,7 @@ name: CN12 Oposición y preferencias
 - scrollUntilVisible:
     element:
       text: Permitir comunicaciones opcionales
-    direction: UP
+    direction: DOWN
     timeout: 30000
 - assertVisible:
     text: Permitir comunicaciones opcionales
