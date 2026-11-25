@@ -25,9 +25,17 @@ name: CN12 Oposición y preferencias
     direction: DOWN
     timeout: 30000
 - tapOn: Guardar mis decisiones
-- extendedWaitUntil:
-    visible: Tus decisiones de privacidad se guardaron.
+- scrollUntilVisible:
+    element:
+      text: Finalidades opcionales
+    direction: UP
+    timeout: 30000
+- scrollUntilVisible:
+    element:
+      text: Tus decisiones de privacidad se guardaron.
+    direction: DOWN
     timeout: 60000
+- assertVisible: Tus decisiones de privacidad se guardaron.
 - stopApp
 - launchApp:
     clearState: false
@@ -62,9 +70,17 @@ name: CN12 Oposición y preferencias
     direction: DOWN
     timeout: 30000
 - tapOn: Guardar mis decisiones
-- extendedWaitUntil:
-    visible: Tus decisiones de privacidad se guardaron.
+- scrollUntilVisible:
+    element:
+      text: Finalidades opcionales
+    direction: UP
+    timeout: 30000
+- scrollUntilVisible:
+    element:
+      text: Tus decisiones de privacidad se guardaron.
+    direction: DOWN
     timeout: 60000
+- assertVisible: Tus decisiones de privacidad se guardaron.
 - stopApp
 - launchApp:
     clearState: false

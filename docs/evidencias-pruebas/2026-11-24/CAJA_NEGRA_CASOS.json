@@ -90,8 +90,8 @@
   {
     "id": "CN12",
     "name": "Oposición y preferencias",
-    "input": "Activar comunicaciones opcionales, guardar, desactivar y guardar",
-    "expected": "Switches inicialmente apagados y preferencias persistidas",
+    "input": "Activar y guardar comunicaciones opcionales; reabrir; desactivar, guardar y reabrir",
+    "expected": "Opción inicialmente apagada; ambos cambios conservados al reabrir",
     "debug": "PENDING",
     "release": "PENDING"
   },
