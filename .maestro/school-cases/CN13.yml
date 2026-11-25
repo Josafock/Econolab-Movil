@@ -1,0 +1,71 @@
+appId: ${APP_ID}
+name: CN13 Sesión persistente y cierre
+---
+- stopApp
+- launchApp:
+    clearState: false
+- extendedWaitUntil:
+    visible: Hola, Perfil
+    timeout: 60000
+- tapOn: Perfil
+- extendedWaitUntil:
+    visible: Mi perfil
+    timeout: 60000
+- scrollUntilVisible:
+    element:
+      text: Perfil QA
+    direction: DOWN
+    timeout: 30000
+- assertVisible: Perfil QA
+- tapOn: Inicio
+- scrollUntilVisible:
+    element:
+      text: Cerrar sesión
+    direction: DOWN
+    timeout: 30000
+- tapOn: Cerrar sesión
+- extendedWaitUntil:
+    visible: Bienvenido
+    timeout: 60000
+- back
+- launchApp:
+    clearState: false
+- extendedWaitUntil:
+    visible: Bienvenido
+    timeout: 60000
+- scrollUntilVisible:
+    element:
+      text: Correo electrónico
+      below: Correo electrónico
+    direction: DOWN
+    timeout: 30000
+- tapOn:
+    text: Correo electrónico
+    below: Correo electrónico
+    point: 95%,50%
+- eraseText: 100
+- inputText: ${EMAIL}
+- hideKeyboard
+- scrollUntilVisible:
+    element:
+      text: Contraseña
+      below: Contraseña
+    direction: DOWN
+    timeout: 30000
+- tapOn:
+    text: Contraseña
+    below: Contraseña
+    point: 95%,50%
+- eraseText: 100
+- inputText: ${PASSWORD}
+- hideKeyboard
+- scrollUntilVisible:
+    element:
+      text: Iniciar sesión
+    direction: DOWN
+    timeout: 30000
+- tapOn: Iniciar sesión
+- extendedWaitUntil:
+    visible: Hola, Perfil
+    timeout: 60000
+- takeScreenshot: CN13-aprobado

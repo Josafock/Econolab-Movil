@@ -1,6 +1,9 @@
 import { validateApiUrl } from '../src/core/config';
+import dataset from './fixtures/config.json';
 
 describe('API configuration', () => {
+  it.each(dataset.valid)('normalizes the versioned QA dataset $input', ({ input, expected }) => expect(validateApiUrl(input)).toBe(expected));
+  it.each(dataset.invalid)('rejects an invalid fixture endpoint %s', input => expect(() => validateApiUrl(input)).toThrow());
   it('normalizes an HTTPS endpoint', () => expect(validateApiUrl('https://example.test/api/')).toBe('https://example.test/api'));
   it('requires configuration', () => expect(() => validateApiUrl('')).toThrow());
   it('rejects credential-bearing URLs and insecure published URLs', () => {

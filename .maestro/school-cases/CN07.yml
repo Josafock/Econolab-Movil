@@ -1,0 +1,24 @@
+appId: ${APP_ID}
+name: CN07 Disponibilidad del servicio
+---
+- scrollUntilVisible:
+    element:
+      text: Pausar Apoyo QA
+    direction: DOWN
+    timeout: 30000
+- tapOn: Pausar Apoyo QA
+- extendedWaitUntil:
+    visible: Activar Apoyo QA
+    timeout: 60000
+- assertVisible: Pausado
+- scrollUntilVisible:
+    element:
+      text: Activar Apoyo QA
+    direction: DOWN
+    timeout: 30000
+- tapOn: Activar Apoyo QA
+- extendedWaitUntil:
+    visible: Pausar Apoyo QA
+    timeout: 60000
+- assertVisible: Disponible
+- takeScreenshot: CN07-aprobado

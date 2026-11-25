@@ -1,0 +1,76 @@
+{
+  "reviewedAt": "2026-10-25",
+  "scope": "October activities 5 and 4; not the November Debug/Release matrix",
+  "pullRequest": "https://github.com/Josafock/Econolab-Movil/pull/59",
+  "developCreatedFrom": "bbd004feff479ce09b022c9d9e2b0a7b5c523711",
+  "native": {
+    "runId": 40229958547,
+    "source": "https://github.com/Josafock/Econolab-Movil/actions/runs/40229958547",
+    "commit": "30ac71d7e00a67651ef887065607b2f00629478f",
+    "conclusion": "success",
+    "variant": "native QA Release with test-only TLS and backend",
+    "physicalDevice": false,
+    "apiLevel": 35,
+    "cases": [
+      {
+        "configuration": "normal",
+        "passed": true,
+        "junit": "octubre-normal.xml",
+        "screenshots": 14
+      },
+      {
+        "configuration": "compacto",
+        "passed": true,
+        "junit": "octubre-compacto.xml",
+        "screenshots": 14
+      }
+    ],
+    "applicationSourceMatchesApk": true,
+    "apkSourceCommit": "e037d41bae8349c0652a83f7b8aaa7a3f7fd694e",
+    "viewports": [
+      {
+        "pixels": "1080x2400",
+        "dpi": 420,
+        "fontScale": 1.0
+      },
+      {
+        "pixels": "720x1280",
+        "dpi": 320,
+        "fontScale": 1.3
+      }
+    ],
+    "backendCommit": "8634ba3dc1071703cb263622809b3fe244acd026"
+  },
+  "regression": {
+    "runId": 40229958561,
+    "tests": 179,
+    "passed": 179,
+    "suites": 19,
+    "ciConfigurationTests": 22,
+    "lint": "passed",
+    "typecheck": "passed"
+  },
+  "team": [
+    {
+      "login": "DavidHdz117",
+      "name": "Jesús David Saldaña Hernández"
+    },
+    {
+      "login": "Josafock",
+      "name": "Kristofer"
+    }
+  ],
+  "humanValidation": [
+    "Both members confirm and explain their recorded contributions",
+    "Teacher assesses balanced participation and accepts timing",
+    "Practice on the physical phone used in class"
+  ],
+  "distribution": {
+    "metadata": "APK_OCTUBRE.json",
+    "verification": "APK_OCTUBRE_VERIFICACION.json",
+    "versionCode": "6",
+    "sha256": "933b5c6a5e5956dee7b54c868aeae9b5ba60965780326c78d0ed58070f3f54d3"
+  },
+  "mainMerged": false,
+  "projectSprintsChanged": false
+}

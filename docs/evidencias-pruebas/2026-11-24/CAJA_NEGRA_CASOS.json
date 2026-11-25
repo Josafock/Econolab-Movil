@@ -1,0 +1,130 @@
+[
+  {
+    "id": "CN01",
+    "name": "Instalación y apertura",
+    "input": "Abrir el APK instalado",
+    "expected": "Bienvenido y acceso visibles",
+    "debug": "PENDING",
+    "release": "PENDING"
+  },
+  {
+    "id": "CN02",
+    "name": "Acceso inválido",
+    "input": "Formulario vacío y una contraseña incorrecta",
+    "expected": "Validaciones y rechazo sin acceso privado",
+    "debug": "PENDING",
+    "release": "PENDING"
+  },
+  {
+    "id": "CN03",
+    "name": "Acceso válido y opt-in",
+    "input": "Credenciales QA y consentimiento explícito",
+    "expected": "Checkbox inicial desmarcado; acceso tras aceptar",
+    "debug": "PENDING",
+    "release": "PENDING"
+  },
+  {
+    "id": "CN04",
+    "name": "Búsqueda sin coincidencias",
+    "input": "Buscar zzzsinresultado y limpiar",
+    "expected": "Estado vacío y recuperación del catálogo",
+    "debug": "PENDING",
+    "release": "PENDING"
+  },
+  {
+    "id": "CN05",
+    "name": "Alta inválida de servicio",
+    "input": "Enviar formulario vacío",
+    "expected": "Se rechaza con mensaje de validación",
+    "debug": "PENDING",
+    "release": "PENDING"
+  },
+  {
+    "id": "CN06",
+    "name": "Alta y búsqueda de servicio",
+    "input": "Servicio Apoyo QA, importe 12.50",
+    "expected": "Servicio guardado y localizado por búsqueda",
+    "debug": "PENDING",
+    "release": "PENDING"
+  },
+  {
+    "id": "CN07",
+    "name": "Disponibilidad del servicio",
+    "input": "Pausar y reactivar Apoyo QA",
+    "expected": "Cambia a pausado y vuelve a disponible",
+    "debug": "PENDING",
+    "release": "PENDING"
+  },
+  {
+    "id": "CN08",
+    "name": "Registro y validación de actividad",
+    "input": "Cantidad 0; luego 3 unidades del servicio de 12.50",
+    "expected": "Rechazo de cero; registro válido de 37.50",
+    "debug": "PENDING",
+    "release": "PENDING"
+  },
+  {
+    "id": "CN09",
+    "name": "Corte por fecha y periodo inválido",
+    "input": "Periodo invertido y luego 24/11/2026",
+    "expected": "Rechazo del periodo invertido; corte 37.50",
+    "debug": "PENDING",
+    "release": "PENDING"
+  },
+  {
+    "id": "CN10",
+    "name": "Cancelar y excluir del corte",
+    "input": "Cancelar actividad 1 y consultar nuevamente",
+    "expected": "Historial cancelado y total 0.00",
+    "debug": "PENDING",
+    "release": "PENDING"
+  },
+  {
+    "id": "CN11",
+    "name": "Consultar y rectificar perfil",
+    "input": "Cambiar nombre a Perfil QA",
+    "expected": "Nombre propio actualizado y persistido",
+    "debug": "PENDING",
+    "release": "PENDING"
+  },
+  {
+    "id": "CN12",
+    "name": "Oposición y preferencias",
+    "input": "Activar y guardar comunicaciones opcionales; reabrir; desactivar, guardar y reabrir",
+    "expected": "Opción inicialmente apagada; ambos cambios conservados al reabrir",
+    "debug": "PENDING",
+    "release": "PENDING"
+  },
+  {
+    "id": "CN13",
+    "name": "Sesión persistente y cierre",
+    "input": "Reabrir, consultar perfil, salir y volver a entrar",
+    "expected": "Sesión restaurada y pantallas protegidas tras logout",
+    "debug": "PENDING",
+    "release": "PENDING"
+  },
+  {
+    "id": "CN14",
+    "name": "Pérdida y recuperación de red",
+    "input": "Modo avión durante consulta del corte",
+    "expected": "Error visible y consulta correcta al recuperar red",
+    "debug": "PENDING",
+    "release": "PENDING"
+  },
+  {
+    "id": "CN15",
+    "name": "Reiniciar sólo ejercicios",
+    "input": "Reiniciar espacio propio",
+    "expected": "Tres servicios iniciales, actividades vacías y cuenta conservada",
+    "debug": "PENDING",
+    "release": "PENDING"
+  },
+  {
+    "id": "CN16",
+    "name": "Cancelación de cuenta desechable",
+    "input": "Contraseña, frase y confirmación; intentar acceder después",
+    "expected": "Cuenta eliminada y acceso posterior rechazado",
+    "debug": "PENDING",
+    "release": "PENDING"
+  }
+]

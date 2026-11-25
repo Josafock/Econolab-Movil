@@ -1,0 +1,60 @@
+{
+  "run": 40397290225,
+  "attempt": 1,
+  "url": "https://github.com/Josafock/Econolab-Movil/actions/runs/40397290225",
+  "commit": "289a4a0bd220afeb10c94dac7b5a3500052856dc",
+  "approved": false,
+  "failures": [
+    "native: failure"
+  ],
+  "jobs": {
+    "security": "success",
+    "plan": "success",
+    "quality": "success",
+    "build": "success",
+    "native": "failure"
+  },
+  "tests": {
+    "passed": 181,
+    "failed": 0,
+    "pending": 0,
+    "total": 181,
+    "suitesPassed": 18,
+    "suitesFailed": 0
+  },
+  "evidenceArtifacts": {
+    "regression": "regression-40397290225-1",
+    "security-dast": "security-dast-40397290225-1",
+    "security-sast": "security-sast-40397290225-1"
+  },
+  "native": {
+    "freshTls": {
+      "passed": true,
+      "tests": 5,
+      "cached": false,
+      "startedAt": "2026-10-26T20:47:53+00:00",
+      "executedAt": "2026-10-26T20:57:40.542000+00:00",
+      "commit": "289a4a0bd220afeb10c94dac7b5a3500052856dc",
+      "requiredCases": [
+        "hostnameVerificationRemainsRequired",
+        "issuerBackupAcceptsASecondCertificateFromTheQaCA",
+        "platformTrustDoesNotAcceptThePrivateQaCA",
+        "validQaPinAcceptsTrustedServer",
+        "wrongPinRejectsOtherwiseTrustedServer"
+      ]
+    },
+    "appium": {
+      "tool": "Appium 3 UiAutomator2",
+      "scope": "Android QA with real isolated API",
+      "cases": [
+        {
+          "name": "Login y consentimiento explÃ­cito",
+          "passed": false,
+          "seconds": 33.602130261999946,
+          "error": "RuntimeError"
+        }
+      ]
+    },
+    "observedFailure": "GET /screenshot: socket hang up; instrumentation stopped; adb: device offline."
+  }
+}

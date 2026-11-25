@@ -1,0 +1,171 @@
+appId: ${APP_ID}
+name: Octubre acceso catalogo cortes perfil ayuda y regreso
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible: Bienvenido
+    timeout: 90000
+- takeScreenshot: 01-acceso
+- scrollUntilVisible:
+    element:
+      text: Correo electrónico
+      below: Correo electrónico
+    direction: DOWN
+- tapOn:
+    text: Correo electrónico
+    below: Correo electrónico
+- inputText: ${EMAIL}
+- assertVisible:
+    text: Correo electrónico
+    below: Correo electrónico
+- takeScreenshot: 01a-teclado-correo
+- pressKey: Enter
+- extendedWaitUntil:
+    visible:
+      text: Contraseña
+      below: Contraseña
+    timeout: 15000
+- takeScreenshot: 01b-teclado-acceso
+- inputText: ${PASSWORD}
+- hideKeyboard
+- scrollUntilVisible:
+    element: Iniciar sesión
+    direction: DOWN
+- tapOn: Iniciar sesión
+- extendedWaitUntil:
+    visible: Privacidad y mis datos|Estudios
+    timeout: 90000
+- runFlow:
+    when:
+      visible: Privacidad y mis datos
+    commands:
+      - scrollUntilVisible:
+          element: He leído y acepto el aviso de privacidad de mi cuenta
+          direction: DOWN
+      - assertVisible:
+          text: He leído y acepto el aviso de privacidad de mi cuenta
+          checked: false
+      - tapOn: He leído y acepto el aviso de privacidad de mi cuenta
+      - scrollUntilVisible:
+          element: Guardar mis decisiones
+          direction: DOWN
+      - tapOn: Guardar mis decisiones
+- extendedWaitUntil:
+    visible: Estudios
+    timeout: 60000
+- takeScreenshot: 02-inicio
+- tapOn:
+    text: Estudios
+    index: 0
+- extendedWaitUntil:
+    visible: Buscar estudio
+    timeout: 60000
+- tapOn: Buscar estudio
+- inputText: Estudio QA
+- hideKeyboard
+- scrollUntilVisible:
+    element: .*Estudio QA seguro.*
+    direction: DOWN
+    timeout: 60000
+- takeScreenshot: 03-catalogo
+- tapOn: .*Estudio QA seguro.*
+- scrollUntilVisible:
+    element: Información del estudio
+    direction: DOWN
+    timeout: 60000
+- scrollUntilVisible:
+    element:
+      text: '.*120[.]00.*'
+    direction: DOWN
+- takeScreenshot: 04-precio
+- scrollUntilVisible:
+    element: '.*Parametro QA.*'
+    direction: DOWN
+- takeScreenshot: 05-parametros
+- back
+- scrollUntilVisible:
+    element: Buscar estudio
+    direction: UP
+- assertVisible: Buscar estudio
+- tapOn: Cortes
+- scrollUntilVisible:
+    element: Fecha inicial \(AAAA-MM-DD\)
+    direction: DOWN
+    timeout: 60000
+- takeScreenshot: 06-filtros
+- scrollUntilVisible:
+    element: 'Importe neto registrado: [$]135[.]50 MXN'
+    direction: DOWN
+    timeout: 60000
+- assertVisible: 'Importe neto registrado: [$]135[.]50 MXN'
+- takeScreenshot: 07-corte
+- scrollUntilVisible:
+    element: '.*QA-OCT-003.*'
+    direction: DOWN
+- takeScreenshot: 08-servicio-cancelado
+- tapOn: Perfil
+- extendedWaitUntil:
+    visible: Mi perfil
+    timeout: 60000
+- scrollUntilVisible:
+    element: Editar perfil
+    direction: DOWN
+- tapOn: Editar perfil
+- scrollUntilVisible:
+    element: Mi perfil
+    direction: UP
+- scrollUntilVisible:
+    element:
+      text: Nombre
+      below: Nombre
+    direction: DOWN
+- tapOn:
+    text: Nombre
+    below: Nombre
+    point: '95%,50%'
+- eraseText: 50
+- inputText: ${PROFILE_NAME}
+- hideKeyboard
+- takeScreenshot: 09-edicion-perfil
+- scrollUntilVisible:
+    element: Guardar perfil
+    direction: DOWN
+- tapOn: Guardar perfil
+- assertVisible: '.*Quieres guardar los cambios.*'
+- tapOn: Guardar cambios
+- scrollUntilVisible:
+    element: Tu perfil se actualizó correctamente.
+    direction: DOWN
+    timeout: 60000
+- scrollUntilVisible:
+    element: ${PROFILE_NAME}
+    direction: UP
+- assertVisible: ${PROFILE_NAME}
+- takeScreenshot: 10-perfil-guardado
+- scrollUntilVisible:
+    element: Ayuda y uso de datos
+    direction: DOWN
+- tapOn: Ayuda y uso de datos
+- scrollUntilVisible:
+    element: Tu acceso al laboratorio
+    direction: DOWN
+    timeout: 60000
+- takeScreenshot: 11-ayuda
+- back
+- scrollUntilVisible:
+    element: Mi perfil
+    direction: UP
+- assertVisible: Mi perfil
+- tapOn: Inicio
+- scrollUntilVisible:
+    element: Cerrar sesión
+    direction: DOWN
+- tapOn: Cerrar sesión
+- assertVisible: '.*Quieres salir de ECONOLAB.*'
+- tapOn: Salir
+- scrollUntilVisible:
+    element: Bienvenido
+    direction: DOWN
+    timeout: 60000
+- takeScreenshot: 12-sesion-cerrada

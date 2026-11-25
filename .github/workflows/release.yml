@@ -1,0 +1,80 @@
+name: Liberación Android aprobada
+
+on:
+  push:
+    tags: ['v[0-9]+.[0-9]+.[0-9]+']
+  workflow_dispatch:
+    inputs:
+      submit:
+        description: Enviar el AAB a Google Play Internal Testing después de todas las pruebas
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-android
+  cancel-in-progress: false
+
+jobs:
+  validation:
+    # Unitarias, estático, integración, regresión, rendimiento, esfuerzo y aceptación nativa.
+    uses: ./.github/workflows/pipeline.yml
+    with:
+      full: true
+      native: true
+
+  delivery:
+    needs: validation
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    environment: google-play-internal
+    env:
+      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+      GOOGLE_PLAY_SERVICE_ACCOUNT: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT }}
+      EXPO_PUBLIC_PRIVACY_URL: https://backend-econolab-escuela-1.onrender.com/api/privacy
+      EXPO_PUBLIC_SUPPORT_EMAIL: 20230009@uthh.edu.mx
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Exigir origen estable y acceso al servicio de compilación
+        shell: bash
+        run: |
+          git merge-base --is-ancestor HEAD origin/main
+          test -n "$EXPO_TOKEN" || { echo '::error::Falta EXPO_TOKEN; no se acredita una compilación EAS.'; exit 1; }
+          mkdir -p reports/release
+      - run: npm ci --no-audit --no-fund
+      - run: npm run release:check -- --store
+      - run: npm run version:check
+      - name: Crear APK instalable y AAB de tienda firmados por EAS
+        shell: bash
+        run: |
+          npx eas-cli@25.3.0 build --platform android --profile preview --non-interactive --wait --json > reports/release/apk.json
+          npx eas-cli@25.3.0 build --platform android --profile production --non-interactive --wait --json > reports/release/aab.json
+      - name: Enviar el AAB validado a la pista interna
+        if: inputs.submit == true
+        shell: bash
+        run: |
+          test -n "$GOOGLE_PLAY_SERVICE_ACCOUNT" || { echo '::error::Falta GOOGLE_PLAY_SERVICE_ACCOUNT; no se envió a Play.'; exit 1; }
+          printf '%s' "$GOOGLE_PLAY_SERVICE_ACCOUNT" > google-play.json
+          chmod 600 google-play.json
+          EAS_VALIDATED_BUILD=$(node -e "const fs=require('fs');const b=JSON.parse(fs.readFileSync('reports/release/aab.json','utf8'));const item=Array.isArray(b)?b[0]:b;if(!/^[0-9a-f-]{36}$/.test(item.id))throw Error('Build sin ID válido');process.stdout.write(item.id);")
+          npx eas-cli@25.3.0 submit --platform android --profile internal --id "$EAS_VALIDATED_BUILD" --non-interactive --wait
+      - name: Retirar la credencial temporal de Play
+        if: always()
+        run: rm -f google-play.json
+      - name: Conservar un solo manifiesto de entrega
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: entrega-android-${{ github.run_id }}
+          path: reports/release/
+          if-no-files-found: warn
+          retention-days: 90

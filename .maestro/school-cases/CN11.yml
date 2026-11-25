@@ -1,0 +1,59 @@
+appId: ${APP_ID}
+name: CN11 Consultar y rectificar perfil
+---
+- tapOn: Perfil
+- extendedWaitUntil:
+    visible: Mi perfil
+    timeout: 60000
+- scrollUntilVisible:
+    element:
+      text: Editar perfil
+    direction: DOWN
+    timeout: 30000
+- tapOn: Editar perfil
+- scrollUntilVisible:
+    element:
+      text: Mi perfil
+    direction: UP
+    timeout: 30000
+- scrollUntilVisible:
+    element:
+      text: Nombre
+      below: Nombre
+    direction: DOWN
+    timeout: 30000
+- tapOn:
+    text: Nombre
+    below: Nombre
+    point: 95%,50%
+- eraseText: 100
+- inputText: Perfil QA
+- hideKeyboard
+- scrollUntilVisible:
+    element:
+      text: Guardar perfil
+    direction: DOWN
+    timeout: 30000
+- tapOn: Guardar perfil
+- extendedWaitUntil:
+    visible: Guardar cambios
+    timeout: 60000
+- tapOn: Guardar cambios
+- scrollUntilVisible:
+    element:
+      text: Mi perfil
+    direction: UP
+    timeout: 30000
+- scrollUntilVisible:
+    element:
+      text: Tu perfil se actualizó correctamente.
+    direction: DOWN
+    timeout: 30000
+- assertVisible: Tu perfil se actualizó correctamente.
+- scrollUntilVisible:
+    element:
+      text: Perfil QA
+    direction: UP
+    timeout: 30000
+- assertVisible: Perfil QA
+- takeScreenshot: CN11-aprobado

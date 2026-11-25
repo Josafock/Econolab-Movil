@@ -1,0 +1,76 @@
+appId: ${APP_ID}
+name: CN10 Cancelar y excluir del corte
+---
+- tapOn: Actividad
+- scrollUntilVisible:
+    element:
+      text: Cancelar actividad 1
+    direction: DOWN
+    timeout: 30000
+- tapOn: Cancelar actividad 1
+- extendedWaitUntil:
+    visible: Cancelar actividad
+    timeout: 60000
+- tapOn: Sí, cancelar actividad
+- scrollUntilVisible:
+    element:
+      text: Actividades
+    direction: UP
+    timeout: 30000
+- scrollUntilVisible:
+    element:
+      text: Actividad cancelada.
+    direction: DOWN
+    timeout: 30000
+- scrollUntilVisible:
+    element:
+      text: Cancelada; se excluye del importe del corte.
+    direction: DOWN
+    timeout: 30000
+- assertVisible: Cancelada; se excluye del importe del corte.
+- tapOn: Cortes
+- scrollUntilVisible:
+    element:
+      text: Cortes por fecha
+    direction: UP
+    timeout: 30000
+- scrollUntilVisible:
+    element:
+      text: Desde \(AAAA-MM-DD\)
+      below: Desde \(AAAA-MM-DD\)
+    direction: DOWN
+    timeout: 30000
+- tapOn:
+    text: Desde \(AAAA-MM-DD\)
+    below: Desde \(AAAA-MM-DD\)
+    point: 95%,50%
+- eraseText: 100
+- inputText: 2026-11-24
+- hideKeyboard
+- scrollUntilVisible:
+    element:
+      text: Hasta \(AAAA-MM-DD\)
+      below: Hasta \(AAAA-MM-DD\)
+    direction: DOWN
+    timeout: 30000
+- tapOn:
+    text: Hasta \(AAAA-MM-DD\)
+    below: Hasta \(AAAA-MM-DD\)
+    point: 95%,50%
+- eraseText: 100
+- inputText: 2026-11-24
+- hideKeyboard
+- scrollUntilVisible:
+    element:
+      text: Consultar resumen
+    direction: DOWN
+    timeout: 30000
+- tapOn: Consultar resumen
+- scrollUntilVisible:
+    element:
+      text: "[$]0[.]00"
+    direction: DOWN
+    timeout: 30000
+- assertVisible: "[$]0[.]00"
+- assertVisible: 0 actividades incluidas.*1 canceladas
+- takeScreenshot: CN10-aprobado

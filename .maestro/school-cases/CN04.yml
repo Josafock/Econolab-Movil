@@ -1,0 +1,55 @@
+appId: ${APP_ID}
+name: CN04 Búsqueda sin coincidencias
+---
+- scrollUntilVisible:
+    element:
+      text: Explorar catálogo
+    direction: DOWN
+    timeout: 30000
+- tapOn: Explorar catálogo
+- extendedWaitUntil:
+    visible: Catálogo de servicios
+    timeout: 60000
+- scrollUntilVisible:
+    element:
+      text: Buscar servicio
+      below: Buscar servicio
+    direction: DOWN
+    timeout: 30000
+- tapOn:
+    text: Buscar servicio
+    below: Buscar servicio
+    point: 95%,50%
+- eraseText: 100
+- inputText: zzzsinresultado
+- hideKeyboard
+- scrollUntilVisible:
+    element:
+      text: No hay servicios que coincidan con tu búsqueda.
+    direction: DOWN
+    timeout: 30000
+- assertVisible: No hay servicios que coincidan con tu búsqueda.
+- scrollUntilVisible:
+    element:
+      text: Catálogo de servicios
+    direction: UP
+    timeout: 30000
+- scrollUntilVisible:
+    element:
+      text: Buscar servicio
+      below: Buscar servicio
+    direction: DOWN
+    timeout: 30000
+- tapOn:
+    text: Buscar servicio
+    below: Buscar servicio
+    point: 95%,50%
+- eraseText: 100
+- hideKeyboard
+- scrollUntilVisible:
+    element:
+      text: Impresión de documentos
+    direction: DOWN
+    timeout: 30000
+- assertVisible: Impresión de documentos
+- takeScreenshot: CN04-aprobado

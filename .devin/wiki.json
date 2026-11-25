@@ -1,0 +1,15 @@
+{
+  "repo_notes": [
+    {
+      "content": "Documentar el commit y la rama realmente indexados. Econolab Mobile usa Expo y React Native; src/core contiene transporte, configuración y seguridad, src/features los módulos y src/app las rutas. No atribuir a main funciones que solo estén en ramas de trabajo. Distinguir suites ejecutadas, evidencia histórica, configuración preparada y servicios externos todavía sin vincular. Los enlaces y scripts de docs/CI_CORRECCIONES_A4.md y docs/VERSIONAMIENTO.md describen la revisión A4 cuando existan en el commit indexado."
+    }
+  ],
+  "pages": [
+    { "title": "Visión general y ejecución", "purpose": "Explicar alcance móvil, repositorio, instalación con lockfile, versiones de plataforma y comandos reales de package.json", "parent": null },
+    { "title": "Arquitectura y dependencias", "purpose": "Describir src/core, src/features, src/app, src/ui y la separación entre API, sesión, presentación y configuración según el código presente", "parent": null },
+    { "title": "Módulos y contratos de API", "purpose": "Documentar las funcionalidades realmente presentes, sus rutas, modelos y dependencia del backend existente; no inventar endpoints", "parent": "Arquitectura y dependencias" },
+    { "title": "Pruebas y datos QA", "purpose": "Explicar Jest, RNTL, fixtures, integración desechable, aceptación nativa, rendimiento y esfuerzo cuando estén implementados, con sus límites de evidencia", "parent": null },
+    { "title": "Workflows y seguimiento", "purpose": "Describir eventos y dependencias de .github/workflows, códigos de salida, check obligatorio, reportes y conservación de artifacts", "parent": null },
+    { "title": "Versionamiento y liberación Android", "purpose": "Explicar SemVer, versionCode, EAS, APK y AAB, promociones y configuración externa pendiente; diferenciar preparación de envío real a Google Play", "parent": "Workflows y seguimiento" }
+  ]
+}

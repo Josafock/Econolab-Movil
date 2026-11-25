@@ -1,0 +1,10 @@
+{
+  "hostname": "backend-econolab-escuela-1.onrender.com",
+  "verifiedAt": "2026-10-24T02:16:04Z",
+  "publicKeyHashes": [
+    "8emdl/UmneUm0I4Y/vHzOTQzb9eJwG4voRHtMdNmBPk=",
+    "kIdp6NNEd8wsugYyyIYFsi1ylMCED3hZbSR8ZFsa/A4=",
+    "mEflZT5enoR1FuXLgYYGqnVEoZvmf9c2bVBpiOjYQ0c="
+  ],
+  "scope": "SPKI SHA-256: leaf onrender.com, Google Trust Services WE1, GTS Root R4. CA pins permit managed certificate renewal within this chain. Hostname and platform trust validation remain required. No expiration or fallback disabling pinning."
+}

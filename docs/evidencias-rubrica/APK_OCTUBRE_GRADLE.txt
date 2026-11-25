@@ -1,0 +1,7 @@
+EAS build 674c2b2f-a3a2-4932-9a46-0b9156ddae25
+Source e037d41bae8349c0652a83f7b8aaa7a3f7fd694e
+Extracto de tareas sin URLs de logs ni credenciales
+
+> Task :app:minifyReleaseWithR8
+> Task :app:convertShrunkResourcesToBinaryRelease
+BUILD SUCCESSFUL in 14m 46s

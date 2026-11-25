@@ -1,0 +1,29 @@
+{
+  "buildId": "619b70bd-c37d-4d2d-a419-7bb0bbf17c91",
+  "sourceCommit": "9b099de2bd202c9c627f1e3c3bfc1bd104191a3d",
+  "package": "com.econolab.mobile",
+  "name": "ECONOLAB",
+  "version": "1.1.0",
+  "versionCode": "3",
+  "minSdk": "24",
+  "targetSdk": "36",
+  "bytes": 100490942,
+  "sha256": "a47e12dde4ed0290b4ba2f804081c3e73e279b9a71ed810cd636540a6228d30a",
+  "permissions": [
+    "android.permission.ACCESS_NETWORK_STATE",
+    "android.permission.ACCESS_WIFI_STATE",
+    "android.permission.INTERNET",
+    "android.permission.VIBRATE",
+    "com.econolab.mobile.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+  ],
+  "debuggable": "false",
+  "allowBackup": "false",
+  "usesCleartextTraffic": "false",
+  "signatureV1Present": false,
+  "signatureV2Present": true,
+  "signatureV3Present": false,
+  "certificatesSha256": [
+    "ce941921641076f0db2185f4951d89848b7a59beb407dd0e7c44d8c861be15ad"
+  ],
+  "scope": "Static APK metadata and certificate extraction; not a cryptographic apksigner verification or a device execution."
+}

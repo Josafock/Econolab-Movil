@@ -1,0 +1,13 @@
+{
+  "runId": "40227417859",
+  "buildId": "674c2b2f-a3a2-4932-9a46-0b9156ddae25",
+  "sourceCommit": "e037d41bae8349c0652a83f7b8aaa7a3f7fd694e",
+  "sha256": "933b5c6a5e5956dee7b54c868aeae9b5ba60965780326c78d0ed58070f3f54d3",
+  "version": "1.1.0",
+  "versionCode": "6",
+  "certificateSha256": "ce941921641076f0db2185f4951d89848b7a59beb407dd0e7c44d8c861be15ad",
+  "signatureVerified": true,
+  "packageVerified": true,
+  "debuggable": false,
+  "scope": "Firma criptografica, integridad, identidad y permisos; no sustituye las pruebas de interfaz."
+}

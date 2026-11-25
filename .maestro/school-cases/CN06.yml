@@ -1,0 +1,83 @@
+appId: ${APP_ID}
+name: CN06 Alta y búsqueda de servicio
+---
+- scrollUntilVisible:
+    element:
+      text: Nuevo servicio de práctica
+    direction: UP
+    timeout: 30000
+- scrollUntilVisible:
+    element:
+      text: Nombre del servicio
+      below: Nombre del servicio
+    direction: DOWN
+    timeout: 30000
+- tapOn:
+    text: Nombre del servicio
+    below: Nombre del servicio
+    point: 95%,50%
+- eraseText: 100
+- inputText: Apoyo QA
+- hideKeyboard
+- scrollUntilVisible:
+    element:
+      text: Descripción
+      below: Descripción
+    direction: DOWN
+    timeout: 30000
+- tapOn:
+    text: Descripción
+    below: Descripción
+    point: 95%,50%
+- eraseText: 100
+- inputText: Ejercicio ficticio de caja negra
+- hideKeyboard
+- scrollUntilVisible:
+    element:
+      text: Importe de ejemplo \(MXN\)
+      below: Importe de ejemplo \(MXN\)
+    direction: DOWN
+    timeout: 30000
+- tapOn:
+    text: Importe de ejemplo \(MXN\)
+    below: Importe de ejemplo \(MXN\)
+    point: 95%,50%
+- eraseText: 100
+- inputText: "12.50"
+- hideKeyboard
+- scrollUntilVisible:
+    element:
+      text: Guardar servicio
+    direction: DOWN
+    timeout: 30000
+- tapOn: Guardar servicio
+- scrollUntilVisible:
+    element:
+      text: Servicio de práctica guardado.
+    direction: UP
+    timeout: 30000
+- scrollUntilVisible:
+    element:
+      text: Catálogo de servicios
+    direction: UP
+    timeout: 30000
+- scrollUntilVisible:
+    element:
+      text: Buscar servicio
+      below: Buscar servicio
+    direction: DOWN
+    timeout: 30000
+- tapOn:
+    text: Buscar servicio
+    below: Buscar servicio
+    point: 95%,50%
+- eraseText: 100
+- inputText: Apoyo QA
+- hideKeyboard
+- scrollUntilVisible:
+    element:
+      text: Pausar Apoyo QA
+    direction: DOWN
+    timeout: 30000
+- assertVisible: Pausar Apoyo QA
+- takeScreenshot: CN06-aprobado

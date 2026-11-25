@@ -1,0 +1,25 @@
+Signer #1:
+
+Certificate #1:
+Owner: CN=, OU=, O=, L=, ST=, C=
+Issuer: CN=, OU=, O=, L=, ST=, C=
+Serial number: 2a10dfff1ed0e38b
+Valid from: Thu Oct 22 02:03:05 UTC 2026 until: Mon Mar 09 02:03:05 UTC 2054
+Certificate fingerprints:
+	 SHA1: 88:32:65:D2:5B:00:37:7E:FB:5D:C3:13:F7:0A:09:E6:48:6B:51:AF
+	 SHA256: CE:94:19:21:64:10:76:F0:DB:21:85:F4:95:1D:89:84:8B:7A:59:BE:B4:07:DD:0E:7C:44:D8:C8:61:BE:15:AD
+Signature algorithm name: SHA256withRSA
+Subject Public Key Algorithm: 2048-bit RSA key
+Version: 3
+
+Extensions: 
+
+#1: ObjectId: 2.5.29.14 Criticality=false
+SubjectKeyIdentifier [
+KeyIdentifier [
+0000: 60 C1 32 CB 9A 54 69 2F   E1 F7 D0 09 DF 42 30 78  `.2..Ti/.....B0x
+0010: 38 B0 05 DE                                        8...
+]
+]
+
+

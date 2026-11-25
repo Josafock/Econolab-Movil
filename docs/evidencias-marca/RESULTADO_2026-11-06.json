@@ -1,0 +1,71 @@
+{
+  "date": "2026-11-06",
+  "identity": {
+    "name": "ECONOLAB",
+    "originalLogo": true,
+    "package": "com.econolab.mobile",
+    "assetVerification": "brand-integrity.json"
+  },
+  "sourceCommit": "3feccd740ea26854b59a43a7e3ff7431d6dc2fe6",
+  "mobilePr": "https://github.com/Josafock/Econolab-Movil/pull/61",
+  "mobileMainMerged": false,
+  "preexistingAppJsonSha256": "ceb6a1a76b2502da88de81eb84347f29caf1b39e665b4d521cf34c97bc880b67",
+  "backend": {
+    "pr": "https://github.com/DavidHdz117/Backend_Econolab_Escuela/pull/8",
+    "mergeCommit": "f1ad794ce9ddf6697ea8a28aec78c70f04224648",
+    "ci": "PASS",
+    "sonarCloud": "PASS",
+    "publicBrandVerified": true
+  },
+  "checks": {
+    "lint": "PASS",
+    "typecheck": "PASS",
+    "mobileTests": 189,
+    "ciConfigurationTests": 22,
+    "hermesPlatforms": [
+      "android",
+      "ios"
+    ],
+    "retiredModulesInExports": 0,
+    "originalAssetsUnchanged": 6,
+    "webViewports": 2,
+    "webFlow": "login-consent-catalog-create-activity-cut-profile-logout",
+    "livePublicPages": 2,
+    "liveProtectedRoutes": 2,
+    "githubCiChecksPassed": 25
+  },
+  "limits": [
+    "Web screenshots use a simulated API, not a native Android run.",
+    "Native phone installation and real flow verification remain for the user.",
+    "Google Play classification and approval are not certified by these technical checks.",
+    "SHA-256 and ZIP integrity checks do not constitute an independent apksigner verification or a native device run."
+  ],
+  "builds": [
+    {
+      "id": "fd7eae08-7063-4298-9406-2d13dd0710ff",
+      "status": "FINISHED",
+      "appBuildVersion": "12",
+      "gitCommitHash": "3feccd740ea26854b59a43a7e3ff7431d6dc2fe6",
+      "download": "https://expo.dev/artifacts/eas/tWbKKlKCWYwf4vXbCKUVc4kwtpvjv7KIGbgXmueKgMw.aab",
+      "completedAt": "2026-11-07T01:25:47.511Z",
+      "type": "aab",
+      "filename": "econolab-1.1.0-code12.aab",
+      "bytes": 71859303,
+      "sha256": "eb642f239915476e6771720202155047f089b9e0600f03ac06c3b6718632631b",
+      "zipCrcValid": true
+    },
+    {
+      "id": "fe8f72bf-7cd9-4d45-91de-f8e724528ce4",
+      "status": "FINISHED",
+      "appBuildVersion": "11",
+      "gitCommitHash": "3feccd740ea26854b59a43a7e3ff7431d6dc2fe6",
+      "download": "https://expo.dev/artifacts/eas/mUq5VL_Ev8fm8UDRNOdXv58BLrK2GqVoHKYNAIlPGZg.apk",
+      "completedAt": "2026-11-07T01:25:48.665Z",
+      "type": "apk",
+      "filename": "econolab-1.1.0-code11.apk",
+      "bytes": 100472494,
+      "sha256": "bcf321675844b82121391c13361d2fef1067fc986cca99bca6278dcef7edf94f",
+      "zipCrcValid": true
+    }
+  ]
+}

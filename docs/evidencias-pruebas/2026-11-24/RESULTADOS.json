@@ -1,0 +1,212 @@
+{
+  "date": "2026-11-24",
+  "timezone": "America/Mexico_City",
+  "sourceCommit": "d07de2631b8c9e00b7b23ccd695e020f526ba46c",
+  "branch": "feature/HU-08-demo-administrativa",
+  "appJsonSha256": "ceb6a1a76b2502da88de81eb84347f29caf1b39e665b4d521cf34c97bc880b67",
+  "sourceCodeModified": false,
+  "checks": {
+    "lint": "PASS",
+    "typecheck": "PASS",
+    "releaseConfiguration": "PASS",
+    "mobile": {
+      "passed": 189,
+      "failed": 0,
+      "suites": 21,
+      "suitesDetail": [
+        {
+          "file": "auth-provider.test.tsx",
+          "status": "passed",
+          "tests": 11
+        },
+        {
+          "file": "api.test.ts",
+          "status": "passed",
+          "tests": 22
+        },
+        {
+          "file": "profile.test.ts",
+          "status": "passed",
+          "tests": 29
+        },
+        {
+          "file": "ui.test.tsx",
+          "status": "passed",
+          "tests": 6
+        },
+        {
+          "file": "studies.test.ts",
+          "status": "passed",
+          "tests": 24
+        },
+        {
+          "file": "cash-cuts-screen.test.tsx",
+          "status": "passed",
+          "tests": 5
+        },
+        {
+          "file": "auth-session.test.ts",
+          "status": "passed",
+          "tests": 10
+        },
+        {
+          "file": "school.test.ts",
+          "status": "passed",
+          "tests": 7
+        },
+        {
+          "file": "cash-cuts.test.ts",
+          "status": "passed",
+          "tests": 20
+        },
+        {
+          "file": "privacy.test.ts",
+          "status": "passed",
+          "tests": 7
+        },
+        {
+          "file": "school-screen.test.tsx",
+          "status": "passed",
+          "tests": 3
+        },
+        {
+          "file": "privacy-screen.test.tsx",
+          "status": "passed",
+          "tests": 3
+        },
+        {
+          "file": "refresh.test.ts",
+          "status": "passed",
+          "tests": 6
+        },
+        {
+          "file": "studies-view-model.test.ts",
+          "status": "passed",
+          "tests": 4
+        },
+        {
+          "file": "auth-api.test.ts",
+          "status": "passed",
+          "tests": 7
+        },
+        {
+          "file": "pinning.test.ts",
+          "status": "passed",
+          "tests": 3
+        },
+        {
+          "file": "dashboard.test.tsx",
+          "status": "passed",
+          "tests": 3
+        },
+        {
+          "file": "session-refresh.test.ts",
+          "status": "passed",
+          "tests": 2
+        },
+        {
+          "file": "public-resources.test.ts",
+          "status": "passed",
+          "tests": 8
+        },
+        {
+          "file": "keyboard.test.ts",
+          "status": "passed",
+          "tests": 5
+        },
+        {
+          "file": "config.test.ts",
+          "status": "passed",
+          "tests": 4
+        }
+      ]
+    },
+    "ciConfiguration": {
+      "passed": 22,
+      "failed": 0
+    },
+    "backendAdministration": {
+      "passed": 8,
+      "failed": 0
+    },
+    "localHttpPostgresJwt": {
+      "checks": 19,
+      "postgres": true,
+      "http": true,
+      "jwt": true,
+      "isolation": true,
+      "concurrentWrites": 10,
+      "cascadeVerified": true
+    },
+    "backendBuild": "PASS",
+    "hermesExport": [
+      "android",
+      "ios"
+    ],
+    "bundleAudit": "bundle-audit.json",
+    "visualWeb": {
+      "passedViewports": 2,
+      "screenshots": 12,
+      "api": "intercepted fixture",
+      "report": "visual-web.json"
+    },
+    "render": {
+      "publicPages": 2,
+      "unauthenticatedRequestsBlocked": 2,
+      "logoutSucceeded": true,
+      "profileIdentityMatched": true,
+      "genericCatalogVerified": true,
+      "cutsChecked": true,
+      "businessRecordWrites": false,
+      "publicReport": "public-probe.json",
+      "authenticatedReport": "live-readonly.json",
+      "httpChecksBeforeLogout": 6,
+      "authenticatedReadChecks": 4,
+      "logoutEvidence": "Command output confirmed that the verification session was closed after writing live-readonly.json."
+    },
+    "tls": {
+      "platformTrustAccepted": true,
+      "configuredPinMatches": 2,
+      "chainPositions": [
+        1,
+        2
+      ]
+    }
+  },
+  "incidents": [
+    {
+      "scope": "Initial Render checks",
+      "observed": [
+        "request timeout",
+        "fetch failure"
+      ],
+      "resolution": "Subsequent public endpoint checks and authenticated checks passed; initial failures are retained in this report."
+    },
+    {
+      "scope": "Additional full backend regression, including retired modules",
+      "initialResult": {
+        "passed": 86,
+        "failed": 1,
+        "suites": 12
+      },
+      "failedTest": "study-clustering.model.spec.ts: accented method labels decoded incorrectly",
+      "resolution": "Reran the affected suite with PYTHONIOENCODING=utf-8 and PYTHONUTF8=1; no source modification.",
+      "rerun": {
+        "passed": 8,
+        "failed": 0
+      }
+    }
+  ],
+  "cleanup": {
+    "temporaryDatabasePort": 55441,
+    "temporaryDatabaseStopped": true,
+    "liveTestSessionClosed": true,
+    "productionBusinessRecordsModified": false
+  },
+  "limits": [
+    "The visual flow uses a browser and a simulated API, not a native Android device.",
+    "Android/iOS exports are bundle checks, not an APK installation or an iOS native build.",
+    "Google Play closed-test participation and duration were not verified in this run.",
+    "The 189 mobile tests include retained regression tests for previous modules; the active school module has 10 dedicated mobile cases."
+  ]
+}
